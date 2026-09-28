@@ -260,12 +260,16 @@
   transform: translateX(calc(-50% + 176px));
   width: 56px;
   height: 56px;
+  padding: 0;
   border-radius: 50%;
   border: none;
   background: var(--color-primary);
   color: white;
   font-size: 28px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
   cursor: pointer;
   z-index: 10;
