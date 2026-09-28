@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { ScheduleItem } from '../types';
 import { formatTimeRange } from '../utils/date';
+import { DeleteIcon } from './icons/DeleteIcon';
+import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
 
 type Props = {
@@ -93,15 +95,15 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
             )}
           </div>
         )}
+      </div>
 
-        <div className="item-card__actions">
-          <button type="button" className="item-card__action" onClick={onEdit}>
-            수정
-          </button>
-          <button type="button" className="item-card__action item-card__action--danger" onClick={onDelete}>
-            삭제
-          </button>
-        </div>
+      <div className="item-card__actions">
+        <button type="button" className="icon-action" onClick={onEdit} aria-label="수정">
+          <PencilIcon />
+        </button>
+        <button type="button" className="icon-action icon-action--danger" onClick={onDelete} aria-label="삭제">
+          <DeleteIcon />
+        </button>
       </div>
     </div>
   );

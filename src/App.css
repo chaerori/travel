@@ -243,21 +243,26 @@
 }
 
 .item-card__actions {
+  flex: none;
   display: flex;
-  gap: 12px;
-  margin-top: 2px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.item-card__action {
+.icon-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  padding: 0;
-  font-size: 12px;
+  padding: 4px;
   color: var(--color-text-muted);
   cursor: pointer;
 }
 
-.item-card__action--danger {
+.icon-action--danger {
   color: var(--color-danger);
 }
 
