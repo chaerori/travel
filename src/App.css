@@ -266,7 +266,7 @@
   color: white;
   font-size: 28px;
   line-height: 1;
-  box-shadow: 0 8px 24px rgba(40, 89, 197, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
   cursor: pointer;
   z-index: 10;
 }
