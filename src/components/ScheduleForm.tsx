@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { LinkedText, PrepItem, ScheduleContent, ScheduleItem } from '../types';
 import { makeId } from '../utils/id';
 
@@ -47,6 +47,35 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
 
   function removeLink(id: string) {
     setLinks((prev) => (prev.length > 1 ? prev.filter((l) => l.id !== id) : prev));
+  }
+
+  const dragIndex = useRef<number | null>(null);
+
+  function handleDragPointerDown(e: React.PointerEvent<HTMLSpanElement>, index: number) {
+    dragIndex.current = index;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function handleDragPointerMove(e: React.PointerEvent<HTMLSpanElement>) {
+    if (dragIndex.current === null) return;
+    const target = document
+      .elementFromPoint(e.clientX, e.clientY)
+      ?.closest<HTMLElement>('[data-link-index]');
+    if (!target) return;
+    const targetIndex = Number(target.dataset.linkIndex);
+    if (targetIndex === dragIndex.current) return;
+    const fromIndex = dragIndex.current;
+    setLinks((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(targetIndex, 0, moved);
+      return next;
+    });
+    dragIndex.current = targetIndex;
+  }
+
+  function handleDragPointerUp() {
+    dragIndex.current = null;
   }
 
   function addPrep() {
@@ -153,8 +182,19 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
         <div className="form-field">
           <span>{linksLabel}</span>
           <div className="link-editor">
-            {links.map((l) => (
-              <div className="link-editor__row" key={l.id}>
+            {links.map((l, index) => (
+              <div className="link-editor__row" key={l.id} data-link-index={index}>
+                {contentType === 'route' && links.length > 1 && (
+                  <span
+                    className="drag-handle"
+                    onPointerDown={(e) => handleDragPointerDown(e, index)}
+                    onPointerMove={handleDragPointerMove}
+                    onPointerUp={handleDragPointerUp}
+                    onPointerCancel={handleDragPointerUp}
+                  >
+                    ⠿
+                  </span>
+                )}
                 <input
                   type="text"
                   placeholder="이름"

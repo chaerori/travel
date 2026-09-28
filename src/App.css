@@ -423,7 +423,21 @@
 
 .link-editor__row {
   display: flex;
+  align-items: center;
   gap: 6px;
+}
+
+.drag-handle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
 .link-editor__row input {
