@@ -14,7 +14,7 @@ export default defineConfig({
         name: '여행 일정',
         short_name: '여행 일정',
         description: '여행 스케줄 등록 및 확인 앱',
-        theme_color: '#7e14ff',
+        theme_color: '#2859c5',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/travel/',
