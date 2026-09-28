@@ -5,7 +5,7 @@ import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
-import { SyncIcon } from './components/icons/SyncIcon';
+import { ShareIcon } from './components/icons/ShareIcon';
 import type { ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
@@ -127,7 +127,7 @@ function TripView({ userEmail }: { userEmail: string }) {
             onClick={() => setAccountPanelOpen(true)}
             aria-label="계정"
           >
-            <SyncIcon />
+            <ShareIcon />
           </button>
         </div>
       </header>
