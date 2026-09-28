@@ -4,6 +4,7 @@ import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { SyncPanel } from './components/SyncPanel';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
+import { SyncIcon } from './components/icons/SyncIcon';
 import type { ScheduleItem } from './types';
 import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
@@ -106,11 +107,11 @@ function App() {
           )}
           <button
             type="button"
-            className="sync-btn"
+            className={synced ? 'sync-btn' : 'sync-btn sync-btn--pending'}
             onClick={() => setSyncPanelOpen(true)}
             aria-label="기기 간 동기화"
           >
-            {synced ? '🔗' : '🔗…'}
+            <SyncIcon />
           </button>
         </div>
       </header>

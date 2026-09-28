@@ -25,13 +25,18 @@
 
 .sync-btn {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: 6px 10px;
-  font-size: 15px;
+  background: none;
+  padding: 6px;
+  color: var(--color-primary);
   cursor: pointer;
+}
+
+.sync-btn--pending {
+  opacity: 0.4;
 }
 
 .sync-panel__hint {
