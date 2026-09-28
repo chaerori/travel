@@ -31,6 +31,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
   const [links, setLinks] = useState<LinkedText[]>(
     initial ? toLinkedList(initial.content) : [emptyLinked()],
   );
+  const [routeTitle, setRouteTitle] = useState(
+    initial?.content.type === 'route' ? initial.content.title : '',
+  );
   const [memo, setMemo] = useState(initial?.memo ?? '');
   const [prep, setPrep] = useState<PrepItem[]>(initial?.prep ?? []);
 
@@ -73,7 +76,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
       const selectedId = cleanLinks.some((l) => l.id === prevSelected) ? prevSelected : null;
       content = { type: 'choices', options: cleanLinks, selectedId };
     } else {
-      content = { type: 'route', stops: cleanLinks };
+      content = { type: 'route', title: routeTitle.trim(), stops: cleanLinks };
     }
 
     const cleanPrep = prep.map((p) => ({ ...p, label: p.label.trim() })).filter((p) => p.label);
@@ -134,6 +137,18 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
             <option value="route">이동 경로</option>
           </select>
         </label>
+
+        {contentType === 'route' && (
+          <label className="form-field">
+            <span>대표 이름</span>
+            <input
+              type="text"
+              placeholder="예: 공항 이동"
+              value={routeTitle}
+              onChange={(e) => setRouteTitle(e.target.value)}
+            />
+          </label>
+        )}
 
         <div className="form-field">
           <span>{linksLabel}</span>

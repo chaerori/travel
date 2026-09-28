@@ -59,15 +59,18 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
 
         {item.content.type === 'route' &&
           (() => {
-            const stops = item.content.stops;
+            const { title, stops } = item.content;
             return (
-              <div className="item-card__content item-card__content--route">
-                {stops.map((stop, i) => (
-                  <span key={stop.id} className="route-stop">
-                    <LinkRow item={stop} />
-                    {i < stops.length - 1 && <span className="route-arrow">→</span>}
-                  </span>
-                ))}
+              <div className="item-card__content">
+                {title && <div className="item-card__route-title">{title}</div>}
+                <div className="item-card__content--route">
+                  {stops.map((stop, i) => (
+                    <span key={stop.id} className="route-stop">
+                      <LinkRow item={stop} />
+                      {i < stops.length - 1 && <span className="route-arrow">→</span>}
+                    </span>
+                  ))}
+                </div>
               </div>
             );
           })()}

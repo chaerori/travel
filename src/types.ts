@@ -13,7 +13,7 @@ export type PrepItem = {
 export type ScheduleContent =
   | { type: 'fixed'; item: LinkedText }
   | { type: 'choices'; options: LinkedText[]; selectedId: string | null }
-  | { type: 'route'; stops: LinkedText[] };
+  | { type: 'route'; title: string; stops: LinkedText[] };
 
 export type ScheduleItem = {
   id: string;
