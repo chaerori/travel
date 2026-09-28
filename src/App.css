@@ -93,6 +93,9 @@
 
 .city-heading {
   margin: 4px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 16px;
   font-weight: 700;
 }

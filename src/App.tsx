@@ -3,6 +3,7 @@ import './App.css';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { SyncPanel } from './components/SyncPanel';
+import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import type { ScheduleItem } from './types';
 import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
@@ -125,7 +126,12 @@ function App() {
         {rows.map(({ item, showDate, showCity }) => (
           <div key={item.id} className="schedule-row">
             {showDate && <div className="date-divider">{formatDateWithWeekday(item.date)}</div>}
-            {showCity && <div className="city-heading">📍 {item.city}</div>}
+            {showCity && (
+              <div className="city-heading">
+                <CityMarkerIcon />
+                {item.city}
+              </div>
+            )}
             <ScheduleItemCard
               item={item}
               onUpdate={handleUpdate}
