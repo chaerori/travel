@@ -5,7 +5,6 @@ export function LinkRow({ item }: { item: LinkedText }) {
     return (
       <a className="link-row" href={item.url} target="_blank" rel="noreferrer">
         {item.label}
-        <span className="link-row__icon">↗</span>
       </a>
     );
   }

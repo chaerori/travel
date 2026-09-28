@@ -170,10 +170,6 @@
   font-weight: 500;
 }
 
-.link-row__icon {
-  font-size: 12px;
-}
-
 .choice-row {
   display: flex;
   align-items: center;
@@ -264,6 +260,10 @@
 
 .icon-action--danger {
   color: var(--color-danger);
+}
+
+.fab__glyph {
+  transform: translateY(-1.5px);
 }
 
 .fab {

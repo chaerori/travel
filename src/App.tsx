@@ -144,7 +144,7 @@ function App() {
       </main>
 
       <button type="button" className="fab" onClick={openAddForm} aria-label="일정 추가">
-        +
+        <span className="fab__glyph">+</span>
       </button>
 
       {formOpen && (
