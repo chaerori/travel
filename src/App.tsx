@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 import './App.css';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
-import type { ScheduleItem, Trip } from './types';
+import { SyncPanel } from './components/SyncPanel';
+import type { ScheduleItem } from './types';
+import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
-import { useLocalStorage } from './utils/storage';
-
-const EMPTY_TRIP: Trip = { title: '나의 여행', items: [] };
+import { useSyncCode } from './utils/syncCode';
 
 type Row = {
   item: ScheduleItem;
@@ -33,10 +33,12 @@ function buildRows(items: ScheduleItem[]): Row[] {
 }
 
 function App() {
-  const [trip, setTrip] = useLocalStorage<Trip>('travel-trip', EMPTY_TRIP);
+  const [syncCode, setSyncCode] = useSyncCode();
+  const [trip, setTrip, synced] = useCloudTrip(syncCode);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
+  const [syncPanelOpen, setSyncPanelOpen] = useState(false);
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
@@ -86,20 +88,30 @@ function App() {
   return (
     <div className="app">
       <header className="app__header">
-        {titleDraft === null ? (
-          <h1 className="app__title" onClick={() => setTitleDraft(trip.title)}>
-            {trip.title}
-          </h1>
-        ) : (
-          <input
-            className="app__title-input"
-            value={titleDraft}
-            autoFocus
-            onChange={(e) => setTitleDraft(e.target.value)}
-            onBlur={commitTitle}
-            onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
-          />
-        )}
+        <div className="app__header-row">
+          {titleDraft === null ? (
+            <h1 className="app__title" onClick={() => setTitleDraft(trip.title)}>
+              {trip.title}
+            </h1>
+          ) : (
+            <input
+              className="app__title-input"
+              value={titleDraft}
+              autoFocus
+              onChange={(e) => setTitleDraft(e.target.value)}
+              onBlur={commitTitle}
+              onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
+            />
+          )}
+          <button
+            type="button"
+            className="sync-btn"
+            onClick={() => setSyncPanelOpen(true)}
+            aria-label="기기 간 동기화"
+          >
+            {synced ? '🔗' : '🔗…'}
+          </button>
+        </div>
       </header>
 
       <main className="app__list">
@@ -139,6 +151,10 @@ function App() {
             setEditingItem(null);
           }}
         />
+      )}
+
+      {syncPanelOpen && (
+        <SyncPanel code={syncCode} onJoin={setSyncCode} onClose={() => setSyncPanelOpen(false)} />
       )}
     </div>
   );
