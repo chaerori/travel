@@ -119,17 +119,23 @@
   flex-direction: column;
 }
 
-.date-divider {
-  margin-top: 24px;
+.date-city-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
   margin-bottom: 4px;
+}
+
+.date-city-row--first {
+  margin-top: 0;
+}
+
+.date-divider {
   font-size: 13px;
   font-weight: 700;
   color: var(--color-primary);
   letter-spacing: 0.02em;
-}
-
-.date-divider:first-child {
-  margin-top: 0;
 }
 
 .city-heading {
@@ -137,8 +143,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
+}
+
+.date-city-row .city-heading {
+  margin: 0;
 }
 
 .item-card {

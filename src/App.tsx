@@ -140,10 +140,18 @@ function TripView({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {rows.map(({ item, showDate, showCity }) => (
+        {rows.map(({ item, showDate, showCity }, index) => (
           <div key={item.id} className="schedule-row">
-            {showDate && <div className="date-divider">{formatDateWithWeekday(item.date)}</div>}
-            {showCity && (
+            {showDate && (
+              <div className={index === 0 ? 'date-city-row date-city-row--first' : 'date-city-row'}>
+                <span className="date-divider">{formatDateWithWeekday(item.date)}</span>
+                <span className="city-heading">
+                  <CityMarkerIcon />
+                  {item.city}
+                </span>
+              </div>
+            )}
+            {!showDate && showCity && (
               <div className="city-heading">
                 <CityMarkerIcon />
                 {item.city}

@@ -1,6 +1,6 @@
 export function CityMarkerIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fill="#007aff"
         fillRule="evenodd"
