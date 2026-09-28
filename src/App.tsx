@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
 import './App.css';
+import { AccountPanel } from './components/AccountPanel';
+import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
-import { SyncPanel } from './components/SyncPanel';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import { SyncIcon } from './components/icons/SyncIcon';
 import type { ScheduleItem } from './types';
+import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
-import { useSyncCode } from './utils/syncCode';
+import { OWNER_EMAIL } from './firebase';
 
 type Row = {
   item: ScheduleItem;
@@ -34,13 +36,13 @@ function buildRows(items: ScheduleItem[]): Row[] {
   });
 }
 
-function App() {
-  const [syncCode, setSyncCode] = useSyncCode();
-  const [trip, setTrip, synced] = useCloudTrip(syncCode);
+function TripView({ userEmail }: { userEmail: string }) {
+  const isOwner = userEmail === OWNER_EMAIL;
+  const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
-  const [syncPanelOpen, setSyncPanelOpen] = useState(false);
+  const [accountPanelOpen, setAccountPanelOpen] = useState(false);
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
@@ -87,6 +89,20 @@ function App() {
     setTitleDraft(null);
   }
 
+  if (status === 'denied') {
+    return (
+      <div className="login-gate">
+        <p className="login-gate__title">접근 권한이 없습니다</p>
+        <p className="login-gate__desc">
+          {userEmail} 계정은 이 여행 일정에 초대되지 않았습니다.
+        </p>
+        <button type="button" className="btn btn--ghost" onClick={signOutUser}>
+          로그아웃
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="app__header">
@@ -107,9 +123,9 @@ function App() {
           )}
           <button
             type="button"
-            className={synced ? 'sync-btn' : 'sync-btn sync-btn--pending'}
-            onClick={() => setSyncPanelOpen(true)}
-            aria-label="기기 간 동기화"
+            className={status === 'ready' ? 'sync-btn' : 'sync-btn sync-btn--pending'}
+            onClick={() => setAccountPanelOpen(true)}
+            aria-label="계정"
           >
             <SyncIcon />
           </button>
@@ -160,11 +176,32 @@ function App() {
         />
       )}
 
-      {syncPanelOpen && (
-        <SyncPanel code={syncCode} onJoin={setSyncCode} onClose={() => setSyncPanelOpen(false)} />
+      {accountPanelOpen && (
+        <AccountPanel
+          userEmail={userEmail}
+          isOwner={isOwner}
+          sharedEmails={sharedEmails}
+          onAddEmail={addSharedEmail}
+          onRemoveEmail={removeSharedEmail}
+          onClose={() => setAccountPanelOpen(false)}
+        />
       )}
     </div>
   );
+}
+
+function App() {
+  const user = useAuthUser();
+
+  if (user === undefined) {
+    return <div className="login-gate" />;
+  }
+
+  if (user === null || !user.email) {
+    return <LoginGate />;
+  }
+
+  return <TripView userEmail={user.email} />;
 }
 
 export default App;

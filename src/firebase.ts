@@ -1,5 +1,8 @@
 import { initializeApp } from 'firebase/app';
+import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+
+export const OWNER_EMAIL = 'leechaeyun95@gmail.com';
 
 // Firebase 웹 설정값은 비밀값이 아니며 Firestore 보안 규칙으로 접근을 제어한다.
 const firebaseConfig = {
@@ -13,3 +16,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();

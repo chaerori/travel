@@ -5,6 +5,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/travel/',
+  optimizeDeps: {
+    // Firebase 모듈이 별도 청크로 최적화되면 "Component X has not been
+    // registered yet" 오류가 발생하므로 함께 묶어 전달한다.
+    include: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+  },
   plugins: [
     react(),
     VitePWA({

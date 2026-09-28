@@ -71,6 +71,42 @@
   gap: 0;
 }
 
+.login-gate {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.login-gate__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.login-gate__desc {
+  margin: 0 0 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.login-gate .btn {
+  flex: none;
+  width: 100%;
+  max-width: 280px;
+}
+
+.account-panel__email {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .empty-state {
   color: var(--color-text-muted);
   text-align: center;
