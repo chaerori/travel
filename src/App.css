@@ -245,10 +245,10 @@
 .item-card__actions {
   flex: none;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .icon-action {
