@@ -463,6 +463,8 @@
 
 .reservation-tag {
   margin-left: 6px;
+  position: relative;
+  top: -2px;
   white-space: nowrap;
   font-size: 9px;
   font-weight: 700;
