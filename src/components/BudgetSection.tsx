@@ -30,7 +30,7 @@ export function BudgetSection({ budget, items, onChange }: Props) {
           placeholder="0"
           onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
         />
-        <span className="budget-card__remaining">남음 {formatWon(budget.cardTotal - cardSpent)}</span>
+        <span className="budget-card__remaining">잔액 {formatWon(budget.cardTotal - cardSpent)}</span>
       </div>
       <div className="budget-card">
         <span className="budget-card__label">현금</span>
@@ -42,7 +42,7 @@ export function BudgetSection({ budget, items, onChange }: Props) {
           placeholder="0"
           onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
         />
-        <span className="budget-card__remaining">남음 {formatWon(budget.cashTotal - cashSpent)}</span>
+        <span className="budget-card__remaining">잔액 {formatWon(budget.cashTotal - cashSpent)}</span>
       </div>
     </div>
   );
