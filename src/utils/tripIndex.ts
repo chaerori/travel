@@ -1,4 +1,4 @@
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { OWNER_EMAIL, db } from '../firebase';
 import type { TripIndexEntry } from '../types';
@@ -78,4 +78,12 @@ export async function renameTripIndexEntry(id: string, title: string): Promise<v
     ? existing.map((t) => (t.id === id ? { ...t, title } : t))
     : [...existing, { id, title }];
   await setDoc(INDEX_REF, { trips: next }, { merge: true });
+}
+
+export async function deleteTrip(id: string): Promise<void> {
+  const indexSnap = await getDoc(INDEX_REF);
+  const existing = (indexSnap.data()?.trips as TripIndexEntry[]) ?? [];
+  const next = existing.filter((t) => t.id !== id);
+  await setDoc(INDEX_REF, { trips: next }, { merge: true });
+  await deleteDoc(doc(db, 'trips', id));
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { createTrip, useTripIndex } from '../utils/tripIndex';
+import { createTrip, deleteTrip, useTripIndex } from '../utils/tripIndex';
 import { AddIcon } from './icons/AddIcon';
+import { DeleteIcon } from './icons/DeleteIcon';
 
 export function TripListPage() {
   const { trips, status } = useTripIndex();
@@ -19,6 +20,15 @@ export function TripListPage() {
     } catch (err) {
       console.error('여행 생성 실패', err);
       setSubmitting(false);
+    }
+  }
+
+  async function handleDelete(id: string, title: string) {
+    if (!confirm(`"${title}" 여행을 삭제할까요? 삭제하면 되돌릴 수 없습니다.`)) return;
+    try {
+      await deleteTrip(id);
+    } catch (err) {
+      console.error('여행 삭제 실패', err);
     }
   }
 
@@ -66,9 +76,19 @@ export function TripListPage() {
         )}
 
         {trips.map((t) => (
-          <a key={t.id} className="trip-card" href={`${import.meta.env.BASE_URL}${t.id}/`}>
-            {t.title}
-          </a>
+          <div key={t.id} className="trip-card">
+            <a className="trip-card__link" href={`${import.meta.env.BASE_URL}${t.id}/`}>
+              {t.title}
+            </a>
+            <button
+              type="button"
+              className="icon-action icon-action--danger"
+              onClick={() => handleDelete(t.id, t.title)}
+              aria-label="삭제"
+            >
+              <DeleteIcon />
+            </button>
+          </div>
         ))}
       </main>
     </div>
