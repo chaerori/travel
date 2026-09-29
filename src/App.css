@@ -251,7 +251,7 @@
 
 .item-card__route-title {
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 500;
   margin-bottom: 4px;
 }
 
@@ -356,6 +356,10 @@
   cursor: pointer;
 }
 
+.prep-list__row input[type='checkbox'] {
+  accent-color: var(--color-primary);
+}
+
 .prep-list__label--checked {
   color: var(--color-text-muted);
   text-decoration: line-through;
@@ -430,6 +434,10 @@
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;
+}
+
+.checkbox-field input[type='checkbox'] {
+  accent-color: var(--color-primary);
 }
 
 .reservation-tag {
