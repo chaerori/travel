@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ScheduleItem } from '../types';
+import { formatWon } from '../utils/currency';
 import { formatTimeRange } from '../utils/date';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { PencilIcon } from './icons/PencilIcon';
@@ -76,6 +77,12 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
           })()}
 
         {item.memo && <div className="item-card__memo">{item.memo}</div>}
+
+        {item.expense && (
+          <div className="item-card__expense">
+            {item.expense.method === 'card' ? '카드' : '현금'} {formatWon(item.expense.amount)}
+          </div>
+        )}
 
         {item.prep.length > 0 && (
           <div className="item-card__prep">

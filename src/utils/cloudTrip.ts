@@ -1,9 +1,9 @@
 import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 import { OWNER_EMAIL, db } from '../firebase';
-import type { Trip } from '../types';
+import type { ScheduleItem, Trip } from '../types';
 
-const EMPTY_TRIP: Trip = { title: '나의 여행', items: [] };
+const EMPTY_TRIP: Trip = { title: '나의 여행', budget: { cardTotal: 0, cashTotal: 0 }, items: [] };
 const CACHE_KEY = 'travel-trip-cache';
 const TRIP_DOC_ID = 'main';
 
@@ -31,7 +31,14 @@ export function useCloudTrip(enabled: boolean) {
       (snap) => {
         const data = snap.data();
         if (data) {
-          const tripPart: Trip = { title: data.title ?? EMPTY_TRIP.title, items: data.items ?? [] };
+          const tripPart: Trip = {
+            title: data.title ?? EMPTY_TRIP.title,
+            budget: data.budget ?? EMPTY_TRIP.budget,
+            items: (data.items ?? []).map((item: ScheduleItem) => ({
+              ...item,
+              expense: item.expense ?? null,
+            })),
+          };
           const json = JSON.stringify(tripPart);
           lastJson.current = json;
           setTrip(tripPart);

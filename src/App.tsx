@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import './App.css';
 import { AccountPanel } from './components/AccountPanel';
+import { BudgetSection } from './components/BudgetSection';
 import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import { ShareIcon } from './components/icons/ShareIcon';
-import type { ScheduleItem } from './types';
+import type { Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
@@ -89,6 +90,10 @@ function TripView({ userEmail }: { userEmail: string }) {
     setTitleDraft(null);
   }
 
+  function handleBudgetChange(budget: Budget) {
+    setTrip((prev) => ({ ...prev, budget }));
+  }
+
   if (status === 'denied') {
     return (
       <div className="login-gate">
@@ -130,6 +135,7 @@ function TripView({ userEmail }: { userEmail: string }) {
             <ShareIcon />
           </button>
         </div>
+        <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
       </header>
 
       <main className="app__list">

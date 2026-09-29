@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import type { LinkedText, PrepItem, ScheduleContent, ScheduleItem } from '../types';
+import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem } from '../types';
+import { parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
 
 type ContentType = ScheduleContent['type'];
@@ -36,6 +37,10 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
   );
   const [memo, setMemo] = useState(initial?.memo ?? '');
   const [prep, setPrep] = useState<PrepItem[]>(initial?.prep ?? []);
+  const [expenseAmount, setExpenseAmount] = useState(
+    initial?.expense ? initial.expense.amount.toLocaleString('ko-KR') : '',
+  );
+  const [expenseMethod, setExpenseMethod] = useState<PaymentMethod>(initial?.expense?.method ?? 'card');
 
   function updateLink(id: string, patch: Partial<LinkedText>) {
     setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
@@ -110,6 +115,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
 
     const cleanPrep = prep.map((p) => ({ ...p, label: p.label.trim() })).filter((p) => p.label);
 
+    const amount = parseWon(expenseAmount);
+    const expense = amount > 0 ? { amount, method: expenseMethod } : null;
+
     onSave({
       id: initial?.id ?? makeId(),
       date,
@@ -119,6 +127,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
       content,
       memo: memo.trim(),
       prep: cleanPrep,
+      expense,
     });
   }
 
@@ -226,6 +235,26 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
           <span>메모</span>
           <textarea value={memo} onChange={(e) => setMemo(e.target.value)} rows={2} />
         </label>
+
+        <div className="form-row form-row--split">
+          <label className="form-field">
+            <span>지출 금액 (선택)</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="0"
+              value={expenseAmount}
+              onChange={(e) => setExpenseAmount(e.target.value.replace(/[^0-9]/g, ''))}
+            />
+          </label>
+          <label className="form-field">
+            <span>결제 수단</span>
+            <select value={expenseMethod} onChange={(e) => setExpenseMethod(e.target.value as PaymentMethod)}>
+              <option value="card">카드</option>
+              <option value="cash">현금</option>
+            </select>
+          </label>
+        </div>
 
         <div className="form-field">
           <span>준비물 (선택)</span>
