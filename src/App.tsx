@@ -12,7 +12,7 @@ import { ShareIcon } from './components/icons/ShareIcon';
 import type { Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
-import { formatDateWithWeekday } from './utils/date';
+import { addHours, formatDateWithWeekday } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
 import { OWNER_EMAIL } from './firebase';
@@ -51,7 +51,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
-  const lastItem = trip.items[trip.items.length - 1];
+  const lastItem = rows[rows.length - 1]?.item;
+  const defaultStartTime = lastItem
+    ? lastItem.endTime || addHours(lastItem.startTime, 1)
+    : '09:00';
 
   function openAddForm() {
     setEditingItem(null);
@@ -196,6 +199,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           initial={editingItem}
           defaultDate={lastItem?.date ?? new Date().toISOString().slice(0, 10)}
           defaultCity={lastItem?.city ?? ''}
+          defaultStartTime={defaultStartTime}
           onSave={handleSave}
           onCancel={() => {
             setFormOpen(false);

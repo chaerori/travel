@@ -11,6 +11,7 @@ type Props = {
   initial: ScheduleItem | null;
   defaultDate: string;
   defaultCity: string;
+  defaultStartTime: string;
   onSave: (item: ScheduleItem) => void;
   onCancel: () => void;
 };
@@ -25,10 +26,10 @@ function toLinkedList(content: ScheduleContent): LinkedText[] {
   return content.stops;
 }
 
-export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCancel }: Props) {
+export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTime, onSave, onCancel }: Props) {
   const [date, setDate] = useState(initial?.date ?? defaultDate);
   const [city, setCity] = useState(initial?.city ?? defaultCity);
-  const [startTime, setStartTime] = useState(initial?.startTime ?? '09:00');
+  const [startTime, setStartTime] = useState(initial?.startTime ?? defaultStartTime);
   const [endTime, setEndTime] = useState(initial?.endTime ?? '');
   const [contentType, setContentType] = useState<ContentType>(initial?.content.type ?? 'fixed');
   const [links, setLinks] = useState<LinkedText[]>(
@@ -145,11 +146,15 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
 
         <div className="form-row form-row--split">
           <label className="form-field">
-            <span>날짜</span>
+            <span>
+              날짜<span className="required-mark">*</span>
+            </span>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           </label>
           <label className="form-field">
-            <span>도시</span>
+            <span>
+              도시<span className="required-mark">*</span>
+            </span>
             <input
               type="text"
               value={city}
@@ -162,11 +167,13 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
 
         <div className="form-row form-row--split">
           <label className="form-field">
-            <span>시작 시간</span>
+            <span>
+              시작 시간<span className="required-mark">*</span>
+            </span>
             <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
           </label>
           <label className="form-field">
-            <span>종료 시간 (선택)</span>
+            <span>종료 시간</span>
             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
           </label>
         </div>
@@ -193,7 +200,10 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
         )}
 
         <div className="form-field">
-          <span>{linksLabel}</span>
+          <span>
+            {linksLabel}
+            <span className="required-mark">*</span>
+          </span>
           <div className="link-editor">
             {links.map((l, index) => (
               <div className="link-editor__row" key={l.id} data-link-index={index}>
@@ -216,7 +226,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
                 />
                 <input
                   type="url"
-                  placeholder="링크 (선택)"
+                  placeholder="링크"
                   value={l.url ?? ''}
                   onChange={(e) => updateLink(l.id, { url: e.target.value })}
                 />
@@ -251,7 +261,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
 
         <div className="form-row form-row--split">
           <label className="form-field">
-            <span>지출 금액 (선택)</span>
+            <span>지출 금액</span>
             <input
               type="text"
               inputMode="numeric"
@@ -270,7 +280,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
         </div>
 
         <div className="form-field">
-          <span>준비물 (선택)</span>
+          <span>준비물</span>
           <div className="link-editor">
             {prep.map((p) => (
               <div className="link-editor__row" key={p.id}>

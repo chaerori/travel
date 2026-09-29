@@ -8,6 +8,14 @@ export function formatDateWithWeekday(dateStr: string): string {
   return `${month}월 ${day}일 (${weekday})`;
 }
 
+export function addHours(time: string, hours: number): string {
+  const [h, m] = time.split(':').map(Number);
+  const total = (h * 60 + m + hours * 60 + 24 * 60) % (24 * 60);
+  const nextH = Math.floor(total / 60);
+  const nextM = total % 60;
+  return `${String(nextH).padStart(2, '0')}:${String(nextM).padStart(2, '0')}`;
+}
+
 export function formatTimeRange(startTime: string, endTime: string): string {
   if (!endTime || endTime === startTime) return startTime;
   return `${startTime} - ${endTime}`;

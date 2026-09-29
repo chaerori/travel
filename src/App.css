@@ -472,6 +472,11 @@
   color: var(--color-text-muted);
 }
 
+.required-mark {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
 .form-field input,
 .form-field select,
 .form-field textarea {
