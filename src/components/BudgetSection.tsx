@@ -16,7 +16,7 @@ function sumExpenses(items: ScheduleItem[], method: PaymentMethod): number {
   }, 0);
 }
 
-const VALUE_WIDTH = '7ch';
+const VALUE_WIDTH = '11ch';
 
 export function BudgetSection({ budget, items, onChange }: Props) {
   const cardSpent = sumExpenses(items, 'card');
@@ -38,7 +38,6 @@ export function BudgetSection({ budget, items, onChange }: Props) {
             style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
           />
-          <span>원</span>
         </span>
         <span className="budget-pair">
           <CashIcon />
@@ -50,24 +49,21 @@ export function BudgetSection({ budget, items, onChange }: Props) {
             style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
           />
-          <span>원</span>
         </span>
       </div>
       <div className="budget-line budget-line--dark">
         <span className="budget-line__label">잔액</span>
         <span className="budget-pair">
-          <CardIcon />
+          <CardIcon original />
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cardTotal - cardSpent).toLocaleString('ko-KR')}
           </span>
-          <span>원</span>
         </span>
         <span className="budget-pair">
-          <CashIcon />
+          <CashIcon original />
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cashTotal - cashSpent).toLocaleString('ko-KR')}
           </span>
-          <span>원</span>
         </span>
       </div>
     </div>

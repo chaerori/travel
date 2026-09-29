@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-bottom: 96px;
+  padding-bottom: 20px;
 }
 
 .app__header {
@@ -21,6 +21,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.app__header-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .sync-btn {
@@ -322,16 +329,6 @@
   white-space: pre-wrap;
 }
 
-.item-card__expense {
-  align-self: flex-start;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-primary);
-  background: var(--color-primary-soft);
-  border-radius: 8px;
-  padding: 2px 8px;
-}
-
 .prep-toggle {
   background: none;
   border: none;
@@ -386,32 +383,6 @@
 
 .icon-action--danger {
   color: var(--color-danger);
-}
-
-.fab {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(calc(-50% + 176px));
-  padding: 12px;
-  border-radius: 50%;
-  border: none;
-  background: none;
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none;
-  cursor: pointer;
-  z-index: 10;
-}
-
-@media (max-width: 480px) {
-  .fab {
-    transform: none;
-    left: auto;
-    right: 20px;
-  }
 }
 
 .modal-backdrop {

@@ -127,14 +127,19 @@ function TripView({ userEmail }: { userEmail: string }) {
               onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
             />
           )}
-          <button
-            type="button"
-            className={status === 'ready' ? 'sync-btn' : 'sync-btn sync-btn--pending'}
-            onClick={() => setAccountPanelOpen(true)}
-            aria-label="계정"
-          >
-            <ShareIcon />
-          </button>
+          <div className="app__header-actions">
+            <button type="button" className="sync-btn" onClick={openAddForm} aria-label="일정 추가">
+              <AddIcon />
+            </button>
+            <button
+              type="button"
+              className={status === 'ready' ? 'sync-btn' : 'sync-btn sync-btn--pending'}
+              onClick={() => setAccountPanelOpen(true)}
+              aria-label="계정"
+            >
+              <ShareIcon />
+            </button>
+          </div>
         </div>
         <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
       </header>
@@ -143,7 +148,7 @@ function TripView({ userEmail }: { userEmail: string }) {
         {rows.length === 0 && (
           <div className="empty-state">
             <p>등록된 일정이 없습니다.</p>
-            <p>아래 + 버튼으로 첫 일정을 추가해 보세요.</p>
+            <p>우측 상단 + 버튼으로 첫 일정을 추가해 보세요.</p>
           </div>
         )}
 
@@ -173,10 +178,6 @@ function TripView({ userEmail }: { userEmail: string }) {
           </div>
         ))}
       </main>
-
-      <button type="button" className="fab" onClick={openAddForm} aria-label="일정 추가">
-        <AddIcon />
-      </button>
 
       {formOpen && (
         <ScheduleForm
