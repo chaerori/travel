@@ -37,6 +37,7 @@ export function useCloudTrip(enabled: boolean) {
             items: (data.items ?? []).map((item: ScheduleItem) => ({
               ...item,
               expense: item.expense ?? null,
+              needsReservation: item.needsReservation ?? false,
             })),
           };
           const json = JSON.stringify(tripPart);

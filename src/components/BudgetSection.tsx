@@ -1,5 +1,7 @@
 import type { Budget, PaymentMethod, ScheduleItem } from '../types';
-import { formatWon, parseWon } from '../utils/currency';
+import { parseWon } from '../utils/currency';
+import { CardIcon } from './icons/CardIcon';
+import { CashIcon } from './icons/CashIcon';
 
 type Props = {
   budget: Budget;
@@ -14,6 +16,8 @@ function sumExpenses(items: ScheduleItem[], method: PaymentMethod): number {
   }, 0);
 }
 
+const VALUE_WIDTH = '7ch';
+
 export function BudgetSection({ budget, items, onChange }: Props) {
   const cardSpent = sumExpenses(items, 'card');
   const cashSpent = sumExpenses(items, 'cash');
@@ -22,35 +26,49 @@ export function BudgetSection({ budget, items, onChange }: Props) {
 
   return (
     <div className="budget-section">
-      <div className="budget-col">
-        <div className="budget-col__total">
-          <span>카드</span>
+      <div className="budget-line">
+        <span className="budget-line__label">예산</span>
+        <span className="budget-pair">
+          <CardIcon />
           <input
             type="text"
             inputMode="numeric"
             value={cardText}
             placeholder="0"
-            style={{ width: `${Math.max(cardText.length, 1)}ch` }}
+            style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
           />
           <span>원</span>
-        </div>
-        <div className="budget-col__remaining">잔액 {formatWon(budget.cardTotal - cardSpent)}</div>
-      </div>
-      <div className="budget-col">
-        <div className="budget-col__total">
-          <span>현금</span>
+        </span>
+        <span className="budget-pair">
+          <CashIcon />
           <input
             type="text"
             inputMode="numeric"
             value={cashText}
             placeholder="0"
-            style={{ width: `${Math.max(cashText.length, 1)}ch` }}
+            style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
           />
           <span>원</span>
-        </div>
-        <div className="budget-col__remaining">잔액 {formatWon(budget.cashTotal - cashSpent)}</div>
+        </span>
+      </div>
+      <div className="budget-line budget-line--dark">
+        <span className="budget-line__label">잔액</span>
+        <span className="budget-pair">
+          <CardIcon />
+          <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
+            {(budget.cardTotal - cardSpent).toLocaleString('ko-KR')}
+          </span>
+          <span>원</span>
+        </span>
+        <span className="budget-pair">
+          <CashIcon />
+          <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
+            {(budget.cashTotal - cashSpent).toLocaleString('ko-KR')}
+          </span>
+          <span>원</span>
+        </span>
       </div>
     </div>
   );

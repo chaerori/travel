@@ -5,6 +5,7 @@ import { BudgetSection } from './components/BudgetSection';
 import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
+import { AddIcon } from './components/icons/AddIcon';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import { ShareIcon } from './components/icons/ShareIcon';
 import type { Budget, ScheduleItem } from './types';
@@ -174,7 +175,7 @@ function TripView({ userEmail }: { userEmail: string }) {
       </main>
 
       <button type="button" className="fab" onClick={openAddForm} aria-label="일정 추가">
-        <span className="fab__glyph">+</span>
+        <AddIcon />
       </button>
 
       {formOpen && (

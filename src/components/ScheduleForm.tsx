@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem } from '../types';
 import { parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
+import { CancelIcon } from './icons/CancelIcon';
+import { SaveIcon } from './icons/SaveIcon';
 
 type ContentType = ScheduleContent['type'];
 
@@ -41,6 +43,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
     initial?.expense ? initial.expense.amount.toLocaleString('ko-KR') : '',
   );
   const [expenseMethod, setExpenseMethod] = useState<PaymentMethod>(initial?.expense?.method ?? 'card');
+  const [needsReservation, setNeedsReservation] = useState(initial?.needsReservation ?? false);
 
   function updateLink(id: string, patch: Partial<LinkedText>) {
     setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
@@ -128,6 +131,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
       memo: memo.trim(),
       prep: cleanPrep,
       expense,
+      needsReservation,
     });
   }
 
@@ -231,6 +235,15 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
           </div>
         </div>
 
+        <label className="checkbox-field">
+          <input
+            type="checkbox"
+            checked={needsReservation}
+            onChange={(e) => setNeedsReservation(e.target.checked)}
+          />
+          <span>예약 필요</span>
+        </label>
+
         <label className="form-field">
           <span>메모</span>
           <textarea value={memo} onChange={(e) => setMemo(e.target.value)} rows={2} />
@@ -279,11 +292,11 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, onSave, onCanc
         </div>
 
         <div className="modal__actions">
-          <button type="button" className="btn btn--ghost" onClick={onCancel}>
-            취소
+          <button type="button" className="btn btn--ghost" onClick={onCancel} aria-label="취소">
+            <CancelIcon />
           </button>
-          <button type="submit" className="btn btn--primary">
-            저장
+          <button type="submit" className="btn btn--primary" aria-label="저장">
+            <SaveIcon />
           </button>
         </div>
       </form>

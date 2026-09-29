@@ -37,6 +37,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
         {item.content.type === 'fixed' && (
           <div className="item-card__content">
             <LinkRow item={item.content.item} />
+            {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
           </div>
         )}
 
@@ -63,7 +64,12 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
             const { title, stops } = item.content;
             return (
               <div className="item-card__content">
-                {title && <div className="item-card__route-title">{title}</div>}
+                {title && (
+                  <div className="item-card__route-title">
+                    {title}
+                    {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
+                  </div>
+                )}
                 <div className="item-card__content--route">
                   {stops.map((stop, i) => (
                     <span key={stop.id} className="route-stop">

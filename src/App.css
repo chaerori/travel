@@ -49,43 +49,60 @@
 
 .budget-section {
   display: flex;
-  gap: 24px;
-  margin-top: 14px;
-}
-
-.budget-col {
-  display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
+  margin-top: 14px;
+  margin-bottom: 24px;
+  color: var(--color-text-muted);
 }
 
-.budget-col__total {
+.budget-line {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 15px;
-  font-weight: 700;
+  gap: 16px;
+}
+
+.budget-line--dark {
   color: var(--color-text);
 }
 
-.budget-col__total input {
+.budget-line__label {
+  flex: none;
+  width: 28px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.budget-pair {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.budget-pair input,
+.budget-pair__value {
+  padding: 0 0 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: inherit;
+  text-align: right;
+}
+
+.budget-pair input {
   border: none;
   border-bottom: 1px solid var(--color-border);
   background: none;
-  padding: 0 0 2px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text);
 }
 
-.budget-col__total input:focus {
+.budget-pair__value {
+  display: inline-block;
+}
+
+.budget-pair input:focus {
   outline: none;
-  border-bottom-color: var(--color-primary);
-}
-
-.budget-col__remaining {
-  font-size: 12px;
-  color: var(--color-text-muted);
+  border-bottom-color: var(--color-text-muted);
 }
 
 .app__title {
@@ -164,8 +181,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 28px;
-  margin-bottom: 4px;
+  margin-top: 24px;
+  margin-bottom: 10px;
 }
 
 .date-city-row--first {
@@ -371,28 +388,20 @@
   color: var(--color-danger);
 }
 
-.fab__glyph {
-  transform: translateY(-1.5px);
-}
-
 .fab {
   position: fixed;
   bottom: 28px;
   left: 50%;
   transform: translateX(calc(-50% + 176px));
-  width: 56px;
-  height: 56px;
-  padding: 0;
+  padding: 12px;
   border-radius: 50%;
   border: none;
-  background: var(--color-primary);
-  color: white;
-  font-size: 28px;
-  line-height: 1;
+  background: none;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+  box-shadow: none;
   cursor: pointer;
   z-index: 10;
 }
@@ -440,6 +449,28 @@
 
 .form-row--split .form-field {
   flex: 1;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.reservation-tag {
+  margin-left: 6px;
+  white-space: nowrap;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: none;
+  border: 1px solid var(--color-primary);
+  border-radius: 6px;
+  padding: 1px 4px;
 }
 
 .form-field {
@@ -531,6 +562,9 @@
 
 .btn {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 12px;
   padding: 12px;
@@ -546,5 +580,18 @@
 
 .btn--ghost {
   background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.modal__actions .btn {
+  background: none;
+  padding: 8px;
+}
+
+.modal__actions .btn--primary {
+  color: var(--color-primary);
+}
+
+.modal__actions .btn--ghost {
   color: var(--color-text-muted);
 }

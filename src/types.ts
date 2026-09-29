@@ -32,6 +32,7 @@ export type ScheduleItem = {
   memo: string;
   prep: PrepItem[];
   expense: Expense | null;
+  needsReservation: boolean;
 };
 
 export type Budget = {
