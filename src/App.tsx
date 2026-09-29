@@ -5,6 +5,7 @@ import { BudgetSection } from './components/BudgetSection';
 import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
+import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import { ShareIcon } from './components/icons/ShareIcon';
@@ -12,6 +13,8 @@ import type { Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { formatDateWithWeekday } from './utils/date';
+import { getTripSlug } from './utils/tripId';
+import { renameTripIndexEntry } from './utils/tripIndex';
 import { OWNER_EMAIL } from './firebase';
 
 type Row = {
@@ -38,9 +41,9 @@ function buildRows(items: ScheduleItem[]): Row[] {
   });
 }
 
-function TripView({ userEmail }: { userEmail: string }) {
+function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) {
   const isOwner = userEmail === OWNER_EMAIL;
-  const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true);
+  const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true, tripId);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
@@ -86,7 +89,13 @@ function TripView({ userEmail }: { userEmail: string }) {
 
   function commitTitle() {
     if (titleDraft !== null) {
-      setTrip((prev) => ({ ...prev, title: titleDraft.trim() || prev.title }));
+      const nextTitle = titleDraft.trim();
+      if (nextTitle) {
+        setTrip((prev) => ({ ...prev, title: nextTitle }));
+        if (isOwner) {
+          renameTripIndexEntry(tripId, nextTitle).catch((err) => console.error('여행 목록 갱신 실패', err));
+        }
+      }
     }
     setTitleDraft(null);
   }
@@ -112,6 +121,9 @@ function TripView({ userEmail }: { userEmail: string }) {
   return (
     <div className="app">
       <header className="app__header">
+        <a className="trip-back-link" href={import.meta.env.BASE_URL}>
+          ← 여행 목록
+        </a>
         <div className="app__header-row">
           {titleDraft === null ? (
             <h1 className="app__title" onClick={() => setTitleDraft(trip.title)}>
@@ -217,7 +229,12 @@ function App() {
     return <LoginGate />;
   }
 
-  return <TripView userEmail={user.email} />;
+  const tripId = getTripSlug();
+  if (tripId === null) {
+    return <TripListPage />;
+  }
+
+  return <TripView userEmail={user.email} tripId={tripId} />;
 }
 
 export default App;

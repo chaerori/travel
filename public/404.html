@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>여행 일정</title>
+    <script>
+      // GitHub Pages는 정적 파일만 제공하므로 /travel/<trip> 같은 하위 경로로
+      // 직접 접속하면 404가 뜬다. 이 스크립트는 경로를 쿼리스트링에 담아
+      // /travel/ (index.html)로 리다이렉트하고, index.html이 이를 다시 원래
+      // 경로로 복원한다. (https://github.com/rafgraph/spa-github-pages)
+      var pathSegmentsToKeep = 1;
+      var l = window.location;
+      l.replace(
+        l.protocol +
+          '//' +
+          l.hostname +
+          (l.port ? ':' + l.port : '') +
+          l.pathname
+            .split('/')
+            .slice(0, 1 + pathSegmentsToKeep)
+            .join('/') +
+          '/?p=' +
+          l.pathname
+            .slice(1)
+            .split('/')
+            .slice(pathSegmentsToKeep)
+            .join('/')
+            .replace(/&/g, '~and~') +
+          (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash,
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -23,6 +23,15 @@
   gap: 12px;
 }
 
+.trip-back-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
 .app__header-actions {
   flex: none;
   display: flex;
@@ -533,6 +542,47 @@
   font-weight: 600;
   color: var(--color-primary);
   cursor: pointer;
+}
+
+.trip-create__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.trip-create__form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.trip-create__form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  background: var(--color-bg);
+}
+
+.trip-create__form .btn {
+  flex: none;
+  padding: 10px 16px;
+}
+
+.trip-card {
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
 }
 
 .modal__actions {

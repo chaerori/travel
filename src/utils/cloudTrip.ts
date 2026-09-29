@@ -4,15 +4,14 @@ import { OWNER_EMAIL, db } from '../firebase';
 import type { ScheduleItem, Trip } from '../types';
 
 const EMPTY_TRIP: Trip = { title: '나의 여행', budget: { cardTotal: 0, cashTotal: 0 }, items: [] };
-const CACHE_KEY = 'travel-trip-cache';
-const TRIP_DOC_ID = 'main';
 
 export type CloudStatus = 'loading' | 'ready' | 'denied';
 
-export function useCloudTrip(enabled: boolean) {
+export function useCloudTrip(enabled: boolean, tripId: string) {
+  const cacheKey = `travel-trip-cache-${tripId}`;
   const [trip, setTrip] = useState<Trip>(() => {
     try {
-      const raw = localStorage.getItem(CACHE_KEY);
+      const raw = localStorage.getItem(cacheKey);
       return raw ? (JSON.parse(raw) as Trip) : EMPTY_TRIP;
     } catch {
       return EMPTY_TRIP;
@@ -25,7 +24,7 @@ export function useCloudTrip(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     setStatus('loading');
-    const ref = doc(db, 'trips', TRIP_DOC_ID);
+    const ref = doc(db, 'trips', tripId);
     const unsubscribe = onSnapshot(
       ref,
       (snap) => {
@@ -44,7 +43,7 @@ export function useCloudTrip(enabled: boolean) {
           lastJson.current = json;
           setTrip(tripPart);
           setSharedEmails((data.sharedEmails as string[]) ?? []);
-          localStorage.setItem(CACHE_KEY, json);
+          localStorage.setItem(cacheKey, json);
         }
         setStatus('ready');
       },
@@ -53,37 +52,37 @@ export function useCloudTrip(enabled: boolean) {
       },
     );
     return unsubscribe;
-  }, [enabled]);
+  }, [enabled, tripId, cacheKey]);
 
   useEffect(() => {
     if (!enabled || status !== 'ready') return;
     const json = JSON.stringify(trip);
     if (json === lastJson.current) return;
     lastJson.current = json;
-    localStorage.setItem(CACHE_KEY, json);
+    localStorage.setItem(cacheKey, json);
     // Firestore는 undefined 필드를 허용하지 않으므로 JSON 왕복으로 제거하고,
     // merge로 저장해 ownerEmail/sharedEmails 필드를 덮어쓰지 않는다.
     setDoc(
-      doc(db, 'trips', TRIP_DOC_ID),
+      doc(db, 'trips', tripId),
       { ...JSON.parse(json), ownerEmail: OWNER_EMAIL },
       { merge: true },
     ).catch((err) => {
       console.error('Firestore 저장 실패', err);
     });
-  }, [trip, enabled, status]);
+  }, [trip, enabled, status, tripId, cacheKey]);
 
   async function addSharedEmail(email: string) {
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || sharedEmails.includes(trimmed)) return;
     const next = [...sharedEmails, trimmed];
     setSharedEmails(next);
-    await setDoc(doc(db, 'trips', TRIP_DOC_ID), { sharedEmails: next, ownerEmail: OWNER_EMAIL }, { merge: true });
+    await setDoc(doc(db, 'trips', tripId), { sharedEmails: next, ownerEmail: OWNER_EMAIL }, { merge: true });
   }
 
   async function removeSharedEmail(email: string) {
     const next = sharedEmails.filter((e) => e !== email);
     setSharedEmails(next);
-    await updateDoc(doc(db, 'trips', TRIP_DOC_ID), { sharedEmails: next });
+    await updateDoc(doc(db, 'trips', tripId), { sharedEmails: next });
   }
 
   return { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } as const;
