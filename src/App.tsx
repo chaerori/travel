@@ -107,6 +107,18 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, budget }));
   }
 
+  function handleMapUrlChange(mapUrl: string) {
+    setTrip((prev) => ({ ...prev, mapUrl }));
+  }
+
+  function openMap() {
+    if (trip.mapUrl) {
+      window.open(trip.mapUrl, '_blank', 'noreferrer');
+    } else {
+      setAccountPanelOpen(true);
+    }
+  }
+
   if (status === 'denied') {
     return (
       <div className="login-gate">
@@ -146,6 +158,9 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
             <button type="button" className="sync-btn" onClick={openAddForm} aria-label="일정 추가">
               <AddIcon />
             </button>
+            <button type="button" className="sync-btn" onClick={openMap} aria-label="지도">
+              <CityMarkerIcon />
+            </button>
             <button
               type="button"
               className={status === 'ready' ? 'sync-btn' : 'sync-btn sync-btn--pending'}
@@ -172,18 +187,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
             {showDate && (
               <div className={index === 0 ? 'date-city-row date-city-row--first' : 'date-city-row'}>
                 <span className="date-divider">{formatDateWithWeekday(item.date)}</span>
-                <span className="city-heading">
-                  <CityMarkerIcon />
-                  {item.city}
-                </span>
+                <span className="city-heading">{item.city}</span>
               </div>
             )}
-            {!showDate && showCity && (
-              <div className="city-heading">
-                <CityMarkerIcon />
-                {item.city}
-              </div>
-            )}
+            {!showDate && showCity && <div className="city-heading">{item.city}</div>}
             <ScheduleItemCard
               item={item}
               onUpdate={handleUpdate}
@@ -215,6 +222,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           sharedEmails={sharedEmails}
           onAddEmail={addSharedEmail}
           onRemoveEmail={removeSharedEmail}
+          mapUrl={trip.mapUrl}
+          onMapUrlChange={handleMapUrlChange}
           onClose={() => setAccountPanelOpen(false)}
         />
       )}

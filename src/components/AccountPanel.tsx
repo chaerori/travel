@@ -7,17 +7,34 @@ type Props = {
   sharedEmails: string[];
   onAddEmail: (email: string) => void;
   onRemoveEmail: (email: string) => void;
+  mapUrl: string;
+  onMapUrlChange: (mapUrl: string) => void;
   onClose: () => void;
 };
 
-export function AccountPanel({ userEmail, isOwner, sharedEmails, onAddEmail, onRemoveEmail, onClose }: Props) {
+export function AccountPanel({
+  userEmail,
+  isOwner,
+  sharedEmails,
+  onAddEmail,
+  onRemoveEmail,
+  mapUrl,
+  onMapUrlChange,
+  onClose,
+}: Props) {
   const [input, setInput] = useState('');
+  const [mapUrlDraft, setMapUrlDraft] = useState(mapUrl);
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!input.trim()) return;
     onAddEmail(input);
     setInput('');
+  }
+
+  function handleMapUrlSave(e: React.FormEvent) {
+    e.preventDefault();
+    onMapUrlChange(mapUrlDraft.trim());
   }
 
   return (
@@ -28,6 +45,21 @@ export function AccountPanel({ userEmail, isOwner, sharedEmails, onAddEmail, onR
         <div className="form-field">
           <span>로그인 계정</span>
           <p className="account-panel__email">{userEmail}</p>
+        </div>
+
+        <div className="form-field">
+          <span>구글맵 링크</span>
+          <form className="link-editor__row" onSubmit={handleMapUrlSave}>
+            <input
+              type="url"
+              placeholder="https://maps.app.goo.gl/..."
+              value={mapUrlDraft}
+              onChange={(e) => setMapUrlDraft(e.target.value)}
+            />
+            <button type="submit" className="add-btn">
+              저장
+            </button>
+          </form>
         </div>
 
         {isOwner && (

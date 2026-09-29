@@ -63,7 +63,7 @@ export async function createTrip(title: string): Promise<string> {
 
   await setDoc(
     doc(db, 'trips', id),
-    { title, budget: { cardTotal: 0, cashTotal: 0 }, items: [], ownerEmail: OWNER_EMAIL },
+    { title, budget: { cardTotal: 0, cashTotal: 0 }, items: [], mapUrl: '', ownerEmail: OWNER_EMAIL },
     { merge: true },
   );
   await setDoc(INDEX_REF, { trips: [...existing, { id, title }] }, { merge: true });

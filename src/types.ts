@@ -44,6 +44,7 @@ export type Trip = {
   title: string;
   budget: Budget;
   items: ScheduleItem[];
+  mapUrl: string;
 };
 
 export type TripIndexEntry = {
