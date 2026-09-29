@@ -17,32 +17,40 @@ function sumExpenses(items: ScheduleItem[], method: PaymentMethod): number {
 export function BudgetSection({ budget, items, onChange }: Props) {
   const cardSpent = sumExpenses(items, 'card');
   const cashSpent = sumExpenses(items, 'cash');
+  const cardText = budget.cardTotal ? budget.cardTotal.toLocaleString('ko-KR') : '';
+  const cashText = budget.cashTotal ? budget.cashTotal.toLocaleString('ko-KR') : '';
 
   return (
     <div className="budget-section">
-      <div className="budget-card">
-        <span className="budget-card__label">카드</span>
-        <input
-          className="budget-card__input"
-          type="text"
-          inputMode="numeric"
-          value={budget.cardTotal ? budget.cardTotal.toLocaleString('ko-KR') : ''}
-          placeholder="0"
-          onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
-        />
-        <span className="budget-card__remaining">잔액 {formatWon(budget.cardTotal - cardSpent)}</span>
+      <div className="budget-col">
+        <div className="budget-col__total">
+          <span>카드</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={cardText}
+            placeholder="0"
+            style={{ width: `${Math.max(cardText.length, 1)}ch` }}
+            onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
+          />
+          <span>원</span>
+        </div>
+        <div className="budget-col__remaining">잔액 {formatWon(budget.cardTotal - cardSpent)}</div>
       </div>
-      <div className="budget-card">
-        <span className="budget-card__label">현금</span>
-        <input
-          className="budget-card__input"
-          type="text"
-          inputMode="numeric"
-          value={budget.cashTotal ? budget.cashTotal.toLocaleString('ko-KR') : ''}
-          placeholder="0"
-          onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
-        />
-        <span className="budget-card__remaining">잔액 {formatWon(budget.cashTotal - cashSpent)}</span>
+      <div className="budget-col">
+        <div className="budget-col__total">
+          <span>현금</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={cashText}
+            placeholder="0"
+            style={{ width: `${Math.max(cashText.length, 1)}ch` }}
+            onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
+          />
+          <span>원</span>
+        </div>
+        <div className="budget-col__remaining">잔액 {formatWon(budget.cashTotal - cashSpent)}</div>
       </div>
     </div>
   );

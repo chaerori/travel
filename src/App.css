@@ -49,42 +49,41 @@
 
 .budget-section {
   display: flex;
-  gap: 10px;
+  gap: 24px;
   margin-top: 14px;
 }
 
-.budget-card {
-  flex: 1;
+.budget-col {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+}
+
+.budget-col__total {
+  display: flex;
+  align-items: center;
   gap: 4px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 12px 14px;
-}
-
-.budget-card__label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-text-muted);
-}
-
-.budget-card__input {
-  border: none;
-  background: none;
-  padding: 0;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-text);
-  width: 100%;
 }
 
-.budget-card__input:focus {
+.budget-col__total input {
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: none;
+  padding: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.budget-col__total input:focus {
   outline: none;
+  border-bottom-color: var(--color-primary);
 }
 
-.budget-card__remaining {
+.budget-col__remaining {
   font-size: 12px;
   color: var(--color-text-muted);
 }
