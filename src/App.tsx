@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import './App.css';
 import { AccountPanel } from './components/AccountPanel';
+import { BookmarkSection } from './components/BookmarkSection';
 import { BudgetSection } from './components/BudgetSection';
+import { CalendarSection } from './components/CalendarSection';
 import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
@@ -9,7 +11,7 @@ import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
 import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
 import { ShareIcon } from './components/icons/ShareIcon';
-import type { Budget, ScheduleItem } from './types';
+import type { Bookmarks, Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { addHours, formatDateWithWeekday } from './utils/date';
@@ -111,12 +113,25 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, mapUrl }));
   }
 
+  function handleBookmarksChange(bookmarks: Bookmarks) {
+    setTrip((prev) => ({ ...prev, bookmarks }));
+  }
+
   function openMap() {
     if (trip.mapUrl) {
       window.open(trip.mapUrl, '_blank', 'noreferrer');
     } else {
       setAccountPanelOpen(true);
     }
+  }
+
+  function scrollToDate(date: string) {
+    const target = document.getElementById(`date-${date}`);
+    if (!target) return;
+    const header = document.querySelector('.app__header');
+    const offset = header instanceof HTMLElement ? header.offsetHeight : 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset - 8;
+    window.scrollTo({ top, behavior: 'smooth' });
   }
 
   if (status === 'denied') {
@@ -172,9 +187,12 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </div>
         </div>
         <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
+        <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} />
       </header>
 
       <main className="app__list">
+        <CalendarSection items={trip.items} onSelectDate={scrollToDate} />
+
         {rows.length === 0 && (
           <div className="empty-state">
             <p>등록된 일정이 없습니다.</p>
@@ -185,7 +203,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         {rows.map(({ item, showDate, showCity }, index) => (
           <div key={item.id} className="schedule-row">
             {showDate && (
-              <div className={index === 0 ? 'date-city-row date-city-row--first' : 'date-city-row'}>
+              <div
+                id={`date-${item.date}`}
+                className={index === 0 ? 'date-city-row date-city-row--first' : 'date-city-row'}
+              >
                 <span className="date-divider">{formatDateWithWeekday(item.date)}</span>
                 <span className="city-heading">{item.city}</span>
               </div>

@@ -12,7 +12,7 @@ export type PrepItem = {
 
 export type ScheduleContent =
   | { type: 'fixed'; item: LinkedText }
-  | { type: 'choices'; options: LinkedText[]; selectedId: string | null }
+  | { type: 'choices'; title: string; options: LinkedText[]; selectedId: string | null }
   | { type: 'route'; title: string; stops: LinkedText[] };
 
 export type PaymentMethod = 'card' | 'cash';
@@ -40,11 +40,24 @@ export type Budget = {
   cashTotal: number;
 };
 
+export type BookmarkItem = {
+  id: string;
+  label: string;
+  location: string;
+  description: string;
+  url: string;
+};
+
+export type BookmarkCategory = 'food' | 'cafe' | 'attraction';
+
+export type Bookmarks = Record<BookmarkCategory, BookmarkItem[]>;
+
 export type Trip = {
   title: string;
   budget: Budget;
   items: ScheduleItem[];
   mapUrl: string;
+  bookmarks: Bookmarks;
 };
 
 export type TripIndexEntry = {

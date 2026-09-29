@@ -2,8 +2,6 @@ import { useRef, useState } from 'react';
 import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem } from '../types';
 import { parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
-import { CancelIcon } from './icons/CancelIcon';
-import { SaveIcon } from './icons/SaveIcon';
 
 type ContentType = ScheduleContent['type'];
 
@@ -35,8 +33,8 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
   const [links, setLinks] = useState<LinkedText[]>(
     initial ? toLinkedList(initial.content) : [emptyLinked()],
   );
-  const [routeTitle, setRouteTitle] = useState(
-    initial?.content.type === 'route' ? initial.content.title : '',
+  const [contentTitle, setContentTitle] = useState(
+    initial?.content.type === 'route' || initial?.content.type === 'choices' ? initial.content.title : '',
   );
   const [memo, setMemo] = useState(initial?.memo ?? '');
   const [prep, setPrep] = useState<PrepItem[]>(initial?.prep ?? []);
@@ -112,9 +110,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
     } else if (contentType === 'choices') {
       const prevSelected = initial?.content.type === 'choices' ? initial.content.selectedId : null;
       const selectedId = cleanLinks.some((l) => l.id === prevSelected) ? prevSelected : null;
-      content = { type: 'choices', options: cleanLinks, selectedId };
+      content = { type: 'choices', title: contentTitle.trim(), options: cleanLinks, selectedId };
     } else {
-      content = { type: 'route', title: routeTitle.trim(), stops: cleanLinks };
+      content = { type: 'route', title: contentTitle.trim(), stops: cleanLinks };
     }
 
     const cleanPrep = prep.map((p) => ({ ...p, label: p.label.trim() })).filter((p) => p.label);
@@ -187,14 +185,14 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
           </select>
         </label>
 
-        {contentType === 'route' && (
+        {(contentType === 'route' || contentType === 'choices') && (
           <label className="form-field">
             <span>대표 이름</span>
             <input
               type="text"
               placeholder="예: 공항 이동"
-              value={routeTitle}
-              onChange={(e) => setRouteTitle(e.target.value)}
+              value={contentTitle}
+              onChange={(e) => setContentTitle(e.target.value)}
             />
           </label>
         )}
@@ -302,11 +300,11 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
         </div>
 
         <div className="modal__actions">
-          <button type="button" className="btn btn--ghost" onClick={onCancel} aria-label="취소">
-            <CancelIcon />
+          <button type="button" className="btn btn--ghost" onClick={onCancel}>
+            취소
           </button>
-          <button type="submit" className="btn btn--primary" aria-label="저장">
-            <SaveIcon />
+          <button type="submit" className="btn btn--primary">
+            저장
           </button>
         </div>
       </form>

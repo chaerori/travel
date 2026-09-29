@@ -41,20 +41,28 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
         )}
 
         {item.content.type === 'choices' && (
-          <div className="item-card__content item-card__content--choices">
-            {item.content.options.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                className={
-                  'choice-row' + (item.content.type === 'choices' && item.content.selectedId === opt.id ? ' choice-row--selected' : '')
-                }
-                onClick={() => toggleChoice(opt.id)}
-              >
-                <span className="choice-row__dot" />
-                <LinkRow item={opt} />
-              </button>
-            ))}
+          <div className="item-card__content">
+            {item.content.title && (
+              <div className="item-card__title">
+                {item.content.title}
+                {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
+              </div>
+            )}
+            <div className="item-card__content--choices">
+              {item.content.options.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={
+                    'choice-row' + (item.content.type === 'choices' && item.content.selectedId === opt.id ? ' choice-row--selected' : '')
+                  }
+                  onClick={() => toggleChoice(opt.id)}
+                >
+                  <span className="choice-row__dot" />
+                  <LinkRow item={opt} />
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -64,7 +72,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
             return (
               <div className="item-card__content">
                 {title && (
-                  <div className="item-card__route-title">
+                  <div className="item-card__title">
                     {title}
                     {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
                   </div>

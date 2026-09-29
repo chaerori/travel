@@ -3,11 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { OWNER_EMAIL, db } from '../firebase';
 import type { ScheduleItem, Trip } from '../types';
 
+const EMPTY_BOOKMARKS = { food: [], cafe: [], attraction: [] };
+
 const EMPTY_TRIP: Trip = {
   title: '나의 여행',
   budget: { cardTotal: 0, cashTotal: 0 },
   items: [],
   mapUrl: '',
+  bookmarks: EMPTY_BOOKMARKS,
 };
 
 export type CloudStatus = 'loading' | 'ready' | 'denied';
@@ -39,6 +42,11 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
             title: data.title ?? EMPTY_TRIP.title,
             budget: data.budget ?? EMPTY_TRIP.budget,
             mapUrl: data.mapUrl ?? '',
+            bookmarks: {
+              food: data.bookmarks?.food ?? [],
+              cafe: data.bookmarks?.cafe ?? [],
+              attraction: data.bookmarks?.attraction ?? [],
+            },
             items: (data.items ?? []).map((item: ScheduleItem) => ({
               ...item,
               expense: item.expense ?? null,

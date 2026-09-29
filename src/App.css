@@ -121,6 +121,174 @@
   border-bottom-color: var(--color-text-muted);
 }
 
+.bookmark-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.bookmark-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.bookmark-card__count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.calendar {
+  margin-top: 12px;
+  margin-bottom: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 10px 8px;
+}
+
+.calendar__weekdays,
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar__grid {
+  grid-auto-rows: 32px;
+  row-gap: 10px;
+}
+
+.calendar__weekdays {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.calendar__day {
+  height: 24px;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.calendar__day--solo {
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 999px;
+}
+
+.calendar__day--start {
+  width: 100%;
+  border-radius: 999px 0 0 999px;
+}
+
+.calendar__day--end {
+  width: 100%;
+  border-radius: 0 999px 999px 0;
+}
+
+.calendar__day--middle {
+  width: 100%;
+  border-radius: 0;
+}
+
+button.calendar__day {
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.calendar__day:hover {
+  background: rgba(108, 92, 231, 0.22);
+}
+
+.calendar__day--empty {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.calendar__day--empty:hover {
+  background: none;
+}
+
+.bookmark-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bookmark-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2ch;
+}
+
+.bookmark-item__desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.bookmark-item__location {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.bookmark-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bookmark-filter__chip {
+  border: 1px solid var(--color-border);
+  background: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.bookmark-filter__chip--active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.bookmark-edit-cancel {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .app__title {
   margin: 0;
   font-size: 22px;
@@ -258,7 +426,7 @@
   gap: 6px;
 }
 
-.item-card__route-title {
+.item-card__title {
   font-size: 15px;
   font-weight: 500;
   margin-bottom: 4px;
@@ -294,6 +462,16 @@
 .link-row--plain {
   color: var(--color-text);
   font-weight: 500;
+}
+
+.link-editor__row .link-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookmark-item__body .link-row {
+  flex: none;
+  min-width: auto;
 }
 
 .item-card__content--route .link-row {
