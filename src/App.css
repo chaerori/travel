@@ -143,6 +143,12 @@
   cursor: pointer;
 }
 
+.bookmark-card--icon {
+  flex: none;
+  width: 40px;
+  padding: 10px 0;
+}
+
 .bookmark-card__count {
   font-size: 12px;
   font-weight: 600;
@@ -235,6 +241,11 @@ button.calendar__day {
   gap: 14px;
 }
 
+.form-actions--end {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .bookmark-item__body {
   flex: 1;
   min-width: 0;
@@ -247,6 +258,7 @@ button.calendar__day {
 .bookmark-item__desc {
   font-size: 13px;
   color: var(--color-text-muted);
+  line-height: 1.3;
 }
 
 .bookmark-item__location {
@@ -424,6 +436,7 @@ button.calendar__day {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-top: 8px;
 }
 
 .item-card__title {
@@ -514,6 +527,7 @@ button.calendar__day {
   font-size: 13px;
   color: var(--color-text-muted);
   white-space: pre-wrap;
+  line-height: 1.3;
 }
 
 .prep-toggle {
@@ -602,6 +616,29 @@ button.calendar__day {
 .modal__title {
   margin: 0;
   font-size: 18px;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal__close {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 4px;
+  font-size: 16px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.account-panel__email-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .form-row--split {
@@ -772,6 +809,16 @@ button.calendar__day {
   font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
+  text-decoration: none;
+}
+
+.attribution {
+  display: block;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  text-align: center;
   text-decoration: none;
 }
 

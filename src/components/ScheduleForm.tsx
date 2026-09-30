@@ -140,7 +140,12 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
   return (
     <div className="modal-backdrop" onClick={onCancel}>
       <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
-        <h2 className="modal__title">{initial ? '일정 수정' : '일정 추가'}</h2>
+        <div className="modal__header">
+          <h2 className="modal__title">{initial ? '일정 수정' : '일정 추가'}</h2>
+          <button type="button" className="modal__close" onClick={onCancel} aria-label="닫기">
+            ✕
+          </button>
+        </div>
 
         <div className="form-row form-row--split">
           <label className="form-field">
@@ -299,11 +304,8 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
           </div>
         </div>
 
-        <div className="modal__actions">
-          <button type="button" className="btn btn--ghost" onClick={onCancel}>
-            취소
-          </button>
-          <button type="submit" className="btn btn--primary">
+        <div className="form-actions--end">
+          <button type="submit" className="add-btn">
             저장
           </button>
         </div>

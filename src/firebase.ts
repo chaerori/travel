@@ -4,6 +4,13 @@ import { getFirestore } from 'firebase/firestore';
 
 export const OWNER_EMAIL = 'leechaeyun95@gmail.com';
 
+// 소유자 외에 모든 여행에 예외적으로 전체 접근 권한을 갖는 계정.
+const EXTRA_ACCESS_EMAILS = ['jebjebh@gmail.com'];
+
+export function hasFullAccess(email: string): boolean {
+  return email === OWNER_EMAIL || EXTRA_ACCESS_EMAILS.includes(email);
+}
+
 // Firebase 웹 설정값은 비밀값이 아니며 Firestore 보안 규칙으로 접근을 제어한다.
 const firebaseConfig = {
   apiKey: 'AIzaSyDFKTcjnPLsZMiR7oJXx3MgffUmEcQO-2c',

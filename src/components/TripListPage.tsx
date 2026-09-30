@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { hasFullAccess } from '../firebase';
+import { signOutUser } from '../utils/auth';
 import { createTrip, deleteTrip, useTripIndex } from '../utils/tripIndex';
-import { AddIcon } from './icons/AddIcon';
+import { TripSettingsPanel } from './TripSettingsPanel';
 import { DeleteIcon } from './icons/DeleteIcon';
+import { SettingsIcon } from './icons/SettingsIcon';
 
-export function TripListPage() {
+export function TripListPage({ userEmail }: { userEmail: string }) {
+  const isOwner = hasFullAccess(userEmail);
   const { trips, status } = useTripIndex();
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [settingsTripId, setSettingsTripId] = useState<string | null>(null);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -47,6 +52,12 @@ export function TripListPage() {
         <div className="app__header-row">
           <h1 className="app__title">나의 여행</h1>
         </div>
+        <div className="account-panel__email-row">
+          <p className="account-panel__email">{userEmail}</p>
+          <button type="button" className="add-btn" onClick={signOutUser}>
+            로그아웃
+          </button>
+        </div>
       </header>
 
       <main className="app__list">
@@ -65,7 +76,7 @@ export function TripListPage() {
           </form>
         ) : (
           <button type="button" className="add-btn trip-create__toggle" onClick={() => setCreating(true)}>
-            <AddIcon />새 여행 만들기
+            + 새 여행 만들기
           </button>
         )}
 
@@ -82,6 +93,14 @@ export function TripListPage() {
             </a>
             <button
               type="button"
+              className="icon-action"
+              onClick={() => setSettingsTripId(t.id)}
+              aria-label="설정"
+            >
+              <SettingsIcon />
+            </button>
+            <button
+              type="button"
               className="icon-action icon-action--danger"
               onClick={() => handleDelete(t.id, t.title)}
               aria-label="삭제"
@@ -90,7 +109,19 @@ export function TripListPage() {
             </button>
           </div>
         ))}
+
+        <a className="attribution" href="https://streamlinehq.com" target="_blank" rel="noreferrer">
+          Icon by Streamline
+        </a>
       </main>
+
+      {settingsTripId && (
+        <TripSettingsPanel
+          tripId={settingsTripId}
+          isOwner={isOwner}
+          onClose={() => setSettingsTripId(null)}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import './App.css';
-import { AccountPanel } from './components/AccountPanel';
 import { BookmarkSection } from './components/BookmarkSection';
 import { BudgetSection } from './components/BudgetSection';
 import { CalendarSection } from './components/CalendarSection';
@@ -8,16 +7,13 @@ import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
-import { AddIcon } from './components/icons/AddIcon';
-import { CityMarkerIcon } from './components/icons/CityMarkerIcon';
-import { ShareIcon } from './components/icons/ShareIcon';
 import type { Bookmarks, Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { addHours, formatDateWithWeekday } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
-import { OWNER_EMAIL } from './firebase';
+import { hasFullAccess } from './firebase';
 
 type Row = {
   item: ScheduleItem;
@@ -44,12 +40,11 @@ function buildRows(items: ScheduleItem[]): Row[] {
 }
 
 function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) {
-  const isOwner = userEmail === OWNER_EMAIL;
-  const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true, tripId);
+  const isOwner = hasFullAccess(userEmail);
+  const { trip, setTrip, status } = useCloudTrip(true, tripId);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
-  const [accountPanelOpen, setAccountPanelOpen] = useState(false);
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
@@ -109,10 +104,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, budget }));
   }
 
-  function handleMapUrlChange(mapUrl: string) {
-    setTrip((prev) => ({ ...prev, mapUrl }));
-  }
-
   function handleBookmarksChange(bookmarks: Bookmarks) {
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
@@ -121,7 +112,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     if (trip.mapUrl) {
       window.open(trip.mapUrl, '_blank', 'noreferrer');
     } else {
-      setAccountPanelOpen(true);
+      alert('구글맵 링크가 설정되지 않았습니다. 여행 목록에서 설정할 수 있습니다.');
     }
   }
 
@@ -170,24 +161,13 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
             />
           )}
           <div className="app__header-actions">
-            <button type="button" className="sync-btn" onClick={openAddForm} aria-label="일정 추가">
-              <AddIcon />
-            </button>
-            <button type="button" className="sync-btn" onClick={openMap} aria-label="지도">
-              <CityMarkerIcon />
-            </button>
-            <button
-              type="button"
-              className={status === 'ready' ? 'sync-btn' : 'sync-btn sync-btn--pending'}
-              onClick={() => setAccountPanelOpen(true)}
-              aria-label="계정"
-            >
-              <ShareIcon />
+            <button type="button" className="add-btn" onClick={openAddForm}>
+              + 일정 추가
             </button>
           </div>
         </div>
         <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
-        <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} />
+        <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} onOpenMap={openMap} />
       </header>
 
       <main className="app__list">
@@ -236,18 +216,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         />
       )}
 
-      {accountPanelOpen && (
-        <AccountPanel
-          userEmail={userEmail}
-          isOwner={isOwner}
-          sharedEmails={sharedEmails}
-          onAddEmail={addSharedEmail}
-          onRemoveEmail={removeSharedEmail}
-          mapUrl={trip.mapUrl}
-          onMapUrlChange={handleMapUrlChange}
-          onClose={() => setAccountPanelOpen(false)}
-        />
-      )}
     </div>
   );
 }
@@ -265,7 +233,7 @@ function App() {
 
   const tripId = getTripSlug();
   if (tripId === null) {
-    return <TripListPage />;
+    return <TripListPage userEmail={user.email} />;
   }
 
   return <TripView userEmail={user.email} tripId={tripId} />;

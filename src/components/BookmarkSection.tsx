@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { BookmarkCategory, BookmarkItem, Bookmarks } from '../types';
 import { makeId } from '../utils/id';
+import { CityMarkerIcon } from './icons/CityMarkerIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
@@ -8,6 +9,7 @@ import { LinkRow } from './LinkRow';
 type Props = {
   bookmarks: Bookmarks;
   onChange: (bookmarks: Bookmarks) => void;
+  onOpenMap: () => void;
 };
 
 const CATEGORIES: { key: BookmarkCategory; label: string }[] = [
@@ -27,7 +29,7 @@ function emptyForm(): FormState {
   return { label: '', location: '', description: '', url: '' };
 }
 
-export function BookmarkSection({ bookmarks, onChange }: Props) {
+export function BookmarkSection({ bookmarks, onChange, onOpenMap }: Props) {
   const [openCategory, setOpenCategory] = useState<BookmarkCategory | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
@@ -88,6 +90,9 @@ export function BookmarkSection({ bookmarks, onChange }: Props) {
   return (
     <>
       <div className="bookmark-row">
+        <button type="button" className="bookmark-card bookmark-card--icon" onClick={onOpenMap} aria-label="지도">
+          <CityMarkerIcon />
+        </button>
         {CATEGORIES.map((c) => (
           <button key={c.key} type="button" className="bookmark-card" onClick={() => openCategoryModal(c.key)}>
             <span>{c.label}</span>
@@ -99,7 +104,12 @@ export function BookmarkSection({ bookmarks, onChange }: Props) {
       {openCategory && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="modal__title">{CATEGORIES.find((c) => c.key === openCategory)?.label}</h2>
+            <div className="modal__header">
+              <h2 className="modal__title">{CATEGORIES.find((c) => c.key === openCategory)?.label}</h2>
+              <button type="button" className="modal__close" onClick={closeModal} aria-label="닫기">
+                ✕
+              </button>
+            </div>
 
             {locations.length > 0 && (
               <div className="bookmark-filter">
@@ -199,16 +209,12 @@ export function BookmarkSection({ bookmarks, onChange }: Props) {
                   수정 취소
                 </button>
               )}
+              <div className="form-actions--end">
+                <button type="submit" className="add-btn">
+                  {editingId ? '저장' : '추가'}
+                </button>
+              </div>
             </form>
-
-            <div className="modal__actions">
-              <button type="button" className="btn btn--ghost" onClick={closeModal}>
-                닫기
-              </button>
-              <button type="button" className="btn btn--primary" onClick={submitForm}>
-                {editingId ? '저장' : '추가'}
-              </button>
-            </div>
           </div>
         </div>
       )}

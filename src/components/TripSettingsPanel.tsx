@@ -1,0 +1,92 @@
+import { useEffect, useState } from 'react';
+import { useCloudTrip } from '../utils/cloudTrip';
+
+type Props = {
+  tripId: string;
+  isOwner: boolean;
+  onClose: () => void;
+};
+
+export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
+  const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true, tripId);
+  const [input, setInput] = useState('');
+  const [mapUrlDraft, setMapUrlDraft] = useState('');
+  const [draftLoaded, setDraftLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!draftLoaded && status === 'ready') {
+      setMapUrlDraft(trip.mapUrl);
+      setDraftLoaded(true);
+    }
+  }, [status, trip.mapUrl, draftLoaded]);
+
+  function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    if (!input.trim()) return;
+    addSharedEmail(input);
+    setInput('');
+  }
+
+  function handleMapUrlSave(e: React.FormEvent) {
+    e.preventDefault();
+    setTrip((prev) => ({ ...prev, mapUrl: mapUrlDraft.trim() }));
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal__header">
+          <h2 className="modal__title">여행 설정</h2>
+          <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
+            ✕
+          </button>
+        </div>
+
+        {isOwner && (
+          <div className="form-field">
+            <span>액세스 권한이 있는 사용자</span>
+            <div className="link-editor">
+              {sharedEmails.length === 0 && (
+                <p className="sync-panel__hint">아직 초대한 사람이 없습니다.</p>
+              )}
+              {sharedEmails.map((email) => (
+                <div className="link-editor__row" key={email}>
+                  <input type="text" value={email} readOnly />
+                  <button type="button" className="icon-btn" onClick={() => removeSharedEmail(email)}>
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <form className="link-editor__row" onSubmit={handleAdd}>
+                <input
+                  type="email"
+                  placeholder="Google 계정 이메일"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+                <button type="submit" className="add-btn">
+                  추가
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <div className="form-field">
+          <span>구글맵 링크</span>
+          <form className="link-editor__row" onSubmit={handleMapUrlSave}>
+            <input
+              type="url"
+              placeholder="https://maps.app.goo.gl/..."
+              value={mapUrlDraft}
+              onChange={(e) => setMapUrlDraft(e.target.value)}
+            />
+            <button type="submit" className="add-btn">
+              저장
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
