@@ -1,5 +1,5 @@
-import type { Budget, PaymentMethod, ScheduleItem } from '../types';
-import { parseWon } from '../utils/currency';
+import type { Budget, CurrencyCode, PaymentMethod, ScheduleItem } from '../types';
+import { getCurrencyUnit, parseWon } from '../utils/currency';
 import { CardIcon } from './icons/CardIcon';
 import { CashIcon } from './icons/CashIcon';
 
@@ -8,6 +8,7 @@ type Props = {
   items: ScheduleItem[];
   onChange: (budget: Budget) => void;
   expanded: boolean;
+  currency: CurrencyCode;
 };
 
 function sumExpenses(items: ScheduleItem[], method: PaymentMethod): number {
@@ -17,11 +18,12 @@ function sumExpenses(items: ScheduleItem[], method: PaymentMethod): number {
   }, 0);
 }
 
-const VALUE_WIDTH = '11ch';
+const VALUE_WIDTH = '9ch';
 
-export function BudgetSection({ budget, items, onChange, expanded }: Props) {
+export function BudgetSection({ budget, items, onChange, expanded, currency }: Props) {
   if (!expanded) return null;
 
+  const unit = getCurrencyUnit(currency);
   const cardSpent = sumExpenses(items, 'card');
   const cashSpent = sumExpenses(items, 'cash');
   const cardText = budget.cardTotal ? budget.cardTotal.toLocaleString('ko-KR') : '';
@@ -41,6 +43,7 @@ export function BudgetSection({ budget, items, onChange, expanded }: Props) {
             style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cardTotal: parseWon(e.target.value) })}
           />
+          <span className="budget-pair__currency">{unit}</span>
         </span>
         <span className="budget-pair">
           <CashIcon />
@@ -52,6 +55,7 @@ export function BudgetSection({ budget, items, onChange, expanded }: Props) {
             style={{ width: VALUE_WIDTH }}
             onChange={(e) => onChange({ ...budget, cashTotal: parseWon(e.target.value) })}
           />
+          <span className="budget-pair__currency">{unit}</span>
         </span>
       </div>
 
@@ -62,12 +66,14 @@ export function BudgetSection({ budget, items, onChange, expanded }: Props) {
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cardTotal - cardSpent).toLocaleString('ko-KR')}
           </span>
+          <span className="budget-pair__currency">{unit}</span>
         </span>
         <span className="budget-pair">
           <CashIcon original />
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cashTotal - cashSpent).toLocaleString('ko-KR')}
           </span>
+          <span className="budget-pair__currency">{unit}</span>
         </span>
       </div>
     </div>

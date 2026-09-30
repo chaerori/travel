@@ -165,6 +165,13 @@
   display: inline-block;
 }
 
+.budget-pair__currency {
+  font-size: 12px;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.7;
+}
+
 .budget-pair input:focus {
   outline: none;
   border-bottom-color: var(--color-text-muted);
@@ -786,6 +793,14 @@ button.calendar__day {
   background: var(--color-bg);
 }
 
+.form-field select {
+  appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%237c7a8a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
 .form-field textarea {
   resize: vertical;
 }
@@ -879,6 +894,7 @@ button.calendar__day {
   padding: 10px 12px;
   font-size: 15px;
   background: var(--color-bg);
+  scroll-margin-top: 76px;
 }
 
 .trip-create__form .btn {
@@ -926,12 +942,17 @@ button.calendar__day {
   color: var(--color-text-muted);
 }
 
-.expense-table td:nth-child(3) {
+.expense-table__amount {
   text-align: right;
   white-space: nowrap;
 }
 
 .expense-table td:last-child {
+  width: 24px;
+  padding: 6px 0;
+}
+
+.expense-table__handle {
   width: 24px;
   padding: 6px 0;
 }

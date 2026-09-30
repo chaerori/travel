@@ -195,6 +195,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
             items={trip.items}
             onChange={handleBudgetChange}
             expanded={budgetOpen}
+            currency={trip.currency}
           />
         )}
       </header>

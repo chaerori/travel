@@ -83,7 +83,7 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
           <table className="expense-table">
             <thead>
               <tr>
-                {expenses.length > 1 && <th />}
+                {expenses.length > 1 && <th className="expense-table__handle" />}
                 <th>항목</th>
                 <th>결제처</th>
                 <th>금액</th>
@@ -95,7 +95,7 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
               {expenses.map((e, index) => (
                 <tr key={e.id} data-expense-index={index}>
                   {expenses.length > 1 && (
-                    <td>
+                    <td className="expense-table__handle">
                       <span
                         className="drag-handle"
                         onPointerDown={(ev) => handleDragPointerDown(ev, index)}
@@ -109,7 +109,7 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
                   )}
                   <td>{e.label}</td>
                   <td>{e.payer}</td>
-                  <td>{formatWon(e.amount)}</td>
+                  <td className="expense-table__amount">{formatWon(e.amount)}</td>
                   <td>{e.note}</td>
                   <td>
                     <button

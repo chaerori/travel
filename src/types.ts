@@ -40,6 +40,8 @@ export type Budget = {
   cashTotal: number;
 };
 
+export type CurrencyCode = 'KRW' | 'USD' | 'JPY' | 'EUR' | 'AUD';
+
 export type BookmarkItem = {
   id: string;
   label: string;
@@ -67,6 +69,7 @@ export type Trip = {
   mapUrl: string;
   bookmarks: Bookmarks;
   showBudget: boolean;
+  currency: CurrencyCode;
   expenses: ExpenseEntry[];
   prepChecklist: PrepItem[];
 };

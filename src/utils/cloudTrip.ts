@@ -12,6 +12,7 @@ const EMPTY_TRIP: Trip = {
   mapUrl: '',
   bookmarks: EMPTY_BOOKMARKS,
   showBudget: true,
+  currency: 'KRW',
   expenses: [],
   prepChecklist: [],
 };
@@ -46,6 +47,7 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
             budget: data.budget ?? EMPTY_TRIP.budget,
             mapUrl: data.mapUrl ?? '',
             showBudget: data.showBudget ?? true,
+            currency: data.currency ?? 'KRW',
             expenses: data.expenses ?? [],
             prepChecklist: data.prepChecklist ?? [],
             bookmarks: {

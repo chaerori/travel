@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import type { CurrencyCode } from '../types';
+import { CURRENCY_OPTIONS } from '../utils/currency';
 import { useCloudTrip } from '../utils/cloudTrip';
 import { renameTripIndexEntry } from '../utils/tripIndex';
 
@@ -115,14 +117,27 @@ export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
           </form>
         </div>
 
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            checked={trip.showBudget}
-            onChange={(e) => setTrip((prev) => ({ ...prev, showBudget: e.target.checked }))}
-          />
-          <span>예산/잔액 섹션 표시</span>
-        </label>
+        <div className="form-field">
+          <span>예산 관리</span>
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={trip.showBudget}
+              onChange={(e) => setTrip((prev) => ({ ...prev, showBudget: e.target.checked }))}
+            />
+            <span>예산/잔액 섹션 표시</span>
+          </label>
+          <select
+            value={trip.currency}
+            onChange={(e) => setTrip((prev) => ({ ...prev, currency: e.target.value as CurrencyCode }))}
+          >
+            {CURRENCY_OPTIONS.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
