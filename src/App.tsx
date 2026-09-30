@@ -113,7 +113,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     if (trip.mapUrl) {
       window.open(trip.mapUrl, '_blank', 'noreferrer');
     } else {
-      alert('구글맵 링크가 설정되지 않았습니다. 여행 목록에서 설정할 수 있습니다.');
+      alert('지도 링크가 설정되지 않았습니다. 여행 목록에서 설정할 수 있습니다.');
     }
   }
 
