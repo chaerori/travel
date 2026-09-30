@@ -52,6 +52,14 @@ export type BookmarkCategory = 'food' | 'cafe' | 'attraction';
 
 export type Bookmarks = Record<BookmarkCategory, BookmarkItem[]>;
 
+export type ExpenseEntry = {
+  id: string;
+  label: string;
+  payer: string;
+  amount: number;
+  note: string;
+};
+
 export type Trip = {
   title: string;
   budget: Budget;
@@ -59,6 +67,8 @@ export type Trip = {
   mapUrl: string;
   bookmarks: Bookmarks;
   showBudget: boolean;
+  expenses: ExpenseEntry[];
+  prepChecklist: PrepItem[];
 };
 
 export type TripIndexEntry = {

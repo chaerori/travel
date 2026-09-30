@@ -8,7 +8,7 @@ import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
-import type { Bookmarks, Budget, ScheduleItem } from './types';
+import type { Bookmarks, Budget, ExpenseEntry, PrepItem, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { addHours, formatDateWithWeekday } from './utils/date';
@@ -105,6 +105,14 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, budget }));
   }
 
+  function handleExpensesChange(expenses: ExpenseEntry[]) {
+    setTrip((prev) => ({ ...prev, expenses }));
+  }
+
+  function handlePrepChecklistChange(prepChecklist: PrepItem[]) {
+    setTrip((prev) => ({ ...prev, prepChecklist }));
+  }
+
   function handleBookmarksChange(bookmarks: Bookmarks) {
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
@@ -170,7 +178,15 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </div>
         </div>
         {trip.showBudget && (
-          <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
+          <BudgetSection
+            budget={trip.budget}
+            items={trip.items}
+            onBudgetChange={handleBudgetChange}
+            expenses={trip.expenses}
+            onExpensesChange={handleExpensesChange}
+            prepChecklist={trip.prepChecklist}
+            onPrepChecklistChange={handlePrepChecklistChange}
+          />
         )}
         <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} onOpenMap={openMap} />
       </header>
