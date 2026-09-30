@@ -8,7 +8,7 @@ import { SettingsIcon } from './icons/SettingsIcon';
 
 export function TripListPage({ userEmail }: { userEmail: string }) {
   const isOwner = hasFullAccess(userEmail);
-  const { trips, status } = useTripIndex();
+  const { trips, status } = useTripIndex(userEmail);
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -61,24 +61,25 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
       </header>
 
       <main className="app__list">
-        {creating ? (
-          <form className="trip-create__form" onSubmit={handleCreate}>
-            <input
-              type="text"
-              autoFocus
-              placeholder="여행 이름 (예: 호주)"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <button type="submit" className="btn btn--primary" disabled={submitting}>
-              만들기
+        {isOwner &&
+          (creating ? (
+            <form className="trip-create__form" onSubmit={handleCreate}>
+              <input
+                type="text"
+                autoFocus
+                placeholder="여행 이름 (예: 호주)"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <button type="submit" className="btn btn--primary" disabled={submitting}>
+                만들기
+              </button>
+            </form>
+          ) : (
+            <button type="button" className="add-btn trip-create__toggle" onClick={() => setCreating(true)}>
+              + 새 여행 만들기
             </button>
-          </form>
-        ) : (
-          <button type="button" className="add-btn trip-create__toggle" onClick={() => setCreating(true)}>
-            + 새 여행 만들기
-          </button>
-        )}
+          ))}
 
         {trips.length === 0 && status === 'ready' && (
           <div className="empty-state">
@@ -99,14 +100,16 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
             >
               <SettingsIcon />
             </button>
-            <button
-              type="button"
-              className="icon-action icon-action--danger"
-              onClick={() => handleDelete(t.id, t.title)}
-              aria-label="삭제"
-            >
-              <DeleteIcon />
-            </button>
+            {isOwner && (
+              <button
+                type="button"
+                className="icon-action icon-action--danger"
+                onClick={() => handleDelete(t.id, t.title)}
+                aria-label="삭제"
+              >
+                <DeleteIcon />
+              </button>
+            )}
           </div>
         ))}
 

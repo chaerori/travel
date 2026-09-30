@@ -63,4 +63,6 @@ export type Trip = {
 export type TripIndexEntry = {
   id: string;
   title: string;
+  ownerEmail: string;
+  sharedEmails: string[];
 };

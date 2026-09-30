@@ -91,12 +91,14 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
     const next = [...sharedEmails, trimmed];
     setSharedEmails(next);
     await setDoc(doc(db, 'trips', tripId), { sharedEmails: next, ownerEmail: OWNER_EMAIL }, { merge: true });
+    await updateDoc(doc(db, 'tripIndex', tripId), { sharedEmails: next });
   }
 
   async function removeSharedEmail(email: string) {
     const next = sharedEmails.filter((e) => e !== email);
     setSharedEmails(next);
     await updateDoc(doc(db, 'trips', tripId), { sharedEmails: next });
+    await updateDoc(doc(db, 'tripIndex', tripId), { sharedEmails: next });
   }
 
   return { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } as const;
