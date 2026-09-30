@@ -267,6 +267,7 @@ button.calendar__day {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 16px;
 }
 
 .form-actions--end {
@@ -607,6 +608,10 @@ button.calendar__day {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.prep-list + form {
+  margin-top: 16px;
 }
 
 .prep-list__row {
