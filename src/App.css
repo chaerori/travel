@@ -23,6 +23,13 @@
   gap: 12px;
 }
 
+.app__title-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
 .trip-back-link {
   display: inline-block;
   margin-bottom: 8px;
@@ -601,24 +608,6 @@ button.calendar__day {
   z-index: 20;
 }
 
-.schedule-fab {
-  position: fixed;
-  right: 20px;
-  bottom: calc(20px + env(safe-area-inset-bottom));
-  z-index: 10;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
-  cursor: pointer;
-}
-
 .modal {
   width: 100%;
   max-width: 480px;
@@ -672,8 +661,7 @@ button.calendar__day {
   right: 0;
   z-index: 16;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   background: rgba(247, 247, 251, 0.85);
   backdrop-filter: blur(8px);
@@ -681,10 +669,11 @@ button.calendar__day {
   border-radius: 14px;
   padding: 14px;
   box-shadow: 0 8px 24px rgba(20, 16, 32, 0.12);
+  white-space: nowrap;
 }
 
-.account-popover .add-btn {
-  align-self: flex-end;
+.account-popover > * {
+  flex-shrink: 0;
 }
 
 .form-row--split {

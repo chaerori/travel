@@ -11,6 +11,7 @@ const EMPTY_TRIP: Trip = {
   items: [],
   mapUrl: '',
   bookmarks: EMPTY_BOOKMARKS,
+  showBudget: true,
 };
 
 export type CloudStatus = 'loading' | 'ready' | 'denied';
@@ -42,6 +43,7 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
             title: data.title ?? EMPTY_TRIP.title,
             budget: data.budget ?? EMPTY_TRIP.budget,
             mapUrl: data.mapUrl ?? '',
+            showBudget: data.showBudget ?? true,
             bookmarks: {
               food: data.bookmarks?.food ?? [],
               cafe: data.bookmarks?.cafe ?? [],

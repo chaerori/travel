@@ -58,6 +58,7 @@ export type Trip = {
   items: ScheduleItem[];
   mapUrl: string;
   bookmarks: Bookmarks;
+  showBudget: boolean;
 };
 
 export type TripIndexEntry = {

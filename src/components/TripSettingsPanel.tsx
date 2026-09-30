@@ -86,6 +86,15 @@ export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
             </button>
           </form>
         </div>
+
+        <label className="checkbox-field">
+          <input
+            type="checkbox"
+            checked={trip.showBudget}
+            onChange={(e) => setTrip((prev) => ({ ...prev, showBudget: e.target.checked }))}
+          />
+          <span>예산/잔액 섹션 표시</span>
+        </label>
       </div>
     </div>
   );

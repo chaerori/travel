@@ -74,6 +74,7 @@ export async function createTrip(title: string): Promise<string> {
     items: [],
     mapUrl: '',
     bookmarks: { food: [], cafe: [], attraction: [] },
+    showBudget: true,
     ownerEmail: OWNER_EMAIL,
     sharedEmails: [],
   });

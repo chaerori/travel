@@ -147,22 +147,31 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           ← 여행 목록
         </a>
         <div className="app__header-row">
-          {titleDraft === null ? (
-            <h1 className="app__title" onClick={() => setTitleDraft(trip.title)}>
-              {trip.title}
-            </h1>
-          ) : (
-            <input
-              className="app__title-input"
-              value={titleDraft}
-              autoFocus
-              onChange={(e) => setTitleDraft(e.target.value)}
-              onBlur={commitTitle}
-              onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
-            />
-          )}
+          <div className="app__title-group">
+            {titleDraft === null ? (
+              <h1 className="app__title" onClick={() => setTitleDraft(trip.title)}>
+                {trip.title}
+              </h1>
+            ) : (
+              <input
+                className="app__title-input"
+                value={titleDraft}
+                autoFocus
+                onChange={(e) => setTitleDraft(e.target.value)}
+                onBlur={commitTitle}
+                onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
+              />
+            )}
+            <div className="app__header-actions">
+              <button type="button" className="sync-btn" onClick={openAddForm} aria-label="일정 추가">
+                <AddIcon />
+              </button>
+            </div>
+          </div>
         </div>
-        <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
+        {trip.showBudget && (
+          <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
+        )}
         <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} onOpenMap={openMap} />
       </header>
 
@@ -176,7 +185,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         {rows.length === 0 && (
           <div className="empty-state">
             <p>등록된 일정이 없습니다.</p>
-            <p>위 + 버튼으로 첫 일정을 추가해 보세요.</p>
           </div>
         )}
 
@@ -201,10 +209,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </div>
         ))}
       </main>
-
-      <button type="button" className="schedule-fab" onClick={openAddForm} aria-label="일정 추가">
-        <AddIcon />
-      </button>
 
       {formOpen && (
         <ScheduleForm

@@ -25,6 +25,25 @@ function startOfWeek(d: Date): Date {
 }
 
 export function CalendarSection({ items, onSelectDate }: Props) {
+  if (items.length === 0) {
+    return (
+      <div className="calendar">
+        <div className="calendar__weekdays">
+          {WEEKDAYS.map((w) => (
+            <span key={w}>{w}</span>
+          ))}
+        </div>
+        <div className="calendar__grid">
+          {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+            <span key={n} className="calendar__day calendar__day--empty">
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const itemDates = new Set(items.map((i) => i.date));
   const sortedDates = [...itemDates].sort();
 

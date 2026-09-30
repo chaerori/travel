@@ -30,6 +30,11 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
     }
   }
 
+  function handleCancelCreate() {
+    setCreating(false);
+    setTitle('');
+  }
+
   async function handleDelete(id: string, title: string) {
     if (!confirm(`"${title}" 여행을 삭제할까요? 삭제하면 되돌릴 수 없습니다.`)) return;
     try {
@@ -79,12 +84,15 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
               <input
                 type="text"
                 autoFocus
-                placeholder="여행 이름 (예: 호주)"
+                placeholder="여행 이름"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
               <button type="submit" className="btn btn--primary" disabled={submitting}>
                 만들기
+              </button>
+              <button type="button" className="icon-btn" onClick={handleCancelCreate} aria-label="취소">
+                ✕
               </button>
             </form>
           ) : (
