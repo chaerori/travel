@@ -72,7 +72,7 @@ export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
 
         {isOwner && (
           <div className="form-field">
-            <span>액세스 권한이 있는 사용자</span>
+            <span>일행 초대</span>
             <div className="link-editor">
               {sharedEmails.length === 0 && (
                 <p className="sync-panel__hint">아직 초대한 사람이 없습니다.</p>
