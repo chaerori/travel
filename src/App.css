@@ -381,6 +381,10 @@ button.calendar__day {
   gap: 0;
 }
 
+.app__list--fill {
+  flex: 1;
+}
+
 .login-gate {
   min-height: 100dvh;
   display: flex;
@@ -957,9 +961,17 @@ button.calendar__day {
   padding: 6px 0;
 }
 
+.expense-table__total-row td {
+  border-bottom: none;
+  border-top: 1px solid var(--color-border);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
 .attribution {
   display: block;
-  margin-top: 24px;
+  margin-top: auto;
+  padding-top: 24px;
   font-size: 11px;
   color: var(--color-text-muted);
   opacity: 0.6;

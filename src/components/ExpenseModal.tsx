@@ -69,6 +69,8 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
     onChange(expenses.filter((e) => e.id !== id));
   }
 
+  const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -124,6 +126,13 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="expense-table__total-row">
+                <td colSpan={(expenses.length > 1 ? 1 : 0) + 2}>총액</td>
+                <td className="expense-table__amount">{formatWon(total)}</td>
+                <td colSpan={2} />
+              </tr>
+            </tfoot>
           </table>
         )}
 

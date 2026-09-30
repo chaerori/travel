@@ -77,7 +77,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
         </div>
       </header>
 
-      <main className="app__list">
+      <main className="app__list app__list--fill">
         {isOwner &&
           (creating ? (
             <form className="trip-create__form" onSubmit={handleCreate}>
@@ -137,6 +137,8 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
           Font: Nanum Font by NAVER (Open Font License)
           <br />
           Icons: Streamline (https://streamlinehq.com)
+          <br />
+          © 2026 Chaeyoon Lee. All rights reserved.
         </p>
       </main>
 
