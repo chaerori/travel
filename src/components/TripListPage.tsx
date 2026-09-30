@@ -133,9 +133,11 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
           </div>
         ))}
 
-        <a className="attribution" href="https://streamlinehq.com" target="_blank" rel="noreferrer">
-          Icon by Streamline
-        </a>
+        <p className="attribution">
+          Font: Nanum Font by NAVER (Open Font License)
+          <br />
+          Icons: Streamline (https://streamlinehq.com)
+        </p>
       </main>
 
       {settingsTripId && (

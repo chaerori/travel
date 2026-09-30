@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import './App.css';
-import { BookmarkSection } from './components/BookmarkSection';
+import { BottomNav } from './components/BottomNav';
 import { BudgetSection } from './components/BudgetSection';
 import { CalendarSection } from './components/CalendarSection';
 import { LoginGate } from './components/LoginGate';
@@ -8,6 +8,7 @@ import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
+import { EWalletIcon } from './components/icons/EWalletIcon';
 import type { Bookmarks, Budget, ExpenseEntry, PrepItem, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
@@ -46,6 +47,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
+  const [budgetOpen, setBudgetOpen] = useState(false);
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
@@ -149,7 +151,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   }
 
   return (
-    <div className="app">
+    <div className="app app--with-bottom-nav">
       <header className="app__header">
         <a className="trip-back-link" href={import.meta.env.BASE_URL}>
           ← 여행 목록
@@ -174,6 +176,16 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
               <button type="button" className="sync-btn" onClick={openAddForm} aria-label="일정 추가">
                 <AddIcon />
               </button>
+              {trip.showBudget && (
+                <button
+                  type="button"
+                  className="sync-btn"
+                  onClick={() => setBudgetOpen((v) => !v)}
+                  aria-label="예산/잔액"
+                >
+                  <EWalletIcon />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -181,14 +193,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           <BudgetSection
             budget={trip.budget}
             items={trip.items}
-            onBudgetChange={handleBudgetChange}
-            expenses={trip.expenses}
-            onExpensesChange={handleExpensesChange}
-            prepChecklist={trip.prepChecklist}
-            onPrepChecklistChange={handlePrepChecklistChange}
+            onChange={handleBudgetChange}
+            expanded={budgetOpen}
           />
         )}
-        <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} onOpenMap={openMap} />
       </header>
 
       <main className="app__list">
@@ -240,6 +248,15 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         />
       )}
 
+      <BottomNav
+        expenses={trip.expenses}
+        onExpensesChange={handleExpensesChange}
+        prepChecklist={trip.prepChecklist}
+        onPrepChecklistChange={handlePrepChecklistChange}
+        bookmarks={trip.bookmarks}
+        onBookmarksChange={handleBookmarksChange}
+        onOpenMap={openMap}
+      />
     </div>
   );
 }
