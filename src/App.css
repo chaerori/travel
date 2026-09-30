@@ -290,11 +290,6 @@ button.calendar__day {
   line-height: 1.3;
 }
 
-.bookmark-item__location {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
 .places-tabs {
   display: flex;
   gap: 4px;

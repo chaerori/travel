@@ -128,7 +128,7 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
             </tbody>
             <tfoot>
               <tr className="expense-table__total-row">
-                <td colSpan={(expenses.length > 1 ? 1 : 0) + 2}>총액</td>
+                <td colSpan={(expenses.length > 1 ? 1 : 0) + 2} />
                 <td className="expense-table__amount">{formatWon(total)}</td>
                 <td colSpan={2} />
               </tr>

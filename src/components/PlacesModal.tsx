@@ -136,7 +136,6 @@ export function PlacesModal({ bookmarks, onChange, onClose }: Props) {
             <div className="link-editor__row" key={item.id}>
               <div className="bookmark-item__body">
                 <LinkRow item={item} />
-                {item.location && <span className="bookmark-item__location">{item.location}</span>}
                 {item.description && <div className="bookmark-item__desc">{item.description}</div>}
               </div>
               <button type="button" className="icon-action" onClick={() => startEdit(item)} aria-label="수정">
