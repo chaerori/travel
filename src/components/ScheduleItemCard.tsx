@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import type { ScheduleItem } from '../types';
 import { formatTimeRange } from '../utils/date';
 import { DeleteIcon } from './icons/DeleteIcon';
@@ -79,10 +79,12 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                 )}
                 <div className="item-card__content--route">
                   {stops.map((stop, i) => (
-                    <span key={stop.id} className="route-stop">
-                      <LinkRow item={stop} />
+                    <Fragment key={stop.id}>
+                      <span className="route-stop">
+                        <LinkRow item={stop} />
+                      </span>
                       {i < stops.length - 1 && <span className="route-arrow">→</span>}
-                    </span>
+                    </Fragment>
                   ))}
                 </div>
               </div>
