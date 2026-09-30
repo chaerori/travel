@@ -942,6 +942,14 @@ button.calendar__day {
   margin-bottom: 10px;
 }
 
+.trip-card:hover {
+  background: var(--color-primary-soft);
+}
+
+.trip-card:hover .trip-card__link {
+  color: var(--color-primary);
+}
+
 .trip-card__link {
   flex: 1;
   min-width: 0;
