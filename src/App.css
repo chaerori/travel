@@ -714,6 +714,12 @@ button.calendar__day {
   flex-shrink: 0;
 }
 
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .form-row--split {
   display: flex;
   gap: 10px;
