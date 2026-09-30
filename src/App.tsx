@@ -53,7 +53,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
   const lastItem = rows[rows.length - 1]?.item;
   const defaultStartTime = lastItem
-    ? lastItem.endTime || addHours(lastItem.startTime, 1)
+    ? lastItem.endTime || addHours(lastItem.startTime, 0.5)
     : '09:00';
 
   function openAddForm() {

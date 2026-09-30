@@ -100,10 +100,6 @@
   cursor: pointer;
 }
 
-.sync-btn--pending {
-  opacity: 0.4;
-}
-
 .sync-panel__hint {
   margin: 0;
   font-size: 12px;
@@ -226,7 +222,7 @@
 }
 
 .calendar__day--solo {
-  width: 60%;
+  width: 100%;
   margin: 0 auto;
   border-radius: 999px;
 }
@@ -720,13 +716,6 @@ button.calendar__day {
   cursor: pointer;
 }
 
-.account-panel__email-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
 .popover-backdrop {
   position: fixed;
   inset: 0;
@@ -1012,12 +1001,6 @@ button.calendar__day {
   text-decoration: none;
 }
 
-.modal__actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 4px;
-}
-
 .btn {
   flex: 1;
   display: flex;
@@ -1041,15 +1024,3 @@ button.calendar__day {
   color: var(--color-text-muted);
 }
 
-.modal__actions .btn {
-  background: none;
-  padding: 8px;
-}
-
-.modal__actions .btn--primary {
-  color: var(--color-primary);
-}
-
-.modal__actions .btn--ghost {
-  color: var(--color-text-muted);
-}
