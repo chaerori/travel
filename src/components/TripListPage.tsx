@@ -4,6 +4,7 @@ import { signOutUser } from '../utils/auth';
 import { createTrip, deleteTrip, useTripIndex } from '../utils/tripIndex';
 import { TripSettingsPanel } from './TripSettingsPanel';
 import { DeleteIcon } from './icons/DeleteIcon';
+import { FaceIdUserIcon } from './icons/FaceIdUserIcon';
 import { SettingsIcon } from './icons/SettingsIcon';
 
 export function TripListPage({ userEmail }: { userEmail: string }) {
@@ -13,6 +14,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
   const [title, setTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [settingsTripId, setSettingsTripId] = useState<string | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -51,12 +53,22 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
       <header className="app__header">
         <div className="app__header-row">
           <h1 className="app__title">나의 여행</h1>
-        </div>
-        <div className="account-panel__email-row">
-          <p className="account-panel__email">{userEmail}</p>
-          <button type="button" className="add-btn" onClick={signOutUser}>
-            로그아웃
-          </button>
+          <div className="app__header-actions">
+            <button type="button" className="sync-btn" onClick={() => setAccountOpen((v) => !v)} aria-label="계정">
+              <FaceIdUserIcon />
+            </button>
+            {accountOpen && (
+              <>
+                <div className="popover-backdrop" onClick={() => setAccountOpen(false)} />
+                <div className="account-popover">
+                  <p className="account-panel__email">{userEmail}</p>
+                  <button type="button" className="add-btn" onClick={signOutUser}>
+                    로그아웃
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

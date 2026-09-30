@@ -7,6 +7,7 @@ import { LoginGate } from './components/LoginGate';
 import { ScheduleForm } from './components/ScheduleForm';
 import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
+import { AddIcon } from './components/icons/AddIcon';
 import type { Bookmarks, Budget, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
@@ -160,11 +161,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
               onKeyDown={(e) => e.key === 'Enter' && commitTitle()}
             />
           )}
-          <div className="app__header-actions">
-            <button type="button" className="add-btn" onClick={openAddForm}>
-              + 일정 추가
-            </button>
-          </div>
         </div>
         <BudgetSection budget={trip.budget} items={trip.items} onChange={handleBudgetChange} />
         <BookmarkSection bookmarks={trip.bookmarks} onChange={handleBookmarksChange} onOpenMap={openMap} />
@@ -173,10 +169,14 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       <main className="app__list">
         <CalendarSection items={trip.items} onSelectDate={scrollToDate} />
 
+        <button type="button" className="add-btn schedule-add-btn" onClick={openAddForm}>
+          + 일정 추가
+        </button>
+
         {rows.length === 0 && (
           <div className="empty-state">
             <p>등록된 일정이 없습니다.</p>
-            <p>우측 상단 + 버튼으로 첫 일정을 추가해 보세요.</p>
+            <p>위 + 버튼으로 첫 일정을 추가해 보세요.</p>
           </div>
         )}
 
@@ -201,6 +201,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </div>
         ))}
       </main>
+
+      <button type="button" className="schedule-fab" onClick={openAddForm} aria-label="일정 추가">
+        <AddIcon />
+      </button>
 
       {formOpen && (
         <ScheduleForm

@@ -33,6 +33,7 @@
 }
 
 .app__header-actions {
+  position: relative;
   flex: none;
   display: flex;
   align-items: center;
@@ -157,7 +158,7 @@
 
 .calendar {
   margin-top: 12px;
-  margin-bottom: 34px;
+  margin-bottom: 14px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 10px 8px;
@@ -377,7 +378,7 @@ button.calendar__day {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 24px;
+  margin-top: 20px;
   margin-bottom: 10px;
 }
 
@@ -600,6 +601,24 @@ button.calendar__day {
   z-index: 20;
 }
 
+.schedule-fab {
+  position: fixed;
+  right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
+  cursor: pointer;
+}
+
 .modal {
   width: 100%;
   max-width: 480px;
@@ -639,6 +658,33 @@ button.calendar__day {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+}
+
+.account-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 16;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(247, 247, 251, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(20, 16, 32, 0.12);
+}
+
+.account-popover .add-btn {
+  align-self: flex-end;
 }
 
 .form-row--split {
@@ -762,6 +808,11 @@ button.calendar__day {
   font-weight: 600;
   color: var(--color-primary);
   cursor: pointer;
+}
+
+.schedule-add-btn {
+  align-self: flex-end;
+  margin-bottom: 14px;
 }
 
 .trip-create__toggle {

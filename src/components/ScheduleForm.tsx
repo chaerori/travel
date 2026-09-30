@@ -155,15 +155,12 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           </label>
           <label className="form-field">
-            <span>
-              도시<span className="required-mark">*</span>
-            </span>
+            <span>도시</span>
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="예: 도쿄"
-              required
             />
           </label>
         </div>
