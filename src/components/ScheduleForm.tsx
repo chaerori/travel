@@ -37,6 +37,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
     initial?.content.type === 'route' || initial?.content.type === 'choices' ? initial.content.title : '',
   );
   const [info, setInfo] = useState(initial?.content.type === 'fixed' ? initial.content.info ?? '' : '');
+  const [routeLocation, setRouteLocation] = useState(
+    initial?.content.type === 'route' ? initial.content.location ?? '' : '',
+  );
   const [memo, setMemo] = useState(initial?.memo ?? '');
   const [prep, setPrep] = useState<PrepItem[]>(initial?.prep ?? []);
   const [expenseAmount, setExpenseAmount] = useState(
@@ -113,7 +116,12 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
       const selectedId = cleanLinks.some((l) => l.id === prevSelected) ? prevSelected : null;
       content = { type: 'choices', title: contentTitle.trim(), options: cleanLinks, selectedId };
     } else {
-      content = { type: 'route', title: contentTitle.trim(), stops: cleanLinks };
+      content = {
+        type: 'route',
+        title: contentTitle.trim(),
+        stops: cleanLinks,
+        location: routeLocation.trim() || undefined,
+      };
     }
 
     const cleanPrep = prep.map((p) => ({ ...p, label: p.label.trim() })).filter((p) => p.label);
@@ -191,47 +199,70 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
           <>
             <label className="form-field">
               <span>
-                이름<span className="required-mark">*</span>
+                일정 이름<span className="required-mark">*</span>
               </span>
               <input
                 type="text"
-                placeholder="이름"
+                placeholder="예: 일일투어"
                 value={links[0].label}
                 onChange={(e) => updateLink(links[0].id, { label: e.target.value })}
               />
             </label>
-            <div className="form-row form-row--tag">
-              <span className="form-row__tag">위치</span>
-              <input
-                type="url"
-                placeholder="링크"
-                value={links[0].url ?? ''}
-                onChange={(e) => updateLink(links[0].id, { url: e.target.value })}
-              />
-            </div>
-            <div className="form-row form-row--tag">
-              <span className="form-row__tag">정보</span>
-              <input
-                type="text"
-                placeholder="링크"
-                value={info}
-                onChange={(e) => setInfo(e.target.value)}
-              />
+            <div className="form-row form-row--split">
+              <label className="form-field">
+                <input
+                  type="url"
+                  placeholder="위치 링크"
+                  value={links[0].url ?? ''}
+                  onChange={(e) => updateLink(links[0].id, { url: e.target.value })}
+                />
+              </label>
+              <label className="form-field">
+                <input
+                  type="text"
+                  placeholder="정보 링크"
+                  value={info}
+                  onChange={(e) => setInfo(e.target.value)}
+                />
+              </label>
             </div>
           </>
         )}
 
         {contentType !== 'fixed' && (
           <>
-            <label className="form-field">
-              <span>대표 이름</span>
-              <input
-                type="text"
-                placeholder="예: 공항 이동"
-                value={contentTitle}
-                onChange={(e) => setContentTitle(e.target.value)}
-              />
-            </label>
+            {contentType === 'route' ? (
+              <div className="form-row form-row--split">
+                <label className="form-field">
+                  <span>일정 이름</span>
+                  <input
+                    type="text"
+                    placeholder="예: 호텔로 이동"
+                    value={contentTitle}
+                    onChange={(e) => setContentTitle(e.target.value)}
+                  />
+                </label>
+                <label className="form-field">
+                  <span aria-hidden="true">&nbsp;</span>
+                  <input
+                    type="url"
+                    placeholder="지도 링크"
+                    value={routeLocation}
+                    onChange={(e) => setRouteLocation(e.target.value)}
+                  />
+                </label>
+              </div>
+            ) : (
+              <label className="form-field">
+                <span>일정 이름</span>
+                <input
+                  type="text"
+                  placeholder="예: 점심 식사"
+                  value={contentTitle}
+                  onChange={(e) => setContentTitle(e.target.value)}
+                />
+              </label>
+            )}
 
             <div className="form-field">
               <span>
@@ -254,7 +285,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                     )}
                     <input
                       type="text"
-                      placeholder="이름"
+                      placeholder="장소"
                       value={l.label}
                       onChange={(e) => updateLink(l.id, { label: e.target.value })}
                     />

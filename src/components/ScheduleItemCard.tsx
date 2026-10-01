@@ -104,12 +104,17 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
 
         {item.content.type === 'route' &&
           (() => {
-            const { title, stops } = item.content;
+            const { title, stops, location } = item.content;
             return (
               <div className="item-card__content">
                 {title && (
                   <div className="item-card__title">
                     {title}
+                    {location && (
+                      <a className="icon-action" href={location} target="_blank" rel="noreferrer" aria-label="위치">
+                        <MapIcon />
+                      </a>
+                    )}
                     {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
                   </div>
                 )}
