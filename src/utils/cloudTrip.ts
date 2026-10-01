@@ -49,7 +49,9 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
             showBudget: data.showBudget ?? true,
             currency: data.currency ?? 'KRW',
             expenses: data.expenses ?? [],
-            prepChecklist: data.prepChecklist ?? [],
+            prepChecklist: Array.isArray(data.prepChecklist) && data.prepChecklist.every((l: unknown) => Array.isArray((l as { items?: unknown })?.items))
+              ? data.prepChecklist
+              : [],
             bookmarks: {
               food: data.bookmarks?.food ?? [],
               cafe: data.bookmarks?.cafe ?? [],

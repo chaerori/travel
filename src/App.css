@@ -314,6 +314,56 @@ button.calendar__day {
   color: var(--color-primary);
 }
 
+.prep-tab--active {
+  position: relative;
+}
+
+.prep-tab__label {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.prep-tab__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.prep-tab__input::placeholder {
+  color: var(--color-border);
+  font-weight: 400;
+}
+
+.prep-tab--active .icon-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 400;
+}
+
+.places-tabs + .prep-list,
+.places-tabs + form {
+  margin-top: 12px;
+}
+
+.modal form + form {
+  margin-top: 12px;
+}
+
 .bookmark-filter {
   display: flex;
   flex-wrap: wrap;
@@ -491,6 +541,21 @@ button.calendar__day {
   margin-top: 8px;
 }
 
+.item-card__fixed-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.item-card__fixed-row .icon-action + .icon-action {
+  margin-left: -4px;
+}
+
+.item-card__fixed-row .icon-action svg {
+  width: 14px;
+  height: 14px;
+}
+
 .item-card__title {
   font-size: 15px;
   font-weight: 500;
@@ -608,6 +673,9 @@ button.calendar__day {
 }
 
 .prep-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   background: none;
   border: none;
   padding: 0;
@@ -615,6 +683,15 @@ button.calendar__day {
   font-weight: 600;
   color: var(--color-text-muted);
   cursor: pointer;
+}
+
+.prep-toggle__chevron {
+  display: flex;
+  transition: transform 0.15s;
+}
+
+.prep-toggle__chevron--open {
+  transform: rotate(180deg);
 }
 
 .prep-list {
@@ -689,10 +766,13 @@ button.calendar__day {
   overflow-y: auto;
   background: var(--color-surface);
   border-radius: 20px 20px 0 0;
-  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  padding: 0 20px calc(20px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 14px;
+}
+
+.modal > * + * {
+  margin-top: 14px;
 }
 
 .modal__title {
@@ -701,6 +781,11 @@ button.calendar__day {
 }
 
 .modal__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface);
+  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -758,6 +843,32 @@ button.calendar__day {
   flex: 1;
 }
 
+.form-row--tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-row__tag {
+  flex: none;
+  width: 48px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.form-row--tag input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
 .checkbox-field {
   display: flex;
   align-items: center;
@@ -775,7 +886,6 @@ button.calendar__day {
 .reservation-tag {
   margin-left: 6px;
   position: relative;
-  top: -2px;
   white-space: nowrap;
   font-size: 9px;
   font-weight: 700;

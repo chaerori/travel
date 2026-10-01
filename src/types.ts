@@ -10,8 +10,14 @@ export type PrepItem = {
   checked: boolean;
 };
 
+export type Luggage = {
+  id: string;
+  name: string;
+  items: PrepItem[];
+};
+
 export type ScheduleContent =
-  | { type: 'fixed'; item: LinkedText }
+  | { type: 'fixed'; item: LinkedText; info?: string }
   | { type: 'choices'; title: string; options: LinkedText[]; selectedId: string | null }
   | { type: 'route'; title: string; stops: LinkedText[] };
 
@@ -71,7 +77,7 @@ export type Trip = {
   showBudget: boolean;
   currency: CurrencyCode;
   expenses: ExpenseEntry[];
-  prepChecklist: PrepItem[];
+  prepChecklist: Luggage[];
 };
 
 export type TripIndexEntry = {

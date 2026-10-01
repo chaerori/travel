@@ -1,9 +1,16 @@
 import { Fragment, useState } from 'react';
 import type { ScheduleItem } from '../types';
 import { formatTimeRange } from '../utils/date';
+import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
+import { LinkIcon } from './icons/LinkIcon';
+import { MapIcon } from './icons/MapIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
+
+function isUrl(value: string): boolean {
+  return /^https?:\/\//.test(value);
+}
 
 type Props = {
   item: ScheduleItem;
@@ -35,8 +42,37 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
       <div className="item-card__body">
         {item.content.type === 'fixed' && (
           <div className="item-card__content">
-            <LinkRow item={item.content.item} />
-            {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
+            <div className="item-card__fixed-row">
+              <span className="link-row link-row--plain">{item.content.item.label}</span>
+              {item.content.item.url && (
+                <a
+                  className="icon-action"
+                  href={item.content.item.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="위치"
+                >
+                  <MapIcon />
+                </a>
+              )}
+              {item.content.info &&
+                (isUrl(item.content.info) ? (
+                  <a
+                    className="icon-action"
+                    href={item.content.info}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="정보"
+                  >
+                    <LinkIcon />
+                  </a>
+                ) : (
+                  <span className="icon-action" title={item.content.info} aria-label="정보">
+                    <LinkIcon />
+                  </span>
+                ))}
+              {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
+            </div>
           </div>
         )}
 
@@ -96,7 +132,10 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
         {item.prep.length > 0 && (
           <div className="item-card__prep">
             <button type="button" className="prep-toggle" onClick={() => setPrepOpen((v) => !v)}>
-              준비물 {prepOpen ? '▾' : '▸'}
+              준비물
+              <span className={prepOpen ? 'prep-toggle__chevron prep-toggle__chevron--open' : 'prep-toggle__chevron'}>
+                <ChevronIcon />
+              </span>
             </button>
             {prepOpen && (
               <ul className="prep-list">

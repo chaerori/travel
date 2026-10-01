@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Bookmarks, ExpenseEntry, PrepItem } from '../types';
+import type { Bookmarks, ExpenseEntry, Luggage } from '../types';
 import { ExpenseModal } from './ExpenseModal';
 import { PlacesModal } from './PlacesModal';
 import { PrepChecklistModal } from './PrepChecklistModal';
@@ -11,8 +11,8 @@ import { PurseIcon } from './icons/PurseIcon';
 type Props = {
   expenses: ExpenseEntry[];
   onExpensesChange: (expenses: ExpenseEntry[]) => void;
-  prepChecklist: PrepItem[];
-  onPrepChecklistChange: (prep: PrepItem[]) => void;
+  luggage: Luggage[];
+  onLuggageChange: (luggage: Luggage[]) => void;
   bookmarks: Bookmarks;
   onBookmarksChange: (bookmarks: Bookmarks) => void;
   onOpenMap: () => void;
@@ -21,8 +21,8 @@ type Props = {
 export function BottomNav({
   expenses,
   onExpensesChange,
-  prepChecklist,
-  onPrepChecklistChange,
+  luggage,
+  onLuggageChange,
   bookmarks,
   onBookmarksChange,
   onOpenMap,
@@ -36,7 +36,7 @@ export function BottomNav({
       <nav className="bottom-nav">
         <button type="button" className="bottom-nav__item" onClick={() => setPrepOpen(true)}>
           <PurseIcon />
-          <span>준비물</span>
+          <span>짐 체크리스트</span>
         </button>
         <button type="button" className="bottom-nav__item" onClick={() => setExpenseOpen(true)}>
           <BillIcon />
@@ -53,7 +53,7 @@ export function BottomNav({
       </nav>
 
       {prepOpen && (
-        <PrepChecklistModal prep={prepChecklist} onChange={onPrepChecklistChange} onClose={() => setPrepOpen(false)} />
+        <PrepChecklistModal luggage={luggage} onChange={onLuggageChange} onClose={() => setPrepOpen(false)} />
       )}
 
       {expenseOpen && (

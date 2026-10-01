@@ -9,7 +9,7 @@ import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
 import { EWalletIcon } from './components/icons/EWalletIcon';
-import type { Bookmarks, Budget, ExpenseEntry, PrepItem, ScheduleItem } from './types';
+import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { addHours, formatDateWithWeekday } from './utils/date';
@@ -111,7 +111,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, expenses }));
   }
 
-  function handlePrepChecklistChange(prepChecklist: PrepItem[]) {
+  function handleLuggageChange(prepChecklist: Luggage[]) {
     setTrip((prev) => ({ ...prev, prepChecklist }));
   }
 
@@ -252,8 +252,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       <BottomNav
         expenses={trip.expenses}
         onExpensesChange={handleExpensesChange}
-        prepChecklist={trip.prepChecklist}
-        onPrepChecklistChange={handlePrepChecklistChange}
+        luggage={trip.prepChecklist}
+        onLuggageChange={handleLuggageChange}
         bookmarks={trip.bookmarks}
         onBookmarksChange={handleBookmarksChange}
         onOpenMap={openMap}

@@ -36,6 +36,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
   const [contentTitle, setContentTitle] = useState(
     initial?.content.type === 'route' || initial?.content.type === 'choices' ? initial.content.title : '',
   );
+  const [info, setInfo] = useState(initial?.content.type === 'fixed' ? initial.content.info ?? '' : '');
   const [memo, setMemo] = useState(initial?.memo ?? '');
   const [prep, setPrep] = useState<PrepItem[]>(initial?.prep ?? []);
   const [expenseAmount, setExpenseAmount] = useState(
@@ -106,7 +107,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
 
     let content: ScheduleContent;
     if (contentType === 'fixed') {
-      content = { type: 'fixed', item: cleanLinks[0] };
+      content = { type: 'fixed', item: cleanLinks[0], info: info.trim() || undefined };
     } else if (contentType === 'choices') {
       const prevSelected = initial?.content.type === 'choices' ? initial.content.selectedId : null;
       const selectedId = cleanLinks.some((l) => l.id === prevSelected) ? prevSelected : null;
@@ -134,8 +135,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
     });
   }
 
-  const linksLabel =
-    contentType === 'fixed' ? '일정' : contentType === 'choices' ? '선택지' : '경로 (순서대로)';
+  const linksLabel = contentType === 'choices' ? '선택지' : '경로 (순서대로)';
 
   return (
     <div className="modal-backdrop" onClick={onCancel}>
@@ -187,63 +187,97 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
           </select>
         </label>
 
-        {(contentType === 'route' || contentType === 'choices') && (
-          <label className="form-field">
-            <span>대표 이름</span>
-            <input
-              type="text"
-              placeholder="예: 공항 이동"
-              value={contentTitle}
-              onChange={(e) => setContentTitle(e.target.value)}
-            />
-          </label>
+        {contentType === 'fixed' && (
+          <>
+            <label className="form-field">
+              <span>
+                이름<span className="required-mark">*</span>
+              </span>
+              <input
+                type="text"
+                placeholder="이름"
+                value={links[0].label}
+                onChange={(e) => updateLink(links[0].id, { label: e.target.value })}
+              />
+            </label>
+            <div className="form-row form-row--tag">
+              <span className="form-row__tag">위치</span>
+              <input
+                type="url"
+                placeholder="링크"
+                value={links[0].url ?? ''}
+                onChange={(e) => updateLink(links[0].id, { url: e.target.value })}
+              />
+            </div>
+            <div className="form-row form-row--tag">
+              <span className="form-row__tag">정보</span>
+              <input
+                type="text"
+                placeholder="링크"
+                value={info}
+                onChange={(e) => setInfo(e.target.value)}
+              />
+            </div>
+          </>
         )}
 
-        <div className="form-field">
-          <span>
-            {linksLabel}
-            <span className="required-mark">*</span>
-          </span>
-          <div className="link-editor">
-            {links.map((l, index) => (
-              <div className="link-editor__row" key={l.id} data-link-index={index}>
-                {contentType === 'route' && links.length > 1 && (
-                  <span
-                    className="drag-handle"
-                    onPointerDown={(e) => handleDragPointerDown(e, index)}
-                    onPointerMove={handleDragPointerMove}
-                    onPointerUp={handleDragPointerUp}
-                    onPointerCancel={handleDragPointerUp}
-                  >
-                    ⠿
-                  </span>
-                )}
-                <input
-                  type="text"
-                  placeholder="이름"
-                  value={l.label}
-                  onChange={(e) => updateLink(l.id, { label: e.target.value })}
-                />
-                <input
-                  type="url"
-                  placeholder="링크"
-                  value={l.url ?? ''}
-                  onChange={(e) => updateLink(l.id, { url: e.target.value })}
-                />
-                {links.length > 1 && (
-                  <button type="button" className="icon-btn" onClick={() => removeLink(l.id)}>
-                    ✕
-                  </button>
-                )}
+        {contentType !== 'fixed' && (
+          <>
+            <label className="form-field">
+              <span>대표 이름</span>
+              <input
+                type="text"
+                placeholder="예: 공항 이동"
+                value={contentTitle}
+                onChange={(e) => setContentTitle(e.target.value)}
+              />
+            </label>
+
+            <div className="form-field">
+              <span>
+                {linksLabel}
+                <span className="required-mark">*</span>
+              </span>
+              <div className="link-editor">
+                {links.map((l, index) => (
+                  <div className="link-editor__row" key={l.id} data-link-index={index}>
+                    {contentType === 'route' && links.length > 1 && (
+                      <span
+                        className="drag-handle"
+                        onPointerDown={(e) => handleDragPointerDown(e, index)}
+                        onPointerMove={handleDragPointerMove}
+                        onPointerUp={handleDragPointerUp}
+                        onPointerCancel={handleDragPointerUp}
+                      >
+                        ⠿
+                      </span>
+                    )}
+                    <input
+                      type="text"
+                      placeholder="이름"
+                      value={l.label}
+                      onChange={(e) => updateLink(l.id, { label: e.target.value })}
+                    />
+                    <input
+                      type="url"
+                      placeholder="링크"
+                      value={l.url ?? ''}
+                      onChange={(e) => updateLink(l.id, { url: e.target.value })}
+                    />
+                    {links.length > 1 && (
+                      <button type="button" className="icon-btn" onClick={() => removeLink(l.id)}>
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button type="button" className="add-btn" onClick={addLink}>
+                  + 항목 추가
+                </button>
               </div>
-            ))}
-            {(contentType === 'choices' || contentType === 'route') && (
-              <button type="button" className="add-btn" onClick={addLink}>
-                + 항목 추가
-              </button>
-            )}
-          </div>
-        </div>
+            </div>
+          </>
+        )}
 
         <label className="checkbox-field">
           <input
@@ -286,7 +320,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
               <div className="link-editor__row" key={p.id}>
                 <input
                   type="text"
-                  placeholder="예: 여권"
+                  placeholder="예: 모자"
                   value={p.label}
                   onChange={(e) => updatePrep(p.id, e.target.value)}
                 />
