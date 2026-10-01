@@ -12,7 +12,7 @@
     <script>
       // 404.html이 쿼리스트링에 담아 보낸 원래 경로를 복원한다.
       (function (l) {
-        if (l.search[1] === 'p') {
+        if (l.search[1] === '/') {
           var decoded = l.search
             .slice(1)
             .split('&')

@@ -594,6 +594,18 @@ button.calendar__day {
   color: var(--color-primary);
 }
 
+.route-stop__photo-icon {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  color: var(--color-primary);
+}
+
+.route-stop__photo-icon svg {
+  width: 13px;
+  height: 11px;
+}
+
 .route-arrow {
   color: var(--color-text-muted);
 }
@@ -749,6 +761,15 @@ button.calendar__day {
   padding: 4px;
   color: var(--color-text-muted);
   cursor: pointer;
+}
+
+.icon-action--active {
+  color: var(--color-primary);
+}
+
+.link-editor__row .icon-action svg {
+  width: 16px;
+  height: 14px;
 }
 
 .icon-action--danger {

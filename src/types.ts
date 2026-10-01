@@ -2,6 +2,7 @@ export type LinkedText = {
   id: string;
   label: string;
   url?: string;
+  photoSpot?: boolean;
 };
 
 export type PrepItem = {

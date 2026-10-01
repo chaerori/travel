@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import type { ScheduleItem } from '../types';
 import { formatTimeRange } from '../utils/date';
+import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { LinkIcon } from './icons/LinkIcon';
@@ -123,6 +124,11 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                     <Fragment key={stop.id}>
                       <span className="route-stop">
                         <LinkRow item={stop} />
+                        {stop.photoSpot && (
+                          <span className="route-stop__photo-icon">
+                            <CameraIcon />
+                          </span>
+                        )}
                       </span>
                       {i < stops.length - 1 && <span className="route-arrow">→</span>}
                     </Fragment>
