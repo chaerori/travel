@@ -556,10 +556,6 @@ button.calendar__day {
   height: 14px;
 }
 
-.item-card__fixed-row .reservation-tag {
-  margin-left: -4px;
-}
-
 .item-card__title {
   display: flex;
   align-items: center;
