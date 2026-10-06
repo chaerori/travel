@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { hasFullAccess } from '../firebase';
 import { signOutUser } from '../utils/auth';
 import { createTrip, deleteTrip, useTripIndex } from '../utils/tripIndex';
+import { tripUrl } from '../utils/tripId';
 import { TripSettingsPanel } from './TripSettingsPanel';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { FaceIdUserIcon } from './icons/FaceIdUserIcon';
@@ -23,7 +24,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
     setSubmitting(true);
     try {
       const id = await createTrip(trimmed);
-      window.location.href = `${import.meta.env.BASE_URL}${id}/`;
+      window.location.href = tripUrl(id);
     } catch (err) {
       console.error('여행 생성 실패', err);
       setSubmitting(false);
@@ -109,7 +110,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
 
         {trips.map((t) => (
           <div key={t.id} className="trip-card">
-            <a className="trip-card__link" href={`${import.meta.env.BASE_URL}${t.id}/`}>
+            <a className="trip-card__link" href={tripUrl(t.id)}>
               {t.title}
             </a>
             <button

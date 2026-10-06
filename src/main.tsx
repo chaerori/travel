@@ -2,8 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { isNativeApp } from './utils/nativePlatform'
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !isNativeApp()) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register(`${import.meta.env.BASE_URL}sw.js`, { updateViaCache: 'none' })
