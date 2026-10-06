@@ -53,6 +53,16 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
     setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
   }
 
+  function handleContentTypeChange(next: ContentType) {
+    const currentName = contentType === 'fixed' ? links[0]?.label ?? '' : contentTitle;
+    if (next === 'fixed') {
+      updateLink(links[0].id, { label: currentName });
+    } else {
+      setContentTitle(currentName);
+    }
+    setContentType(next);
+  }
+
   function addLink() {
     setLinks((prev) => [...prev, emptyLinked()]);
   }
@@ -189,7 +199,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
 
         <label className="form-field">
           <span>일정 유형</span>
-          <select value={contentType} onChange={(e) => setContentType(e.target.value as ContentType)}>
+          <select value={contentType} onChange={(e) => handleContentTypeChange(e.target.value as ContentType)}>
             <option value="fixed">확정된 일정</option>
             <option value="choices">당일 선택지</option>
             <option value="route">이동 경로</option>
