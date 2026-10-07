@@ -958,6 +958,11 @@ button.calendar__day {
 
 .checkbox-field input[type='checkbox'] {
   accent-color: var(--color-primary);
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 .reservation-tag {
