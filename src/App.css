@@ -574,8 +574,8 @@ button.calendar__day {
 }
 
 .item-card__fixed-row .icon-action svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 .item-card__title {
@@ -588,8 +588,8 @@ button.calendar__day {
 }
 
 .item-card__title .icon-action svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 .item-card__content--route {
@@ -624,8 +624,8 @@ button.calendar__day {
 }
 
 .route-stop__photo-icon svg {
-  width: 13px;
-  height: 11px;
+  width: 14px;
+  height: 14px;
 }
 
 .route-arrow {
@@ -790,8 +790,8 @@ button.calendar__day {
 }
 
 .link-editor__row .icon-action svg {
-  width: 16px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 .icon-action--danger {

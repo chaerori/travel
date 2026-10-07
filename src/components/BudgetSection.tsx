@@ -62,14 +62,14 @@ export function BudgetSection({ budget, items, onChange, expanded, currency }: P
       <div className="budget-line budget-line--dark">
         <span className="budget-line__label">잔액</span>
         <span className="budget-pair">
-          <CardIcon original />
+          <CardIcon />
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cardTotal - cardSpent).toLocaleString('ko-KR')}
           </span>
           <span className="budget-pair__currency">{unit}</span>
         </span>
         <span className="budget-pair">
-          <CashIcon original />
+          <CashIcon />
           <span className="budget-pair__value" style={{ width: VALUE_WIDTH }}>
             {(budget.cashTotal - cashSpent).toLocaleString('ko-KR')}
           </span>
