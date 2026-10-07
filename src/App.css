@@ -1266,29 +1266,8 @@ button.calendar__day {
   margin-top: 6px;
 }
 
-/* 유리 효과: 콘텐츠 위에 떠 있는 레이어(헤더, 탭바, 모달 배경)에만 쓴다.
-   헤더는 fixed 자손(.popover-backdrop)의 기준이 바뀌지 않도록 ::before에 적용한다. */
+/* 유리 효과: 모달 뒤 배경에만 쓴다. */
 @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .app__header {
-    background: transparent;
-  }
-
-  .app__header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: rgba(247, 247, 251, 0.72);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    backdrop-filter: blur(16px) saturate(160%);
-  }
-
-  .bottom-nav {
-    background: rgba(255, 255, 255, 0.78);
-    -webkit-backdrop-filter: blur(18px) saturate(170%);
-    backdrop-filter: blur(18px) saturate(170%);
-  }
-
   .modal-backdrop {
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
@@ -1296,18 +1275,6 @@ button.calendar__day {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .app__header::before {
-    background: var(--color-bg);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  .bottom-nav {
-    background: var(--color-surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
   .modal-backdrop {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
