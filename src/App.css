@@ -733,16 +733,30 @@ button.calendar__day {
 }
 
 .choice-row__dot {
+  position: relative;
   flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 2px solid var(--color-text-muted);
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1.5px solid var(--color-text-muted);
+  background: var(--color-surface);
 }
 
 .choice-row--selected .choice-row__dot {
   background: var(--color-primary);
   border-color: var(--color-primary);
+}
+
+.choice-row--selected .choice-row__dot::after {
+  content: '';
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .item-card__memo {
