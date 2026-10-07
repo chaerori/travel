@@ -3,6 +3,7 @@ import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem
 import { parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
 import { CameraIcon } from './icons/CameraIcon';
+import { TimeSelect } from './TimeSelect';
 
 type ContentType = ScheduleContent['type'];
 
@@ -189,11 +190,11 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
             <span>
               시작 시간<span className="required-mark">*</span>
             </span>
-            <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+            <TimeSelect value={startTime} onChange={setStartTime} required />
           </label>
           <label className="form-field">
             <span>종료 시간</span>
-            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+            <TimeSelect value={endTime} onChange={setEndTime} />
           </label>
         </div>
 

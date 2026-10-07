@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import type { ScheduleItem } from '../types';
 import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
@@ -125,7 +125,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                 )}
                 <div className="item-card__content--route">
                   {stops.map((stop, i) => (
-                    <Fragment key={stop.id}>
+                    <span key={stop.id} className="route-step">
                       <span className="route-stop">
                         <LinkRow item={stop} />
                         {stop.photoSpot && (
@@ -135,7 +135,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                         )}
                       </span>
                       {i < stops.length - 1 && <span className="route-arrow">→</span>}
-                    </Fragment>
+                    </span>
                   ))}
                 </div>
               </div>

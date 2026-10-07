@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { BottomNav } from './components/BottomNav';
 import { BudgetSection } from './components/BudgetSection';
@@ -48,6 +48,15 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // 헤더가 고정되어 내용과 겹치기 시작하면 경계를 표시한다.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
@@ -152,10 +161,12 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
   return (
     <div className="app app--with-bottom-nav">
-      <header className="app__header">
+      <div className="trip-back">
         <a className="trip-back-link" href={import.meta.env.BASE_URL}>
           ← 여행 목록
         </a>
+      </div>
+      <header className={scrolled ? 'app__header app__header--trip app__header--scrolled' : 'app__header app__header--trip'}>
         <div className="app__header-row">
           <div className="app__title-group">
             {titleDraft === null ? (

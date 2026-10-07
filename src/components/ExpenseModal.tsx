@@ -87,9 +87,7 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
               <tr>
                 {expenses.length > 1 && <th className="expense-table__handle" />}
                 <th>항목</th>
-                <th>결제처</th>
-                <th>금액</th>
-                <th>비고</th>
+                <th className="expense-table__amount">금액</th>
                 <th />
               </tr>
             </thead>
@@ -109,10 +107,13 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
                       </span>
                     </td>
                   )}
-                  <td>{e.label}</td>
-                  <td>{e.payer}</td>
+                  <td>
+                    <div className="expense-table__label">{e.label}</div>
+                    {(e.payer || e.note) && (
+                      <div className="expense-table__sub">{[e.payer, e.note].filter(Boolean).join(' · ')}</div>
+                    )}
+                  </td>
                   <td className="expense-table__amount">{formatWon(e.amount)}</td>
-                  <td>{e.note}</td>
                   <td>
                     <button
                       type="button"
@@ -128,9 +129,9 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
             </tbody>
             <tfoot>
               <tr className="expense-table__total-row">
-                <td colSpan={(expenses.length > 1 ? 1 : 0) + 2} />
+                <td colSpan={(expenses.length > 1 ? 1 : 0) + 1} />
                 <td className="expense-table__amount">{formatWon(total)}</td>
-                <td colSpan={2} />
+                <td />
               </tr>
             </tfoot>
           </table>

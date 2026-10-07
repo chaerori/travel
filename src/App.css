@@ -57,6 +57,32 @@
   padding: calc(20px + env(safe-area-inset-top)) 20px 12px;
 }
 
+/* 여행 화면: "여행 목록" 링크는 헤더 밖에 두어 스크롤과 함께 올라가고, 제목 줄만 상태 표시줄 아래에 고정된다. */
+.trip-back {
+  padding: calc(20px + env(safe-area-inset-top)) 20px 0;
+}
+
+.app__header--trip {
+  top: env(safe-area-inset-top);
+  padding-top: 8px;
+}
+
+/* 고정된 헤더 위쪽(상태 표시줄 영역)으로 올라가는 내용을 가린다. */
+.app--with-bottom-nav::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top);
+  background: var(--color-bg);
+  z-index: 6;
+}
+
+.app__header--scrolled {
+  box-shadow: 0 8px 12px -10px rgba(32, 31, 43, 0.18);
+}
+
 .app__header-row {
   display: flex;
   align-items: center;
@@ -72,8 +98,10 @@
 }
 
 .trip-back-link {
-  display: inline-block;
-  margin-bottom: 8px;
+  display: block;
+  width: fit-content;
+  height: 18px;
+  line-height: 18px;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-muted);
@@ -628,6 +656,13 @@ button.calendar__day {
   height: 14px;
 }
 
+.route-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
 .route-arrow {
   color: var(--color-text-muted);
 }
@@ -1167,6 +1202,33 @@ button.calendar__day {
   white-space: nowrap;
 }
 
+.expense-table td {
+  vertical-align: middle;
+}
+
+.expense-table__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.expense-table__sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.expense-table th.expense-table__amount,
+.expense-table td.expense-table__amount {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.expense-table td.expense-table__amount {
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .expense-table td:last-child {
   width: 24px;
   padding: 6px 0;
@@ -1297,4 +1359,21 @@ button.calendar__day {
 .form-field input[type='date']::-webkit-date-and-time-value,
 .form-field input[type='time']::-webkit-date-and-time-value {
   text-align: left;
+}
+
+.time-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-select select {
+  flex: 1;
+  padding-left: 12px;
+  padding-right: 28px;
+  background-position: right 10px center;
+}
+
+.time-select select:disabled {
+  color: var(--color-text-muted);
 }
