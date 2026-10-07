@@ -971,8 +971,8 @@ button.calendar__day {
   white-space: nowrap;
   font-size: 9px;
   font-weight: 700;
-  color: var(--color-primary-strong);
-  background: var(--color-primary-soft);
+  color: var(--color-warning-strong);
+  background: var(--color-warning-soft);
   border: 1px solid transparent;
   border-radius: 5px;
   padding: 1px 4px;
