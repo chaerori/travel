@@ -1183,13 +1183,6 @@ button.calendar__day {
 }
 
 
-.date-divider,
-.city-heading,
-.empty-state,
-.login-gate__title {
-  font-family: var(--font-display);
-}
-
 .item-card__time,
 .expense-table__amount,
 .budget-pair input,

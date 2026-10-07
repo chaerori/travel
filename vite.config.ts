@@ -29,7 +29,7 @@ export default defineConfig({
             workbox: {
               runtimeCaching: [
                 {
-                  urlPattern: /^https:\/\/(cdn\.jsdelivr\.net|hangeul\.pstatic\.net)\//,
+                  urlPattern: /^https:\/\/cdn\.jsdelivr\.net\//,
                   handler: 'CacheFirst',
                   options: {
                     cacheName: 'web-fonts',

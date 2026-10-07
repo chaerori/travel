@@ -135,7 +135,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
         ))}
 
         <p className="attribution">
-          Font: Nanum Font by NAVER (Open Font License)
+          Font: Pretendard (SIL Open Font License)
           <br />
           Icons: Streamline (https://streamlinehq.com)
           <br />
