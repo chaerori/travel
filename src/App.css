@@ -804,12 +804,6 @@ button.calendar__day {
   color: var(--color-danger);
 }
 
-@media (hover: hover) {
-  .icon-action--danger:hover {
-    color: var(--color-danger);
-  }
-}
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
