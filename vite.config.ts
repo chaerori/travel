@@ -9,6 +9,9 @@ const isIosBuild = process.env.IOS_BUILD === 'true'
 // https://vite.dev/config/
 export default defineConfig({
   base: isIosBuild ? '/' : '/travel/',
+  define: {
+    __IOS_BUILD__: JSON.stringify(isIosBuild),
+  },
   build: {
     outDir: isIosBuild ? 'dist-ios' : 'dist',
   },
@@ -19,6 +22,13 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    // iOS 앱은 폰트를 번들에 포함하므로 웹 전용 CDN 링크는 제거한다.
+    {
+      name: 'strip-web-only-links',
+      transformIndexHtml(html) {
+        return isIosBuild ? html.replace(/<link[^>]*data-web-only[^>]*>\s*/g, '') : html
+      },
+    },
     ...(isIosBuild
       ? []
       : [
