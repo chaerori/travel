@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import type { ScheduleItem } from '../types';
-import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { LinkIcon } from './icons/LinkIcon';
 import { MapIcon } from './icons/MapIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
+import { SpotIcon, getSpot } from './SpotPicker';
 
 function isUrl(value: string): boolean {
   return /^https?:\/\//.test(value);
@@ -128,9 +128,9 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                     <span key={stop.id} className="route-step">
                       <span className="route-stop">
                         <LinkRow item={stop} />
-                        {stop.photoSpot && (
+                        {getSpot(stop) && (
                           <span className="route-stop__photo-icon">
-                            <CameraIcon />
+                            <SpotIcon spot={getSpot(stop)!} />
                           </span>
                         )}
                       </span>

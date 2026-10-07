@@ -2,8 +2,12 @@ export type LinkedText = {
   id: string;
   label: string;
   url?: string;
+  /** 이동 경로 장소 옆에 표시할 아이콘 종류. 예전 데이터는 photoSpot(사진 스폿)만 가진다. */
+  spot?: Spot;
   photoSpot?: boolean;
 };
+
+export type Spot = 'photo' | 'bike';
 
 export type PrepItem = {
   id: string;

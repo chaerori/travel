@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem } from '../types';
 import { parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
-import { CameraIcon } from './icons/CameraIcon';
+import { SpotPicker, getSpot } from './SpotPicker';
 import { TimeSelect } from './TimeSelect';
 
 type ContentType = ScheduleContent['type'];
@@ -308,14 +308,10 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                       onChange={(e) => updateLink(l.id, { url: e.target.value })}
                     />
                     {contentType === 'route' && (
-                      <button
-                        type="button"
-                        className={l.photoSpot ? 'icon-action icon-action--active' : 'icon-action'}
-                        onClick={() => updateLink(l.id, { photoSpot: !l.photoSpot })}
-                        aria-label="사진 스폿"
-                      >
-                        <CameraIcon />
-                      </button>
+                      <SpotPicker
+                        value={getSpot(l)}
+                        onChange={(spot) => updateLink(l.id, { spot, photoSpot: undefined })}
+                      />
                     )}
                     {links.length > 1 && (
                       <button type="button" className="icon-btn" onClick={() => removeLink(l.id)}>

@@ -1386,3 +1386,76 @@ button.calendar__day {
 .time-select select:disabled {
   color: var(--color-text-muted);
 }
+
+.spot-picker {
+  position: relative;
+  flex: none;
+}
+
+.spot-picker__btn {
+  gap: 2px;
+  padding: 4px 2px;
+}
+
+.link-editor__row .spot-picker__chevron svg {
+  width: 12px;
+  height: 12px;
+}
+
+.spot-picker__chevron {
+  display: flex;
+  color: var(--color-text-muted);
+}
+
+.spot-picker__none {
+  width: 18px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.spot-picker__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 2;
+  min-width: 128px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(20, 16, 32, 0.12);
+}
+
+.spot-picker__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-size: 14px;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.spot-picker__option--selected {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  font-weight: 600;
+}
+
+.spot-picker__option-icon {
+  display: flex;
+  width: 18px;
+  height: 18px;
+}
+
+.spot-picker__option-icon svg {
+  width: 18px;
+  height: 18px;
+}
