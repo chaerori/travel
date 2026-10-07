@@ -498,7 +498,7 @@ button.calendar__day {
 .date-divider {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-text-secondary);
+  color: var(--color-primary-strong);
   letter-spacing: 0.02em;
 }
 
