@@ -1281,3 +1281,20 @@ button.calendar__day {
     backdrop-filter: none;
   }
 }
+
+/* iOS(WebKit)의 날짜·시간 입력은 고유 최소 너비와 중앙 정렬 때문에 칸을 넘치므로 일반 입력창처럼 맞춘다. */
+.form-field input[type='date'],
+.form-field input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 41.5px;
+  text-align: left;
+}
+
+.form-field input[type='date']::-webkit-date-and-time-value,
+.form-field input[type='time']::-webkit-date-and-time-value {
+  text-align: left;
+}
