@@ -96,7 +96,7 @@
   border: none;
   background: none;
   padding: 6px;
-  color: var(--color-primary-strong);
+  color: var(--color-text-secondary);
   cursor: pointer;
 }
 
@@ -498,7 +498,7 @@ button.calendar__day {
 .date-divider {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-primary-strong);
+  color: var(--color-text-secondary);
   letter-spacing: 0.02em;
 }
 
@@ -684,12 +684,17 @@ button.calendar__day {
 
 .choice-row--selected {
   background: var(--color-primary-soft);
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .choice-row .link-row {
   font-size: 13px;
   font-weight: 400;
   color: var(--color-text-muted);
+}
+
+.choice-row--selected .link-row {
+  color: var(--color-text);
 }
 
 .choice-row__dot {
@@ -794,8 +799,15 @@ button.calendar__day {
   height: 18px;
 }
 
-.icon-action--danger {
+.icon-action--danger:active,
+.icon-action--danger:focus-visible {
   color: var(--color-danger);
+}
+
+@media (hover: hover) {
+  .icon-action--danger:hover {
+    color: var(--color-danger);
+  }
 }
 
 .modal-backdrop {
@@ -1068,8 +1080,8 @@ button.calendar__day {
 
 .add-btn {
   align-self: flex-start;
-  border: 1px dashed var(--color-border);
-  background: none;
+  border: 1px solid transparent;
+  background: var(--color-primary-soft);
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 13px;
