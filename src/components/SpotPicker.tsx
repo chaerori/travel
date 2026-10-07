@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LinkedText, Spot } from '../types';
 import { BikeIcon } from './icons/BikeIcon';
+import { BusIcon } from './icons/BusIcon';
 import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
+import { TramIcon } from './icons/TramIcon';
 
 /** 예전 데이터(photoSpot)도 사진 스폿으로 취급한다. */
 export function getSpot(link: LinkedText): Spot | undefined {
@@ -10,13 +12,24 @@ export function getSpot(link: LinkedText): Spot | undefined {
 }
 
 export function SpotIcon({ spot }: { spot: Spot }) {
-  return spot === 'bike' ? <BikeIcon /> : <CameraIcon />;
+  switch (spot) {
+    case 'bike':
+      return <BikeIcon />;
+    case 'tram':
+      return <TramIcon />;
+    case 'bus':
+      return <BusIcon />;
+    default:
+      return <CameraIcon />;
+  }
 }
 
 const OPTIONS: { value: Spot | undefined; label: string }[] = [
   { value: undefined, label: '없음' },
   { value: 'photo', label: '카메라' },
   { value: 'bike', label: '자전거' },
+  { value: 'tram', label: '트램' },
+  { value: 'bus', label: '버스' },
 ];
 
 type Props = {
@@ -24,7 +37,7 @@ type Props = {
   onChange: (value: Spot | undefined) => void;
 };
 
-/** 이동 경로 장소 옆에 표시할 아이콘(카메라/자전거)을 고르는 드롭다운. */
+/** 이동 경로 장소 옆에 표시할 아이콘(카메라/자전거/트램/버스)을 고르는 드롭다운. */
 export function SpotPicker({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

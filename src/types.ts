@@ -7,7 +7,7 @@ export type LinkedText = {
   photoSpot?: boolean;
 };
 
-export type Spot = 'photo' | 'bike';
+export type Spot = 'photo' | 'bike' | 'tram' | 'bus';
 
 export type PrepItem = {
   id: string;
