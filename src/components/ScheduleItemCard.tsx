@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react';
 import type { ScheduleItem } from '../types';
-import { formatTimeRange } from '../utils/date';
 import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
@@ -38,7 +37,12 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
 
   return (
     <div className="item-card">
-      <div className="item-card__time">{formatTimeRange(item.startTime, item.endTime)}</div>
+      <div className="item-card__time">
+        <span className="item-card__time-start">{item.startTime}</span>
+        {item.endTime && item.endTime !== item.startTime && (
+          <span className="item-card__time-end">{item.endTime}</span>
+        )}
+      </div>
 
       <div className="item-card__body">
         {item.content.type === 'fixed' && (

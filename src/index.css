@@ -21,10 +21,15 @@
   --color-surface: #ffffff;
   --color-border: #e6e4ee;
   --color-text: #201f2b;
-  --color-text-muted: #7c7a8a;
+  --color-text-secondary: #5f5b73;
+  --color-text-muted: #6b6880;
   --color-primary: #6c5ce7;
+  --color-primary-strong: #5b4bd6;
   --color-primary-soft: #edebfc;
   --color-danger: #e5484d;
+  --font-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Segoe UI', Roboto, sans-serif;
+  --font-display: 'NanumBarunpen', var(--font-body);
   color-scheme: light;
 }
 
@@ -42,8 +47,9 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'NanumBarunpen', -apple-system, BlinkMacSystemFont, 'Pretendard',
-    'Apple SD Gothic Neo', 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
+  word-break: keep-all;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -56,5 +62,32 @@ textarea {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-strong);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

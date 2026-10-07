@@ -96,7 +96,7 @@
   border: none;
   background: none;
   padding: 6px;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   cursor: pointer;
 }
 
@@ -217,7 +217,7 @@
   border: none;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   cursor: pointer;
 }
 
@@ -311,7 +311,7 @@ button.calendar__day {
 
 .places-tab--active {
   border-bottom-color: var(--color-primary);
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .prep-tab--active {
@@ -384,7 +384,7 @@ button.calendar__day {
 .bookmark-filter__chip--active {
   background: var(--color-primary-soft);
   border-color: var(--color-primary);
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .bookmark-edit-cancel {
@@ -490,7 +490,7 @@ button.calendar__day {
 .date-divider {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   letter-spacing: 0.02em;
 }
 
@@ -519,11 +519,24 @@ button.calendar__day {
 
 .item-card__time {
   flex: none;
-  width: 76px;
-  font-size: 13px;
-  font-weight: 600;
+  width: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  padding-top: 1px;
+}
+
+.item-card__time-start {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.item-card__time-end {
+  font-size: 12px;
+  font-weight: 500;
   color: var(--color-text-muted);
-  padding-top: 2px;
 }
 
 .item-card__body {
@@ -591,14 +604,14 @@ button.calendar__day {
 }
 
 .route-stop:has(a.link-row):hover .link-row {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .route-stop__photo-icon {
   display: flex;
   align-items: center;
   margin-left: 4px;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .route-stop__photo-icon svg {
@@ -657,7 +670,7 @@ button.calendar__day {
 }
 
 .choice-row:hover .link-row {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .choice-row--selected {
@@ -764,7 +777,7 @@ button.calendar__day {
 }
 
 .icon-action--active {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .link-editor__row .icon-action svg {
@@ -868,6 +881,14 @@ button.calendar__day {
 
 .form-row--split .form-field {
   flex: 1;
+  min-width: 0;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  min-width: 0;
+  width: 100%;
 }
 
 .form-row--tag {
@@ -916,7 +937,7 @@ button.calendar__day {
   white-space: nowrap;
   font-size: 9px;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   background: none;
   border: 1px solid var(--color-primary);
   border-radius: 5px;
@@ -1019,7 +1040,7 @@ button.calendar__day {
   padding: 8px 12px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   cursor: pointer;
 }
 
@@ -1073,7 +1094,7 @@ button.calendar__day {
 }
 
 .trip-card:hover .trip-card__link {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .trip-card__link {
@@ -1161,3 +1182,53 @@ button.calendar__day {
   color: var(--color-text-muted);
 }
 
+
+.date-divider,
+.city-heading,
+.empty-state,
+.login-gate__title {
+  font-family: var(--font-display);
+}
+
+.item-card__time,
+.expense-table__amount,
+.budget-pair input,
+.budget-pair__value,
+.calendar__day,
+.bookmark-card__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea,
+.link-editor__row input,
+.trip-create__form input {
+  font-size: 16px;
+}
+
+.sync-btn,
+.icon-action,
+.modal__close {
+  position: relative;
+}
+
+.sync-btn::after,
+.icon-action::after,
+.modal__close::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+.btn,
+.add-btn,
+.bottom-nav__item {
+  transition: transform 0.12s ease;
+}
+
+.btn:active,
+.add-btn:active,
+.bottom-nav__item:active {
+  transform: scale(0.98);
+}

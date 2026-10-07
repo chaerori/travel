@@ -26,6 +26,19 @@ export default defineConfig({
             registerType: 'autoUpdate',
             injectRegister: false,
             includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+            workbox: {
+              runtimeCaching: [
+                {
+                  urlPattern: /^https:\/\/(cdn\.jsdelivr\.net|hangeul\.pstatic\.net)\//,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'web-fonts',
+                    expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 },
+                    cacheableResponse: { statuses: [0, 200] },
+                  },
+                },
+              ],
+            },
             manifest: {
               name: '여행 일정',
               short_name: '여행 일정',

@@ -15,8 +15,3 @@ export function addHours(time: string, hours: number): string {
   const nextM = total % 60;
   return `${String(nextH).padStart(2, '0')}:${String(nextM).padStart(2, '0')}`;
 }
-
-export function formatTimeRange(startTime: string, endTime: string): string {
-  if (!endTime || endTime === startTime) return startTime;
-  return `${startTime} - ${endTime}`;
-}
