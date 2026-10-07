@@ -137,7 +137,7 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
         <p className="attribution">
           Font: Pretendard (SIL Open Font License)
           <br />
-          Icons: Streamline (https://streamlinehq.com)
+          Icons: Iconoir (https://iconoir.com)
           <br />
           © 2026 Chaeyoon Lee. All rights reserved.
         </p>

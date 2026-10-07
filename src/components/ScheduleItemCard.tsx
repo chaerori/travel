@@ -40,7 +40,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
       <div className="item-card__time">
         <span className="item-card__time-start">{item.startTime}</span>
         {item.endTime && item.endTime !== item.startTime && (
-          <span className="item-card__time-end">~ {item.endTime}</span>
+          <span className="item-card__time-end">- {item.endTime}</span>
         )}
       </div>
 
