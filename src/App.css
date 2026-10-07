@@ -799,11 +799,6 @@ button.calendar__day {
   height: 18px;
 }
 
-.icon-action--danger:active,
-.icon-action--danger:focus-visible {
-  color: var(--color-danger);
-}
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
