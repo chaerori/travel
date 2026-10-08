@@ -9,12 +9,8 @@ lerna-debug.log*
 
 node_modules
 dist
-dist-ios
 dist-ssr
 *.local
-
-# Capacitor: 빌드 때마다 자동 복사되는 웹 번들
-ios/App/App/public
 
 # Editor directories and files
 .vscode/*

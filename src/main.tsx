@@ -2,14 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { isNativeApp } from './utils/nativePlatform'
 
-// iOS 앱은 오프라인에서도 같은 서체를 쓰도록 폰트를 번들에 포함한다(웹은 CDN 사용).
-if (__IOS_BUILD__) {
-  import('pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css')
-}
-
-if ('serviceWorker' in navigator && !isNativeApp()) {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register(`${import.meta.env.BASE_URL}sw.js`, { updateViaCache: 'none' })

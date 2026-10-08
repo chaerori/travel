@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, getAuth, indexedDBLocalPersistence, initializeAuth } from 'firebase/auth';
+import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { isNativeApp } from './utils/nativePlatform';
 
 export const OWNER_EMAIL = 'leechaeyun95@gmail.com';
 
@@ -24,6 +23,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-// 네이티브 앱의 capacitor:// 출처에서는 팝업/리다이렉트용 iframe 로딩이 막혀 인증 초기화가 멈추므로 resolver 없이 초기화한다.
-export const auth = isNativeApp() ? initializeAuth(app, { persistence: indexedDBLocalPersistence }) : getAuth(app);
+export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
