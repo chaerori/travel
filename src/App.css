@@ -1790,24 +1790,16 @@ button.calendar__day {
   color: var(--color-text-muted);
 }
 
-.day-map__stack {
-  position: absolute;
-  right: -8px;
-  top: -8px;
-  min-width: 12px;
-  height: 12px;
-  padding: 0 3px;
-  border: 1.5px solid #fff;
-  border-radius: 999px;
-  box-sizing: content-box;
-  background: var(--color-text);
-  color: #fff;
-  font-size: 9px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 12px;
-  text-align: center;
-  pointer-events: none;
+.day-map__pin--stack {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 5px rgba(108, 92, 231, 0.4);
+}
+
+.day-map__pin--choice.day-map__pin--stack {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 5px rgba(217, 72, 15, 0.4);
 }
 
 .day-map__popup .leaflet-popup-content-wrapper {

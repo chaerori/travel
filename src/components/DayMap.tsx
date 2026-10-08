@@ -124,15 +124,15 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     for (const g of groups) {
       const members = g.map((i) => pts[i]).sort((a, b) => a.number - b.number);
       members.forEach((p, k) => {
-        const stackBadge = k === 0 && members.length > 1 ? `<i class="day-map__stack">${members.length}</i>` : '';
+        const stacked = k === 0 && members.length > 1;
         const icon = L.divIcon({
           className: 'day-map__marker',
-          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>${stackBadge}`,
+          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}${stacked ? ' day-map__pin--stack' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>`,
           iconSize: [size, size],
           iconAnchor: [size / 2, size / 2],
         });
         const marker = L.marker([p.lat!, p.lng!], { icon, zIndexOffset: -p.number })
-          .bindTooltip(p.label, { direction: 'top', offset: [0, -size / 2] })
+          .bindTooltip(stacked ? `${p.label} 외 ${members.length - 1}곳` : p.label, { direction: 'top', offset: [0, -size / 2] })
           .addTo(layer);
         marker.on('click', () => {
           // 위치를 찍는 중에는 핀을 눌러도 링크를 열지 않는다.
