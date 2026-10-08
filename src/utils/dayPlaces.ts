@@ -9,8 +9,12 @@ export type DayPlace = {
   city: string;
   lat?: number;
   lng?: number;
-  /** 지도에서 순서 번호를 붙일지 여부. 선택하지 않은 선택지 후보는 번호 없이 표시한다. */
-  numbered: boolean;
+  /** 지도·목록에 표시하는 번호. 당일 선택지의 선택지들은 같은 번호를 쓴다. */
+  number: number;
+  /** 같은 번호의 선택지 중 이미 다른 선택지가 골라진 경우 true. 흐리게 표시한다. */
+  candidate: boolean;
+  /** 같은 번호 안에서 경로선이 지나는 장소(선택한 선택지, 없으면 첫 선택지). */
+  primary: boolean;
   /** 이름으로 좌표를 검색해도 되는 장소인지. 확정된 일정의 이름은 활동명일 수 있어 제외한다. */
   searchable: boolean;
   /** 장소가 속한 일정의 제목(이동 경로·선택지). */
@@ -23,9 +27,13 @@ export type Coords = { lat: number; lng: number };
 export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   const dayItems = items.filter((i) => i.date === date).sort((a, b) => a.startTime.localeCompare(b.startTime));
   const places: DayPlace[] = [];
+  let number = 0;
 
-  function push(item: ScheduleItem, link: LinkedText, numbered: boolean, searchable: boolean, context: string) {
-    if (!link.label.trim()) return;
+  function push(
+    item: ScheduleItem,
+    link: LinkedText,
+    extra: Pick<DayPlace, 'candidate' | 'primary' | 'searchable' | 'context'>,
+  ) {
     places.push({
       key: `${item.id}:${link.id}`,
       itemId: item.id,
@@ -35,22 +43,37 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       city: item.city,
       lat: link.lat,
       lng: link.lng,
-      numbered,
-      searchable,
-      context,
+      number,
+      ...extra,
     });
   }
 
   for (const item of dayItems) {
     const content = item.content;
     if (content.type === 'fixed') {
-      if (content.item.url || content.item.lat !== undefined) push(item, content.item, true, false, '');
+      if (content.item.label.trim() && (content.item.url || content.item.lat !== undefined)) {
+        number++;
+        push(item, content.item, { candidate: false, primary: true, searchable: false, context: '' });
+      }
     } else if (content.type === 'choices') {
-      const selected = content.options.find((o) => o.id === content.selectedId);
-      if (selected) push(item, selected, true, true, content.title);
-      else content.options.forEach((o) => push(item, o, false, true, content.title));
+      const options = content.options.filter((o) => o.label.trim());
+      if (options.length === 0) continue;
+      number++;
+      const selected = options.find((o) => o.id === content.selectedId);
+      options.forEach((o, i) =>
+        push(item, o, {
+          candidate: !!selected && o.id !== selected.id,
+          primary: selected ? o.id === selected.id : i === 0,
+          searchable: true,
+          context: content.title,
+        }),
+      );
     } else {
-      content.stops.forEach((s) => push(item, s, true, true, content.title));
+      for (const stop of content.stops) {
+        if (!stop.label.trim()) continue;
+        number++;
+        push(item, stop, { candidate: false, primary: true, searchable: true, context: content.title });
+      }
     }
   }
   return places;

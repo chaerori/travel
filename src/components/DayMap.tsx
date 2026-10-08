@@ -19,6 +19,7 @@ function sleep(ms: number) {
 export function DayMap({ items, date, onPlaceCoords }: Props) {
   const [searching, setSearching] = useState<string | null>(null);
   const [pickingKey, setPickingKey] = useState<string | null>(null);
+  const [tried, setTried] = useState<Set<string>>(new Set());
   const [managing, setManaging] = useState(false);
 
   const places = useMemo(() => getDayPlaces(items, date), [items, date]);
@@ -71,26 +72,31 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     const layer = layerRef.current;
     if (!map || !layer) return;
     layer.clearLayers();
-    let n = 0;
     const route: L.LatLngTuple[] = [];
+    const routeNumbers = new Set<number>();
     for (const p of located) {
       const point: L.LatLngTuple = [p.lat!, p.lng!];
-      const label = p.numbered ? String(++n) : '?';
       const icon = L.divIcon({
         className: 'day-map__marker',
-        html: `<span class="day-map__pin${p.numbered ? '' : ' day-map__pin--candidate'}">${label}</span>`,
+        html: `<span class="day-map__pin${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14],
       });
       L.marker(point, { icon }).bindTooltip(p.label, { direction: 'top', offset: [0, -12] }).addTo(layer);
-      if (p.numbered) route.push(point);
+    }
+    // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
+    for (const p of located) {
+      if (routeNumbers.has(p.number)) continue;
+      const pick = located.find((q) => q.number === p.number && q.primary) ?? p;
+      routeNumbers.add(p.number);
+      route.push([pick.lat!, pick.lng!]);
     }
     if (route.length > 1) {
       L.polyline(route, { color: '#6c5ce7', weight: 3, opacity: 0.55, dashArray: '6 8' }).addTo(layer);
     }
     if (located.length === 1) map.setView([located[0].lat!, located[0].lng!], 15, { animate: false });
     else if (located.length > 1) map.fitBounds(L.latLngBounds(located.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate: false });
-  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.numbered}`).join('|')]);
+  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.candidate}:${p.primary}`).join('|')]);
 
   // 좌표가 없는 장소는 링크에서 읽거나 이름으로 검색한다(검색은 초당 1건 이하로 제한).
   useEffect(() => {
@@ -110,6 +116,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
         const hit = await geocodePlace(p.city ? `${p.label}, ${p.city}` : p.label);
         if (cancelled) return;
         if (hit) onCoordsRef.current(p.itemId, p.placeId, hit);
+        setTried((prev) => new Set(prev).add(p.key));
         await sleep(1100);
       }
       if (!cancelled) setSearching(null);
@@ -120,9 +127,15 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     };
   }, [date]);
 
+  function startPicking(key: string) {
+    setPickingKey(key);
+    wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   const picking = places.find((p) => p.key === pickingKey);
   const unlocated = places.length - located.length;
-  let number = 0;
+  // 링크에서 읽지 못했고 이름 검색도 끝났거나 검색 대상이 아닌 장소는 직접 찍어야 한다.
+  const needsPin = places.filter((p) => p.lat === undefined && (!p.searchable || tried.has(p.key)));
 
   return (
     <section className="day-map">
@@ -138,6 +151,20 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
         )}
       </div>
 
+      {needsPin.length > 0 && (
+        <div className="day-map__needs-pin">
+          <p>위치를 찾지 못한 장소가 있어요. 눌러서 지도에 직접 찍어 주세요.</p>
+          <div className="day-map__needs-pin-chips">
+            {needsPin.map((p) => (
+              <button key={p.key} type="button" onClick={() => startPicking(p.key)}>
+                <span className="day-map__needs-pin-number">{p.number}</span>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <button type="button" className="day-map__manage" aria-expanded={managing} onClick={() => setManaging((v) => !v)}>
         <span>
           장소 {places.length}곳{unlocated > 0 && searching === null ? ` · 위치를 찾지 못한 곳 ${unlocated}곳` : ''}
@@ -151,10 +178,9 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
       {managing && (
         <ol className="day-map__list">
           {places.map((p) => {
-            const badge = p.numbered ? String(++number) : '?';
             return (
               <li key={p.key} className="day-map__row">
-                <span className={p.numbered ? 'day-map__badge' : 'day-map__badge day-map__badge--candidate'}>{badge}</span>
+                <span className={p.candidate ? 'day-map__badge day-map__badge--candidate' : 'day-map__badge'}>{p.number}</span>
                 <span className="day-map__row-text">
                   <span className="day-map__row-label">{p.label}</span>
                   {p.context && <span className="day-map__row-context">{p.context}</span>}
@@ -165,10 +191,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
                   <button
                     type="button"
                     className="day-map__locate"
-                    onClick={() => {
-                      setPickingKey(p.key);
-                      wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }}
+                    onClick={() => startPicking(p.key)}
                   >
                     {p.lat !== undefined ? '위치 수정' : '위치 지정'}
                   </button>
