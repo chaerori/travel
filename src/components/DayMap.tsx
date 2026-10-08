@@ -1,7 +1,6 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronIcon } from './icons/ChevronIcon';
 import type { ScheduleItem } from '../types';
 import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
 
@@ -9,6 +8,8 @@ type Props = {
   items: ScheduleItem[];
   date: string;
   onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
+  /** 일정 카드의 번호를 눌렀을 때 해당 장소로 이동하라는 요청. n이 바뀔 때마다 새 요청이다. */
+  focusRequest: { key: string; n: number } | null;
 };
 
 /** 장소에 넣어 둔 구글 지도 링크. 링크가 없으면 지도에 표시된 좌표를 구글 지도에서 연다. */
@@ -49,10 +50,9 @@ function badgeClass(p: { choice: boolean; candidate: boolean }): string {
     .join(' ');
 }
 
-export function DayMap({ items, date, onPlaceCoords }: Props) {
+export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
   const [pickingKey, setPickingKey] = useState<string | null>(null);
-  const [managing, setManaging] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [focusedKey, setFocusedKey] = useState<string | null>(null);
 
   const places = useMemo(() => getDayPlaces(items, date), [items, date]);
   const located = places.filter((p) => p.lat !== undefined && p.lng !== undefined);
@@ -182,24 +182,31 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     const map = mapRef.current;
     const pts = locatedRef.current;
     if (!map || pts.length === 0) return;
-    setFocused(false);
+    setFocusedKey(null);
     markersRef.current.forEach((m) => m.closeTooltip());
     if (pts.length === 1) map.setView([pts[0].lat!, pts[0].lng!], 15, { animate });
     else map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate });
   }
 
-  // 목록에서 고른 장소로 지도를 확대한다. 위치가 없는 장소는 직접 찍도록 한다.
+  // 일정 카드에서 고른 장소로 지도를 확대한다. 위치가 없는 장소는 직접 찍도록 한다.
   function focusPlace(p: DayPlace) {
     const map = mapRef.current;
-    if (!map || p.lat === undefined || p.lng === undefined) {
+    const at = p.lat !== undefined && p.lng !== undefined ? { lat: p.lat, lng: p.lng } : p.url ? parseCoords(p.url) : null;
+    if (!map || !at) {
       startPicking(p.key);
       return;
     }
     wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    map.setView([p.lat, p.lng], 17);
+    map.setView([at.lat, at.lng], 17);
     markersRef.current.get(p.key)?.openTooltip();
-    setFocused(true);
+    setFocusedKey(p.key);
   }
+
+  useEffect(() => {
+    if (!focusRequest) return;
+    const place = placesRef.current.find((p) => p.key === focusRequest.key);
+    if (place) focusPlace(place);
+  }, [focusRequest]);
 
   function startPicking(key: string) {
     setPickingKey(key);
@@ -214,10 +221,15 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     <section className="day-map">
       <div className="day-map__canvas-wrap" ref={wrapRef}>
         <div className="day-map__canvas" ref={mapEl} />
-        {focused && !picking && (
-          <button type="button" className="day-map__fit" onClick={() => fitToLocated(true)}>
-            전체 보기
-          </button>
+        {focusedKey && !picking && (
+          <>
+            <button type="button" className="day-map__edit" onClick={() => startPicking(focusedKey)}>
+              위치 수정
+            </button>
+            <button type="button" className="day-map__fit" onClick={() => fitToLocated(true)}>
+              전체 보기
+            </button>
+          </>
         )}
         {picking && (
           <div className="day-map__hint">
@@ -256,36 +268,6 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
             선택지
           </span>
         </div>
-      )}
-
-      <button type="button" className="day-map__manage" aria-expanded={managing} onClick={() => setManaging((v) => !v)}>
-        <span>
-          장소 {places.length}곳{needsPin.length > 0 ? ` · 위치를 찍어야 하는 곳 ${needsPin.length}곳` : ''}
-        </span>
-        <span className={managing ? 'day-map__chevron day-map__chevron--open' : 'day-map__chevron'}>
-          <ChevronIcon />
-        </span>
-      </button>
-
-      {managing && (
-        <ol className="day-map__list">
-          {places.map((p) => {
-            return (
-              <li key={p.key} className="day-map__row">
-                <button type="button" className="day-map__row-main" onClick={() => focusPlace(p)}>
-                  <span className={badgeClass(p)}>{p.number}</span>
-                  <span className="day-map__row-text">
-                    <span className="day-map__row-label">{p.label}</span>
-                    {p.context && <span className="day-map__row-context">{p.context}</span>}
-                  </span>
-                </button>
-                <button type="button" className="day-map__locate" onClick={() => startPicking(p.key)}>
-                  {p.lat !== undefined ? '위치 수정' : '위치 지정'}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
       )}
     </section>
   );

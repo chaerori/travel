@@ -12,7 +12,7 @@ import { EWalletIcon } from './components/icons/EWalletIcon';
 import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
-import { getDayPlaces, setPlaceCoords, type Coords } from './utils/dayPlaces';
+import { getDayPlaces, getPlaceBadges, setPlaceCoords, type Coords } from './utils/dayPlaces';
 import { addHours, formatDateWithWeekday, todayString } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
@@ -54,6 +54,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [focusRequest, setFocusRequest] = useState<{ key: string; n: number } | null>(null);
 
   // 헤더가 고정되어 내용과 겹치기 시작하면 경계를 표시한다.
   useEffect(() => {
@@ -75,6 +76,10 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         ? today
         : (scheduledDates[0] ?? null);
   const dayRows = useMemo(() => rows.filter((r) => r.item.date === activeDate), [rows, activeDate]);
+  const placeBadges = useMemo(
+    () => (activeDate ? getPlaceBadges(trip.items, activeDate) : {}),
+    [trip.items, activeDate],
+  );
   const hasPlaces = useMemo(
     () => activeDate !== null && getDayPlaces(trip.items, activeDate).length > 0,
     [trip.items, activeDate],
@@ -250,7 +255,12 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
         {activeDate && hasPlaces && (
           <Suspense fallback={<div className="day-map__placeholder" />}>
-            <DayMap items={trip.items} date={activeDate} onPlaceCoords={handlePlaceCoords} />
+            <DayMap
+              items={trip.items}
+              date={activeDate}
+              onPlaceCoords={handlePlaceCoords}
+              focusRequest={focusRequest}
+            />
           </Suspense>
         )}
 
@@ -262,6 +272,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
               onUpdate={handleUpdate}
               onEdit={() => openEditForm(item)}
               onDelete={() => handleDelete(item.id)}
+              badges={placeBadges}
+              onPlaceBadge={(key) => setFocusRequest((prev) => ({ key, n: (prev?.n ?? 0) + 1 }))}
             />
           </div>
         ))}

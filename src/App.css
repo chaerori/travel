@@ -1528,22 +1528,6 @@ button.calendar__day {
   color: var(--color-text-secondary);
 }
 
-.day-map__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.day-map__row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
 .day-map__badge {
   flex: none;
   width: 22px;
@@ -1562,64 +1546,6 @@ button.calendar__day {
   border: 1.5px solid var(--color-text-muted);
   color: var(--color-text-secondary);
   line-height: 19px;
-}
-
-.day-map__row-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.day-map__row-label {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.day-map__row-context {
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-
-.day-map__locate {
-  flex: none;
-  border: none;
-  background: none;
-  padding: 4px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-primary-strong);
-}
-
-.day-map__locate {
-  cursor: pointer;
-}
-
-
-.day-map__manage {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 4px 2px;
-  border: none;
-  background: none;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  text-align: left;
-  cursor: pointer;
-}
-
-.day-map__chevron {
-  display: flex;
-  transition: transform 0.15s;
-}
-
-.day-map__chevron--open {
-  transform: rotate(180deg);
 }
 
 .calendar__day--selected {
@@ -1753,21 +1679,6 @@ button.calendar__day {
   background: var(--color-choice);
 }
 
-.day-map__row-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
 .day-map__fit {
   position: absolute;
   left: 8px;
@@ -1834,4 +1745,55 @@ button.calendar__day {
 
 .day-map__chooser-item:hover {
   background: var(--color-primary-soft);
+}
+
+.day-map__edit {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  z-index: 500;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(20, 16, 32, 0.15);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+  cursor: pointer;
+}
+
+/* 일정 카드 안에서 지도 핀과 같은 번호를 보여 주는 배지 */
+.place-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.place-badge--choice {
+  background: var(--color-choice);
+}
+
+.place-badge--candidate {
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1.5px var(--color-choice);
+  color: var(--color-choice);
+}
+
+.place-badge--unplaced {
+  background: var(--color-surface);
+  box-shadow: none;
+  border: 1.5px dashed var(--color-warning-strong);
+  color: var(--color-warning-strong);
 }

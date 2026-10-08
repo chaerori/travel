@@ -113,3 +113,25 @@ export function setPlaceCoords(
     return { ...item, content: { ...c, stops: c.stops.map(patch) } };
   });
 }
+
+export type PlaceBadgeInfo = {
+  number: number;
+  choice: boolean;
+  candidate: boolean;
+  /** 링크에서 위치를 읽지 못했고 아직 찍지도 않아 지도에 표시되지 않는 장소. */
+  unplaced: boolean;
+};
+
+/** 일정 카드에 보여 줄 지도 번호를 `일정id:장소id`를 키로 모은다. */
+export function getPlaceBadges(items: ScheduleItem[], date: string): Record<string, PlaceBadgeInfo> {
+  const badges: Record<string, PlaceBadgeInfo> = {};
+  for (const p of getDayPlaces(items, date)) {
+    badges[p.key] = {
+      number: p.number,
+      choice: p.choice,
+      candidate: p.candidate,
+      unplaced: p.lat === undefined && !(p.url && parseCoords(p.url)),
+    };
+  }
+  return badges;
+}

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import type { ScheduleItem } from '../types';
+import type { PlaceBadgeInfo } from '../utils/dayPlaces';
 import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { LinkIcon } from './icons/LinkIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
+import { PlaceBadge } from './PlaceBadge';
 import { SpotIcon, getSpot } from './SpotPicker';
 
 function isUrl(value: string): boolean {
@@ -16,10 +18,19 @@ type Props = {
   onUpdate: (item: ScheduleItem) => void;
   onEdit: () => void;
   onDelete: () => void;
+  /** 지도 번호(`일정id:장소id` 키). 없으면 번호를 표시하지 않는다. */
+  badges?: Record<string, PlaceBadgeInfo>;
+  onPlaceBadge?: (key: string) => void;
 };
 
-export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
+export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onPlaceBadge }: Props) {
   const [prepOpen, setPrepOpen] = useState(false);
+
+  function badgeFor(placeId: string) {
+    const key = `${item.id}:${placeId}`;
+    const info = badges?.[key];
+    return info && onPlaceBadge ? <PlaceBadge info={info} onClick={() => onPlaceBadge(key)} /> : null;
+  }
 
   function toggleChoice(optionId: string) {
     if (item.content.type !== 'choices') return;
@@ -47,6 +58,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
         {item.content.type === 'fixed' && (
           <div className="item-card__content">
             <div className="item-card__fixed-row">
+              {badgeFor(item.content.item.id)}
               <span className="link-row link-row--plain">{item.content.item.label}</span>
               {item.content.info &&
                 (isUrl(item.content.info) ? (
@@ -88,6 +100,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                   onClick={() => toggleChoice(opt.id)}
                 >
                   <span className="choice-row__dot" />
+                  {badgeFor(opt.id)}
                   <LinkRow item={opt} />
                 </button>
               ))}
@@ -110,6 +123,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
                   {stops.map((stop, i) => (
                     <span key={stop.id} className="route-step">
                       <span className="route-stop">
+                        {badgeFor(stop.id)}
                         <LinkRow item={stop} />
                         {getSpot(stop) && (
                           <span className="route-stop__photo-icon">
