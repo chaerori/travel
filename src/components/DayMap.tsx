@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Bookmarks, ScheduleItem } from '../types';
 import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
 
+/** 전체 보기에서 가고 싶은 장소를 함께 보여 줄, 그날 장소로부터의 최대 거리(미터). */
+const STAR_FIT_RADIUS_M = 5000;
+
 const BOOKMARK_LABELS = { food: '식당', cafe: '카페', attraction: '관광지' } as const;
 
 /** 가고 싶은 장소 중 링크에서 위치를 읽을 수 있는 것. 지도에 별로 표시한다. */
@@ -233,8 +236,15 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
     if (!map || pts.length === 0) return;
     setFocusedKey(null);
     markersRef.current.forEach((m) => m.closeTooltip());
-    if (pts.length === 1) map.setView([pts[0].lat!, pts[0].lng!], 15, { animate });
-    else map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate });
+    // 그날 장소 가까이(걸어서나 가볍게 이동할 거리)에 있는 가고 싶은 장소도 함께 보이게 맞춘다.
+    // 멀리 떨어진 도시의 별까지 넣으면 그날 일정이 너무 작아지므로 제외한다.
+    const here = pts.map((p) => L.latLng(p.lat!, p.lng!));
+    const nearStars = starsRef.current
+      .map((st) => L.latLng(st.lat, st.lng))
+      .filter((at) => here.some((h) => h.distanceTo(at) <= STAR_FIT_RADIUS_M));
+    const all = [...here, ...nearStars];
+    if (all.length === 1) map.setView(all[0], 15, { animate });
+    else map.fitBounds(L.latLngBounds(all), { padding: [36, 36], maxZoom: 16, animate });
   }
 
   // 일정 카드에서 고른 장소로 지도를 확대한다. 위치가 없는 장소는 직접 찍도록 한다.
