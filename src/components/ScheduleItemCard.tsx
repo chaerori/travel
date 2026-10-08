@@ -32,12 +32,6 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
     return info && onPlaceBadge ? <PlaceBadge info={info} onClick={() => onPlaceBadge(key)} /> : null;
   }
 
-  function toggleChoice(optionId: string) {
-    if (item.content.type !== 'choices') return;
-    const selectedId = item.content.selectedId === optionId ? null : optionId;
-    onUpdate({ ...item, content: { ...item.content, selectedId } });
-  }
-
   function togglePrep(prepId: string) {
     onUpdate({
       ...item,
@@ -91,17 +85,10 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
             )}
             <div className="item-card__content--choices">
               {item.content.options.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  className={
-                    'choice-row' + (item.content.type === 'choices' && item.content.selectedId === opt.id ? ' choice-row--selected' : '')
-                  }
-                  onClick={() => toggleChoice(opt.id)}
-                >
+                <div key={opt.id} className="choice-row">
                   {badgeFor(opt.id)}
                   <LinkRow item={opt} />
-                </button>
+                </div>
               ))}
             </div>
           </div>

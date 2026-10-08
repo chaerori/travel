@@ -139,9 +139,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
     if (contentType === 'fixed') {
       content = { type: 'fixed', item: cleanLinks[0], info: info.trim() || undefined };
     } else if (contentType === 'choices') {
-      const prevSelected = initial?.content.type === 'choices' ? initial.content.selectedId : null;
-      const selectedId = cleanLinks.some((l) => l.id === prevSelected) ? prevSelected : null;
-      content = { type: 'choices', title: contentTitle.trim(), options: cleanLinks, selectedId };
+      content = { type: 'choices', title: contentTitle.trim(), options: cleanLinks };
     } else {
       content = { type: 'route', title: contentTitle.trim(), stops: cleanLinks };
     }

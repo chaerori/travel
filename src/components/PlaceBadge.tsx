@@ -10,7 +10,6 @@ export function PlaceBadge({ info, onClick }: Props) {
   const className = [
     'place-badge',
     info.choice && 'place-badge--choice',
-    info.candidate && 'place-badge--candidate',
     info.unplaced && 'place-badge--unplaced',
   ]
     .filter(Boolean)

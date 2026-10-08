@@ -44,8 +44,8 @@ function openChooser(map: L.Map, at: L.LatLngTuple, members: DayPlace[], size: n
     .openOn(map);
 }
 
-function badgeClass(p: { choice: boolean; candidate: boolean }): string {
-  return ['day-map__badge', p.choice && 'day-map__badge--choice', p.candidate && 'day-map__badge--candidate']
+function badgeClass(p: { choice: boolean }): string {
+  return ['day-map__badge', p.choice && 'day-map__badge--choice']
     .filter(Boolean)
     .join(' ');
 }
@@ -127,7 +127,7 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
         const stacked = k === 0 && members.length > 1;
         const icon = L.divIcon({
           className: 'day-map__marker',
-          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}${stacked ? ' day-map__pin--stack' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>`,
+          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${stacked ? ' day-map__pin--stack' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>`,
           iconSize: [size, size],
           iconAnchor: [size / 2, size / 2],
         });
@@ -162,7 +162,7 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
   useEffect(() => {
     drawMarkers();
     fitToLocated(false);
-  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.candidate}:${p.primary}`).join('|')]);
+  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.primary}`).join('|')]);
 
   // 링크에 좌표가 있으면 읽어서 저장한다. 짧은 링크처럼 읽을 수 없는 장소는 직접 찍는다.
   useEffect(() => {
@@ -214,8 +214,6 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
   }
 
   const picking = places.find((p) => p.key === pickingKey);
-  // 링크에서 위치를 읽을 수 없고 아직 찍지 않은 장소는 직접 찍어야 한다.
-  const needsPin = places.filter((p) => p.lat === undefined && !(p.url && parseCoords(p.url)));
 
   return (
     <section className="day-map">
@@ -240,22 +238,6 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
           </div>
         )}
       </div>
-
-      {needsPin.length > 0 && (
-        <div className="day-map__needs-pin">
-          <p>링크에서 위치를 읽지 못한 장소예요. 눌러서 지도에 직접 찍어 주세요.</p>
-          <div className="day-map__needs-pin-chips">
-            {needsPin.map((p) => (
-              <button key={p.key} type="button" onClick={() => startPicking(p.key)}>
-                <span className={p.choice ? 'day-map__needs-pin-number day-map__needs-pin-number--choice' : 'day-map__needs-pin-number'}>
-                  {p.number}
-                </span>
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {places.some((p) => p.choice) && (
         <div className="day-map__legend">

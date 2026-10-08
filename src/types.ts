@@ -26,7 +26,7 @@ export type Luggage = {
 
 export type ScheduleContent =
   | { type: 'fixed'; item: LinkedText; info?: string }
-  | { type: 'choices'; title: string; options: LinkedText[]; selectedId: string | null }
+  | { type: 'choices'; title: string; options: LinkedText[] }
   | { type: 'route'; title: string; stops: LinkedText[] };
 
 export type PaymentMethod = 'card' | 'cash';

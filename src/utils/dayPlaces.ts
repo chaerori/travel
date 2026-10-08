@@ -13,9 +13,7 @@ export type DayPlace = {
   number: number;
   /** 당일 선택지의 선택지인지. 지도에서 다른 색으로 구분한다. */
   choice: boolean;
-  /** 같은 번호의 선택지 중 이미 다른 선택지가 골라진 경우 true. 흐리게 표시한다. */
-  candidate: boolean;
-  /** 같은 번호 안에서 경로선이 지나는 장소(선택한 선택지, 없으면 첫 선택지). */
+  /** 같은 번호 안에서 경로선이 지나는 장소(선택지는 첫 번째). */
   primary: boolean;
   /** 장소가 속한 일정의 제목(이동 경로·선택지). */
   context: string;
@@ -32,7 +30,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   function push(
     item: ScheduleItem,
     link: LinkedText,
-    extra: Pick<DayPlace, 'choice' | 'candidate' | 'primary' | 'context'>,
+    extra: Pick<DayPlace, 'choice' | 'primary' | 'context'>,
   ) {
     places.push({
       key: `${item.id}:${link.id}`,
@@ -53,18 +51,16 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
     if (content.type === 'fixed') {
       if (content.item.label.trim() && content.item.url?.trim()) {
         number++;
-        push(item, content.item, { choice: false, candidate: false, primary: true, context: '' });
+        push(item, content.item, { choice: false, primary: true, context: '' });
       }
     } else if (content.type === 'choices') {
       const options = content.options.filter((o) => o.label.trim() && o.url?.trim());
       if (options.length === 0) continue;
       number++;
-      const selected = options.find((o) => o.id === content.selectedId);
       options.forEach((o, i) =>
         push(item, o, {
           choice: true,
-          candidate: !!selected && o.id !== selected.id,
-          primary: selected ? o.id === selected.id : i === 0,
+          primary: i === 0,
           context: content.title,
         }),
       );
@@ -72,7 +68,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       for (const stop of content.stops) {
         if (!stop.label.trim() || !stop.url?.trim()) continue;
         number++;
-        push(item, stop, { choice: false, candidate: false, primary: true, context: content.title });
+        push(item, stop, { choice: false, primary: true, context: content.title });
       }
     }
   }
@@ -117,7 +113,6 @@ export function setPlaceCoords(
 export type PlaceBadgeInfo = {
   number: number;
   choice: boolean;
-  candidate: boolean;
   /** 링크에서 위치를 읽지 못했고 아직 찍지도 않아 지도에 표시되지 않는 장소. */
   unplaced: boolean;
 };
@@ -129,7 +124,6 @@ export function getPlaceBadges(items: ScheduleItem[], date: string): Record<stri
     badges[p.key] = {
       number: p.number,
       choice: p.choice,
-      candidate: p.candidate,
       unplaced: p.lat === undefined && !(p.url && parseCoords(p.url)),
     };
   }

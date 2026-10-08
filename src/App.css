@@ -697,30 +697,12 @@ button.calendar__day {
   border: none;
   border-radius: 10px;
   padding: 6px 10px;
-  cursor: pointer;
-}
-
-.choice-row:hover {
-  background: var(--color-primary-soft);
-}
-
-.choice-row:hover .link-row {
-  color: var(--color-primary-strong);
-}
-
-.choice-row--selected {
-  background: var(--color-primary-soft);
-  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .choice-row .link-row {
   font-size: 13px;
   font-weight: 400;
   color: var(--color-text-muted);
-}
-
-.choice-row--selected .link-row {
-  color: var(--color-text);
 }
 
 .item-card__memo {
@@ -1500,12 +1482,6 @@ button.calendar__day {
   box-shadow: 0 2px 6px rgba(20, 16, 32, 0.3);
 }
 
-.day-map__pin--candidate {
-  background: var(--color-surface);
-  border-color: var(--color-text-muted);
-  color: var(--color-text-secondary);
-}
-
 .day-map__badge {
   flex: none;
   width: 22px;
@@ -1517,13 +1493,6 @@ button.calendar__day {
   font-weight: 700;
   line-height: 22px;
   text-align: center;
-}
-
-.day-map__badge--candidate {
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-text-muted);
-  color: var(--color-text-secondary);
-  line-height: 19px;
 }
 
 .calendar__day--selected {
@@ -1543,51 +1512,6 @@ button.calendar__day {
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: var(--color-primary);
-}
-
-.day-map__needs-pin {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--color-warning-soft);
-}
-
-.day-map__needs-pin p {
-  margin: 0 0 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-warning-strong);
-}
-
-.day-map__needs-pin-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.day-map__needs-pin-chips button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px 5px 6px;
-  border: none;
-  border-radius: 999px;
-  background: var(--color-surface);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.day-map__needs-pin-number {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 11px;
-  line-height: 18px;
-  text-align: center;
 }
 
 .form-hint {
@@ -1610,24 +1534,7 @@ button.calendar__day {
   background: var(--color-choice);
 }
 
-.day-map__pin--choice.day-map__pin--candidate {
-  background: var(--color-surface);
-  border-color: var(--color-choice);
-  color: var(--color-choice);
-}
-
 .day-map__badge--choice {
-  background: var(--color-choice);
-}
-
-.day-map__badge--choice.day-map__badge--candidate {
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-choice);
-  color: var(--color-choice);
-  line-height: 19px;
-}
-
-.day-map__needs-pin-number--choice {
   background: var(--color-choice);
 }
 
@@ -1761,12 +1668,6 @@ button.calendar__day {
 
 .place-badge--choice {
   background: var(--color-choice);
-}
-
-.place-badge--candidate {
-  background: var(--color-surface);
-  box-shadow: inset 0 0 0 1.5px var(--color-choice);
-  color: var(--color-choice);
 }
 
 .place-badge--unplaced {
