@@ -17,6 +17,32 @@ function mapsLinkFor(p: DayPlace): string {
   return `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
 }
 
+/** 겹친 핀을 눌렀을 때 어느 장소의 구글 지도 링크를 열지 고르는 작은 목록. */
+function openChooser(map: L.Map, at: L.LatLngTuple, members: DayPlace[], size: number) {
+  const box = document.createElement('div');
+  box.className = 'day-map__chooser';
+  for (const m of members) {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'day-map__chooser-item';
+    const badge = document.createElement('span');
+    badge.className = badgeClass(m);
+    badge.textContent = String(m.number);
+    const name = document.createElement('span');
+    name.textContent = m.label;
+    item.append(badge, name);
+    item.addEventListener('click', () => {
+      map.closePopup();
+      window.open(mapsLinkFor(m), '_blank', 'noreferrer');
+    });
+    box.append(item);
+  }
+  L.popup({ closeButton: false, className: 'day-map__popup', offset: [0, -size / 2], minWidth: 150 })
+    .setLatLng(at)
+    .setContent(box)
+    .openOn(map);
+}
+
 function badgeClass(p: { choice: boolean; candidate: boolean }): string {
   return ['day-map__badge', p.choice && 'day-map__badge--choice', p.candidate && 'day-map__badge--candidate']
     .filter(Boolean)
@@ -86,34 +112,33 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     const zoom = map.getZoom();
     const px = pts.map((p) => map.project([p.lat!, p.lng!], zoom));
 
-    // 화면에서 서로 겹치는 핀끼리 묶어, 묶음 안에서는 핀을 둥글게 펼쳐 놓아 하나씩 누를 수 있게 한다.
+    // 핀은 항상 실제 좌표에 그린다. 축소해서 서로 거의 가려지는 핀(중심이 20px 안)은 한 묶음으로 보고,
+    // 묶음의 핀을 누르면 목록에서 고르게 한다. 확대하면 핀이 자연스럽게 떨어져 묶음이 풀린다.
+    const size = zoom >= 15 ? 28 : zoom >= 13 ? 24 : 20;
     const groups: number[][] = [];
     pts.forEach((_, i) => {
-      const g = groups.find((members) => members.some((j) => px[i].distanceTo(px[j]) < 30));
+      const g = groups.find((members) => members.some((j) => px[i].distanceTo(px[j]) < 20));
       if (g) g.push(i);
       else groups.push([i]);
     });
     for (const g of groups) {
-      const n = g.length;
-      const radius = n === 2 ? 18 : Math.max(20, n * 6.5);
-      g.forEach((i, k) => {
-        const p = pts[i];
-        const angle = n === 2 ? Math.PI * k : -Math.PI / 2 + (2 * Math.PI * k) / n;
-        const dx = n === 1 ? 0 : Math.round(Math.cos(angle) * radius);
-        const dy = n === 1 ? 0 : Math.round(Math.sin(angle) * radius);
+      const members = g.map((i) => pts[i]).sort((a, b) => a.number - b.number);
+      members.forEach((p, k) => {
+        const stackBadge = k === 0 && members.length > 1 ? `<i class="day-map__stack">${members.length}</i>` : '';
         const icon = L.divIcon({
           className: 'day-map__marker',
-          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
-          iconSize: [28, 28],
-          iconAnchor: [14 - dx, 14 - dy],
+          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>${stackBadge}`,
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
         });
-        const marker = L.marker([p.lat!, p.lng!], { icon })
-          .bindTooltip(p.label, { direction: 'top', offset: [dx, dy - 12] })
+        const marker = L.marker([p.lat!, p.lng!], { icon, zIndexOffset: -p.number })
+          .bindTooltip(p.label, { direction: 'top', offset: [0, -size / 2] })
           .addTo(layer);
         marker.on('click', () => {
           // 위치를 찍는 중에는 핀을 눌러도 링크를 열지 않는다.
           if (pickingRef.current) return;
-          window.open(mapsLinkFor(p), '_blank', 'noreferrer');
+          if (members.length > 1) openChooser(map, [p.lat!, p.lng!], members, size);
+          else window.open(mapsLinkFor(p), '_blank', 'noreferrer');
         });
         markersRef.current.set(p.key, marker);
       });
