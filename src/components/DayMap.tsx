@@ -154,7 +154,9 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
       route.push([pick.lat!, pick.lng!]);
     }
     if (route.length > 1) {
-      L.polyline(route, { color: '#6c5ce7', weight: 3, opacity: 0.55, dashArray: '6 8' }).addTo(layer);
+      // 지도 타일의 바다 위 항로(보라색 점선)와 헷갈리지 않도록 흰 테두리를 두른 실선으로 그린다.
+      L.polyline(route, { color: '#fff', weight: 7, opacity: 0.9, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(layer);
+      L.polyline(route, { color: '#4338ca', weight: 3.5, opacity: 0.95, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(layer);
     }
   }
   drawRef.current = drawMarkers;
