@@ -60,9 +60,13 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
         if (l.id !== id) return l;
         const next = { ...l, ...patch };
         // 링크가 바뀌거나 지워지면 이전 링크로 정해진 지도 좌표는 더 이상 맞지 않는다.
-        if ('url' in patch && (patch.url ?? '') !== (l.url ?? '')) {
+        // 이름이 바뀌면 이름 검색으로 찾은 좌표만 다시 찾도록 지운다.
+        const urlChanged = 'url' in patch && (patch.url ?? '') !== (l.url ?? '');
+        const labelChanged = 'label' in patch && patch.label !== l.label && l.geo === 'search';
+        if (urlChanged || labelChanged) {
           next.lat = undefined;
           next.lng = undefined;
+          next.geo = undefined;
         }
         return next;
       }),
@@ -309,6 +313,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                   </div>
                 ))}
                 {links.some((l) => isShortMapLink(l.url)) && <p className="form-hint">{SHORT_LINK_HINT}</p>}
+                <p className="form-note">구글 지도 링크를 넣은 장소만 지도에 표시돼요.</p>
                 <button type="button" className="add-btn" onClick={addLink}>
                   + 항목 추가
                 </button>

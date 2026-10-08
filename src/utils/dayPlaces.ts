@@ -1,4 +1,4 @@
-import type { LinkedText, ScheduleItem } from '../types';
+import type { GeoSource, LinkedText, ScheduleItem } from '../types';
 
 export type DayPlace = {
   key: string;
@@ -25,7 +25,7 @@ export type DayPlace = {
 
 export type Coords = { lat: number; lng: number };
 
-/** 해당 날짜 일정의 장소를 시간 순으로 모은다. */
+/** 해당 날짜 일정의 장소를 시간 순으로 모은다. 구글 지도 링크를 넣은 장소만 대상이다. */
 export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   const dayItems = items.filter((i) => i.date === date).sort((a, b) => a.startTime.localeCompare(b.startTime));
   const places: DayPlace[] = [];
@@ -53,12 +53,12 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   for (const item of dayItems) {
     const content = item.content;
     if (content.type === 'fixed') {
-      if (content.item.label.trim() && content.item.url) {
+      if (content.item.label.trim() && content.item.url?.trim()) {
         number++;
         push(item, content.item, { choice: false, candidate: false, primary: true, searchable: false, context: '' });
       }
     } else if (content.type === 'choices') {
-      const options = content.options.filter((o) => o.label.trim());
+      const options = content.options.filter((o) => o.label.trim() && o.url?.trim());
       if (options.length === 0) continue;
       number++;
       const selected = options.find((o) => o.id === content.selectedId);
@@ -73,7 +73,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       );
     } else {
       for (const stop of content.stops) {
-        if (!stop.label.trim()) continue;
+        if (!stop.label.trim() || !stop.url?.trim()) continue;
         number++;
         push(item, stop, { choice: false, candidate: false, primary: true, searchable: true, context: content.title });
       }
@@ -101,8 +101,14 @@ export function parseCoords(url: string): Coords | null {
 }
 
 /** 일정 안의 특정 장소에 좌표를 기록한다. */
-export function setPlaceCoords(items: ScheduleItem[], itemId: string, placeId: string, coords: Coords): ScheduleItem[] {
-  const patch = (l: LinkedText): LinkedText => (l.id === placeId ? { ...l, ...coords } : l);
+export function setPlaceCoords(
+  items: ScheduleItem[],
+  itemId: string,
+  placeId: string,
+  coords: Coords,
+  geo?: GeoSource,
+): ScheduleItem[] {
+  const patch = (l: LinkedText): LinkedText => (l.id === placeId ? { ...l, ...coords, geo } : l);
   return items.map((item) => {
     if (item.id !== itemId) return item;
     const c = item.content;

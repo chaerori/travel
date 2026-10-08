@@ -2,14 +2,14 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from './icons/ChevronIcon';
-import type { ScheduleItem } from '../types';
+import type { GeoSource, ScheduleItem } from '../types';
 import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
 import { geocodePlace } from '../utils/geocode';
 
 type Props = {
   items: ScheduleItem[];
   date: string;
-  onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
+  onPlaceCoords: (itemId: string, placeId: string, coords: Coords, geo?: GeoSource) => void;
 };
 
 function sleep(ms: number) {
@@ -69,7 +69,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
       const key = pickingRef.current;
       if (!key) return;
       const place = placesRef.current.find((p) => p.key === key);
-      if (place) onCoordsRef.current(place.itemId, place.placeId, { lat: e.latlng.lat, lng: e.latlng.lng });
+      if (place) onCoordsRef.current(place.itemId, place.placeId, { lat: e.latlng.lat, lng: e.latlng.lng }, 'manual');
       setPickingKey(null);
     });
     mapRef.current = map;
@@ -137,7 +137,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
         setSearching(p.key);
         const hit = await geocodePlace(p.city ? `${p.label}, ${p.city}` : p.label);
         if (cancelled) return;
-        if (hit) onCoordsRef.current(p.itemId, p.placeId, hit);
+        if (hit) onCoordsRef.current(p.itemId, p.placeId, hit, 'search');
         setTried((prev) => new Set(prev).add(p.key));
         await sleep(1100);
       }
