@@ -16,6 +16,12 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** 장소에 넣어 둔 구글 지도 링크. 링크가 없으면 지도에 표시된 좌표를 구글 지도에서 연다. */
+function mapsLinkFor(p: DayPlace): string {
+  if (p.url && /^https?:\/\//i.test(p.url)) return p.url;
+  return `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
+}
+
 function badgeClass(p: { choice: boolean; candidate: boolean }): string {
   return ['day-map__badge', p.choice && 'day-map__badge--choice', p.candidate && 'day-map__badge--candidate']
     .filter(Boolean)
@@ -94,6 +100,11 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
         iconAnchor: [14, 14],
       });
       const marker = L.marker(point, { icon }).bindTooltip(p.label, { direction: 'top', offset: [0, -12] }).addTo(layer);
+      marker.on('click', () => {
+        // 위치를 찍는 중에는 핀을 눌러도 링크를 열지 않는다.
+        if (pickingRef.current) return;
+        window.open(mapsLinkFor(p), '_blank', 'noreferrer');
+      });
       markersRef.current.set(p.key, marker);
     }
     // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
