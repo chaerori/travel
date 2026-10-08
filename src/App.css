@@ -1405,6 +1405,8 @@ button.calendar__day {
 
 .day-map__canvas-wrap {
   position: relative;
+  /* 지도 위 버튼의 z-index가 일정 추가 창 같은 모달 위로 올라오지 않도록 가둔다. */
+  isolation: isolate;
 }
 
 .day-map {
