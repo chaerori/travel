@@ -253,6 +253,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           <Suspense fallback={<div className="day-map__placeholder" />}>
             <DayMap
               items={trip.items}
+              bookmarks={trip.bookmarks}
               date={activeDate}
               onPlaceCoords={handlePlaceCoords}
               focusRequest={focusRequest}

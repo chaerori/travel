@@ -1737,3 +1737,20 @@ button.calendar__day {
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
 }
+
+/* 가고 싶은 장소 별 */
+.day-map__star {
+  display: block;
+  fill: #f5a524;
+  stroke: #fff;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1.5px rgba(32, 31, 43, 0.4));
+}
+
+.day-map__legend-star {
+  flex: none;
+  filter: none;
+  stroke: #d98a0b;
+  stroke-width: 1;
+}

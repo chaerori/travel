@@ -1,11 +1,28 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ScheduleItem } from '../types';
+import type { Bookmarks, ScheduleItem } from '../types';
 import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
+
+const BOOKMARK_LABELS = { food: '식당', cafe: '카페', attraction: '관광지' } as const;
+
+/** 가고 싶은 장소 중 링크에서 위치를 읽을 수 있는 것. 지도에 별로 표시한다. */
+type Star = { id: string; label: string; category: string; url: string; lat: number; lng: number };
+
+function getStars(bookmarks: Bookmarks): Star[] {
+  const stars: Star[] = [];
+  for (const key of Object.keys(BOOKMARK_LABELS) as (keyof typeof BOOKMARK_LABELS)[]) {
+    for (const b of bookmarks[key]) {
+      const at = b.url ? parseCoords(b.url) : null;
+      if (at) stars.push({ id: b.id, label: b.label, category: BOOKMARK_LABELS[key], url: b.url, ...at });
+    }
+  }
+  return stars;
+}
 
 type Props = {
   items: ScheduleItem[];
+  bookmarks: Bookmarks;
   date: string;
   onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
   /** 일정 카드의 번호를 눌렀을 때 해당 장소로 이동하라는 요청. n이 바뀔 때마다 새 요청이다. */
@@ -50,12 +67,13 @@ function badgeClass(p: { choice: boolean }): string {
     .join(' ');
 }
 
-export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
+export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: Props) {
   const [pickingKey, setPickingKey] = useState<string | null>(null);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
 
   const places = useMemo(() => getDayPlaces(items, date), [items, date]);
   const located = places.filter((p) => p.lat !== undefined && p.lng !== undefined);
+  const stars = useMemo(() => getStars(bookmarks), [bookmarks]);
 
   const mapEl = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -69,6 +87,8 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
   placesRef.current = places;
   const locatedRef = useRef(located);
   locatedRef.current = located;
+  const starsRef = useRef(stars);
+  starsRef.current = stars;
   const pickingRef = useRef<string | null>(null);
   pickingRef.current = pickingKey;
 
@@ -144,6 +164,27 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
       });
     }
 
+    // 가고 싶은 장소는 별로 표시한다. 일정에 넣은 장소와 겹치는 것은 번호 핀이 대신하므로 그리지 않고,
+    // 번호 핀보다 아래에 깔리게 한다.
+    const starSize = zoom >= 15 ? 22 : 18;
+    for (const star of starsRef.current) {
+      const sp = map.project([star.lat, star.lng], zoom);
+      if (px.some((q) => q.distanceTo(sp) < 16)) continue;
+      const icon = L.divIcon({
+        className: 'day-map__marker',
+        html: `<svg class="day-map__star" viewBox="0 0 24 24" width="${starSize}" height="${starSize}" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.2 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>`,
+        iconSize: [starSize, starSize],
+        iconAnchor: [starSize / 2, starSize / 2],
+      });
+      L.marker([star.lat, star.lng], { icon, zIndexOffset: -1000 })
+        .bindTooltip(`${star.label} (${star.category})`, { direction: 'top', offset: [0, -starSize / 2] })
+        .on('click', () => {
+          if (pickingRef.current) return;
+          if (/^https?:\/\//i.test(star.url)) window.open(star.url, '_blank', 'noreferrer');
+        })
+        .addTo(layer);
+    }
+
     // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
     const route: L.LatLngTuple[] = [];
     const routeNumbers = new Set<number>();
@@ -165,6 +206,12 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
     drawMarkers();
     fitToLocated(false);
   }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.primary}`).join('|')]);
+
+  // 가고 싶은 장소가 바뀌면 별만 다시 그린다(지도 위치는 그대로 둔다).
+  const starsKey = stars.map((st) => `${st.id}:${st.lat}:${st.lng}:${st.label}`).join('|');
+  useEffect(() => {
+    drawMarkers();
+  }, [starsKey]);
 
   // 링크에 좌표가 있으면 읽어서 저장한다. 짧은 링크처럼 읽을 수 없는 장소는 직접 찍는다.
   useEffect(() => {
@@ -241,16 +288,28 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
         )}
       </div>
 
-      {places.some((p) => p.choice) && (
+      {(places.some((p) => p.choice) || stars.length > 0) && (
         <div className="day-map__legend">
-          <span>
-            <i className="day-map__legend-dot" />
-            일정
-          </span>
-          <span>
-            <i className="day-map__legend-dot day-map__legend-dot--choice" />
-            선택지
-          </span>
+          {places.some((p) => p.choice) && (
+            <>
+              <span>
+                <i className="day-map__legend-dot" />
+                일정
+              </span>
+              <span>
+                <i className="day-map__legend-dot day-map__legend-dot--choice" />
+                선택지
+              </span>
+            </>
+          )}
+          {stars.length > 0 && (
+            <span>
+              <svg className="day-map__star day-map__legend-star" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.2 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" />
+              </svg>
+              가고 싶은 장소
+            </span>
+          )}
         </div>
       )}
     </section>
