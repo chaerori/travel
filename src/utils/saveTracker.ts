@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 /** 저장 요청이 이 시간 안에 서버 응답을 받지 못하면 "저장이 지연되고 있다"고 본다. */
 export const STUCK_AFTER_MS = 5000;
 
-export type SaveIssue = 'stuck' | 'failed' | null;
+export type SaveIssue = 'stuck' | 'failed' | 'blocked' | null;
 
 /**
  * Firestore는 서버가 쓰기를 거부하는 일부 경우(하루 한도 초과, 연결 불안정 등)에 오류를 내지 않고
