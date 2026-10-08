@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from './icons/ChevronIcon';
 import type { ScheduleItem } from '../types';
-import { getDayPlaces, parseCoords, type Coords } from '../utils/dayPlaces';
+import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
 import { geocodePlace } from '../utils/geocode';
 
 type Props = {
@@ -27,6 +27,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
   const [pickingKey, setPickingKey] = useState<string | null>(null);
   const [tried, setTried] = useState<Set<string>>(new Set());
   const [managing, setManaging] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const places = useMemo(() => getDayPlaces(items, date), [items, date]);
   const located = places.filter((p) => p.lat !== undefined && p.lng !== undefined);
@@ -35,12 +36,15 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
+  const markersRef = useRef(new Map<string, L.Marker>());
   const itemsRef = useRef(items);
   itemsRef.current = items;
   const onCoordsRef = useRef(onPlaceCoords);
   onCoordsRef.current = onPlaceCoords;
   const placesRef = useRef(places);
   placesRef.current = places;
+  const locatedRef = useRef(located);
+  locatedRef.current = located;
   const pickingRef = useRef<string | null>(null);
   pickingRef.current = pickingKey;
 
@@ -78,6 +82,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     const layer = layerRef.current;
     if (!map || !layer) return;
     layer.clearLayers();
+    markersRef.current.clear();
     const route: L.LatLngTuple[] = [];
     const routeNumbers = new Set<number>();
     for (const p of located) {
@@ -88,7 +93,8 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
         iconSize: [28, 28],
         iconAnchor: [14, 14],
       });
-      L.marker(point, { icon }).bindTooltip(p.label, { direction: 'top', offset: [0, -12] }).addTo(layer);
+      const marker = L.marker(point, { icon }).bindTooltip(p.label, { direction: 'top', offset: [0, -12] }).addTo(layer);
+      markersRef.current.set(p.key, marker);
     }
     // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
     for (const p of located) {
@@ -100,8 +106,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     if (route.length > 1) {
       L.polyline(route, { color: '#6c5ce7', weight: 3, opacity: 0.55, dashArray: '6 8' }).addTo(layer);
     }
-    if (located.length === 1) map.setView([located[0].lat!, located[0].lng!], 15, { animate: false });
-    else if (located.length > 1) map.fitBounds(L.latLngBounds(located.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate: false });
+    fitToLocated(false);
   }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.candidate}:${p.primary}`).join('|')]);
 
   // 좌표가 없는 장소는 링크에서 읽거나 이름으로 검색한다(검색은 초당 1건 이하로 제한).
@@ -133,6 +138,30 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     };
   }, [date]);
 
+  // 그날 장소가 모두 보이도록 지도를 맞춘다.
+  function fitToLocated(animate: boolean) {
+    const map = mapRef.current;
+    const pts = locatedRef.current;
+    if (!map || pts.length === 0) return;
+    setFocused(false);
+    markersRef.current.forEach((m) => m.closeTooltip());
+    if (pts.length === 1) map.setView([pts[0].lat!, pts[0].lng!], 15, { animate });
+    else map.fitBounds(L.latLngBounds(pts.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate });
+  }
+
+  // 목록에서 고른 장소로 지도를 확대한다. 위치가 없는 장소는 직접 찍도록 한다.
+  function focusPlace(p: DayPlace) {
+    const map = mapRef.current;
+    if (!map || p.lat === undefined || p.lng === undefined) {
+      startPicking(p.key);
+      return;
+    }
+    wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    map.setView([p.lat, p.lng], 17);
+    markersRef.current.get(p.key)?.openTooltip();
+    setFocused(true);
+  }
+
   function startPicking(key: string) {
     setPickingKey(key);
     wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -147,6 +176,11 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     <section className="day-map">
       <div className="day-map__canvas-wrap" ref={wrapRef}>
         <div className="day-map__canvas" ref={mapEl} />
+        {focused && !picking && (
+          <button type="button" className="day-map__fit" onClick={() => fitToLocated(true)}>
+            전체 보기
+          </button>
+        )}
         {picking && (
           <div className="day-map__hint">
             <span>지도를 눌러 ‘{picking.label}’ 위치를 지정하세요</span>
@@ -201,11 +235,13 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
           {places.map((p) => {
             return (
               <li key={p.key} className="day-map__row">
-                <span className={badgeClass(p)}>{p.number}</span>
-                <span className="day-map__row-text">
-                  <span className="day-map__row-label">{p.label}</span>
-                  {p.context && <span className="day-map__row-context">{p.context}</span>}
-                </span>
+                <button type="button" className="day-map__row-main" onClick={() => focusPlace(p)}>
+                  <span className={badgeClass(p)}>{p.number}</span>
+                  <span className="day-map__row-text">
+                    <span className="day-map__row-label">{p.label}</span>
+                    {p.context && <span className="day-map__row-context">{p.context}</span>}
+                  </span>
+                </button>
                 {searching === p.key ? (
                   <span className="day-map__status">찾는 중…</span>
                 ) : (
