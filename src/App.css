@@ -1692,8 +1692,12 @@ button.calendar__day {
 }
 
 .form-hint {
-  margin: -6px 0 0;
+  margin: 4px 0 0;
   font-size: 12px;
   line-height: 1.5;
   color: var(--color-warning-strong);
+}
+
+.link-editor .form-hint {
+  margin: 0;
 }
