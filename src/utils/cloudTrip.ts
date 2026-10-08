@@ -2,6 +2,7 @@ import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 import { OWNER_EMAIL, db } from '../firebase';
 import type { ScheduleItem, Trip } from '../types';
+import { useSaveTracker } from './saveTracker';
 
 const EMPTY_BOOKMARKS = { food: [], cafe: [], attraction: [] };
 
@@ -32,6 +33,7 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
   const [status, setStatus] = useState<CloudStatus>('loading');
   const [sharedEmails, setSharedEmails] = useState<string[]>([]);
   const lastJson = useRef<string | null>(null);
+  const { issue: saveIssue, track } = useSaveTracker();
 
   useEffect(() => {
     if (!enabled) return;
@@ -86,14 +88,10 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
     localStorage.setItem(cacheKey, json);
     // Firestore는 undefined 필드를 허용하지 않으므로 JSON 왕복으로 제거하고,
     // merge로 저장해 ownerEmail/sharedEmails 필드를 덮어쓰지 않는다.
-    setDoc(
-      doc(db, 'trips', tripId),
-      { ...JSON.parse(json), ownerEmail: OWNER_EMAIL },
-      { merge: true },
-    ).catch((err) => {
-      console.error('Firestore 저장 실패', err);
-    });
-  }, [trip, enabled, status, tripId, cacheKey]);
+    track(
+      setDoc(doc(db, 'trips', tripId), { ...JSON.parse(json), ownerEmail: OWNER_EMAIL }, { merge: true }),
+    );
+  }, [trip, enabled, status, tripId, cacheKey, track]);
 
   async function addSharedEmail(email: string) {
     const trimmed = email.trim().toLowerCase();
@@ -111,5 +109,5 @@ export function useCloudTrip(enabled: boolean, tripId: string) {
     await updateDoc(doc(db, 'tripIndex', tripId), { sharedEmails: next });
   }
 
-  return { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } as const;
+  return { trip, setTrip, status, sharedEmails, saveIssue, addSharedEmail, removeSharedEmail } as const;
 }

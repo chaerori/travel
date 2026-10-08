@@ -1666,3 +1666,22 @@ button.calendar__day {
 .day-map__edit {
   color: var(--color-primary-strong);
 }
+
+/* 저장이 서버에 반영되지 않을 때 하단 탭바 위에 띄우는 알림 */
+.save-banner {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  z-index: 12;
+  max-width: 456px;
+  margin: 0 auto;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--color-warning-soft);
+  box-shadow: 0 4px 16px rgba(20, 16, 32, 0.18);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-warning-strong);
+}

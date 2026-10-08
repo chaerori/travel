@@ -47,7 +47,7 @@ function buildRows(items: ScheduleItem[]): Row[] {
 
 function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) {
   const isOwner = hasFullAccess(userEmail);
-  const { trip, setTrip, status } = useCloudTrip(true, tripId);
+  const { trip, setTrip, status, saveIssue } = useCloudTrip(true, tripId);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
@@ -291,6 +291,14 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
             setEditingItem(null);
           }}
         />
+      )}
+
+      {saveIssue && (
+        <div className="save-banner" role="alert">
+          {saveIssue === 'stuck'
+            ? '서버에 저장하지 못하고 있어요. 연결이나 서버 사용량 한도 문제일 수 있어요. 이 화면을 닫거나 새로고침하면 방금 한 수정이 사라질 수 있습니다.'
+            : '저장에 실패했어요. 권한이나 연결 문제일 수 있어요. 새로고침하면 방금 한 수정이 사라질 수 있습니다.'}
+        </div>
       )}
 
       <BottomNav
