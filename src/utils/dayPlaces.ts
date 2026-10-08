@@ -33,6 +33,14 @@ function viewportCenter(url: string): Coords | null {
  */
 function savedCoords(link: LinkedText): { lat?: number; lng?: number } {
   if (link.lat === undefined || link.lng === undefined) return {};
+  // 예전에는 주소의 첫 번째 쌍을 썼다. 마지막 쌍이 아닌 다른 쌍과 같은 값이면 그때 잘못 저장된 좌표다.
+  if (link.url) {
+    const pairs = dataPairs(link.url);
+    const wrong = pairs
+      .slice(0, -1)
+      .some((c) => Math.abs(c.lat - link.lat!) < 1e-6 && Math.abs(c.lng - link.lng!) < 1e-6);
+    if (wrong) return {};
+  }
   if (link.url && !parseCoords(link.url)) {
     const center = viewportCenter(link.url);
     if (center && Math.abs(center.lat - link.lat) < 1e-6 && Math.abs(center.lng - link.lng) < 1e-6) return {};
@@ -93,23 +101,32 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   return places;
 }
 
+/** 주소 안의 `!3d위도!4d경도` 쌍을 나온 순서대로 모두 찾는다. */
+function dataPairs(url: string): Coords[] {
+  const pairs: Coords[] = [];
+  for (const m of url.matchAll(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g)) {
+    const lat = Number(m[1]);
+    const lng = Number(m[2]);
+    if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) pairs.push({ lat, lng });
+  }
+  return pairs;
+}
+
 /**
  * 구글 지도 주소에서 장소의 정확한 좌표(!3d…!4d…, q=·ll=·query= 값)를 읽는다.
+ * `!3d…!4d…` 쌍은 주소에 여러 개 들어 있을 수 있다(앞에 보던 다른 장소가 함께 실리는 경우). 열린 장소는
+ * 맨 마지막 쌍이므로 마지막 것을 쓴다.
  * 주소의 `@위도,경도`는 장소가 아니라 지도 화면의 중심이라 쓰지 않는다. 지도를 움직이지 않고 여러 장소의
  * 주소를 복사하면 모두 같은 값이 들어 있어, 쓰면 전부 한 곳에 찍힌다. 짧은 링크(maps.app.goo.gl)도 읽을 수 없다.
  */
 export function parseCoords(url: string): Coords | null {
-  const patterns = [
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-    /[?&](?:q|ll|query|destination)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-  ];
-  for (const re of patterns) {
-    const m = url.match(re);
-    if (m) {
-      const lat = Number(m[1]);
-      const lng = Number(m[2]);
-      if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) return { lat, lng };
-    }
+  const pairs = dataPairs(url);
+  if (pairs.length > 0) return pairs[pairs.length - 1];
+  const m = url.match(/[?&](?:q|ll|query|destination)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+  if (m) {
+    const lat = Number(m[1]);
+    const lng = Number(m[2]);
+    if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) return { lat, lng };
   }
   return null;
 }
