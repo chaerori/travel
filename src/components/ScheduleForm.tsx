@@ -60,13 +60,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
         if (l.id !== id) return l;
         const next = { ...l, ...patch };
         // 링크가 바뀌거나 지워지면 이전 링크로 정해진 지도 좌표는 더 이상 맞지 않는다.
-        // 이름이 바뀌면 이름 검색으로 찾은 좌표만 다시 찾도록 지운다.
-        const urlChanged = 'url' in patch && (patch.url ?? '') !== (l.url ?? '');
-        const labelChanged = 'label' in patch && patch.label !== l.label && l.geo === 'search';
-        if (urlChanged || labelChanged) {
+        if ('url' in patch && (patch.url ?? '') !== (l.url ?? '')) {
           next.lat = undefined;
           next.lng = undefined;
-          next.geo = undefined;
         }
         return next;
       }),

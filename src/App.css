@@ -1581,8 +1581,7 @@ button.calendar__day {
   color: var(--color-text-muted);
 }
 
-.day-map__locate,
-.day-map__status {
+.day-map__locate {
   flex: none;
   border: none;
   background: none;
@@ -1594,10 +1593,6 @@ button.calendar__day {
 
 .day-map__locate {
   cursor: pointer;
-}
-
-.day-map__status {
-  color: var(--color-text-muted);
 }
 
 

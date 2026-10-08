@@ -9,7 +9,7 @@ import { ScheduleItemCard } from './components/ScheduleItemCard';
 import { TripListPage } from './components/TripListPage';
 import { AddIcon } from './components/icons/AddIcon';
 import { EWalletIcon } from './components/icons/EWalletIcon';
-import type { Bookmarks, Budget, ExpenseEntry, GeoSource, Luggage, ScheduleItem } from './types';
+import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { getDayPlaces, setPlaceCoords, type Coords } from './utils/dayPlaces';
@@ -150,8 +150,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
 
-  function handlePlaceCoords(itemId: string, placeId: string, coords: Coords, geo?: GeoSource) {
-    setTrip((prev) => ({ ...prev, items: setPlaceCoords(prev.items, itemId, placeId, coords, geo) }));
+  function handlePlaceCoords(itemId: string, placeId: string, coords: Coords) {
+    setTrip((prev) => ({ ...prev, items: setPlaceCoords(prev.items, itemId, placeId, coords) }));
   }
 
   function openMap() {

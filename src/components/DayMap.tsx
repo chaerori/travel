@@ -2,19 +2,14 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from './icons/ChevronIcon';
-import type { GeoSource, ScheduleItem } from '../types';
+import type { ScheduleItem } from '../types';
 import { getDayPlaces, parseCoords, type Coords, type DayPlace } from '../utils/dayPlaces';
-import { geocodePlace } from '../utils/geocode';
 
 type Props = {
   items: ScheduleItem[];
   date: string;
-  onPlaceCoords: (itemId: string, placeId: string, coords: Coords, geo?: GeoSource) => void;
+  onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
 };
-
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 /** 장소에 넣어 둔 구글 지도 링크. 링크가 없으면 지도에 표시된 좌표를 구글 지도에서 연다. */
 function mapsLinkFor(p: DayPlace): string {
@@ -29,9 +24,7 @@ function badgeClass(p: { choice: boolean; candidate: boolean }): string {
 }
 
 export function DayMap({ items, date, onPlaceCoords }: Props) {
-  const [searching, setSearching] = useState<string | null>(null);
   const [pickingKey, setPickingKey] = useState<string | null>(null);
-  const [tried, setTried] = useState<Set<string>>(new Set());
   const [managing, setManaging] = useState(false);
   const [focused, setFocused] = useState(false);
 
@@ -43,8 +36,6 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
   const markersRef = useRef(new Map<string, L.Marker>());
-  const itemsRef = useRef(items);
-  itemsRef.current = items;
   const onCoordsRef = useRef(onPlaceCoords);
   onCoordsRef.current = onPlaceCoords;
   const placesRef = useRef(places);
@@ -69,7 +60,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
       const key = pickingRef.current;
       if (!key) return;
       const place = placesRef.current.find((p) => p.key === key);
-      if (place) onCoordsRef.current(place.itemId, place.placeId, { lat: e.latlng.lat, lng: e.latlng.lng }, 'manual');
+      if (place) onCoordsRef.current(place.itemId, place.placeId, { lat: e.latlng.lat, lng: e.latlng.lng });
       setPickingKey(null);
     });
     mapRef.current = map;
@@ -120,33 +111,17 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     fitToLocated(false);
   }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.candidate}:${p.primary}`).join('|')]);
 
-  // 좌표가 없는 장소는 링크에서 읽거나 이름으로 검색한다(검색은 초당 1건 이하로 제한).
+  // 링크에 좌표가 있으면 읽어서 저장한다. 짧은 링크처럼 읽을 수 없는 장소는 직접 찍는다.
+  useEffect(() => {
+    for (const p of places) {
+      if (p.lat !== undefined) continue;
+      const fromUrl = p.url ? parseCoords(p.url) : null;
+      if (fromUrl) onCoordsRef.current(p.itemId, p.placeId, fromUrl);
+    }
+  }, [places]);
+
   useEffect(() => {
     setPickingKey(null);
-    let cancelled = false;
-    (async () => {
-      for (const p of getDayPlaces(itemsRef.current, date)) {
-        if (cancelled) return;
-        if (p.lat !== undefined) continue;
-        const fromUrl = p.url ? parseCoords(p.url) : null;
-        if (fromUrl) {
-          onCoordsRef.current(p.itemId, p.placeId, fromUrl);
-          continue;
-        }
-        if (!p.searchable) continue;
-        setSearching(p.key);
-        const hit = await geocodePlace(p.city ? `${p.label}, ${p.city}` : p.label);
-        if (cancelled) return;
-        if (hit) onCoordsRef.current(p.itemId, p.placeId, hit, 'search');
-        setTried((prev) => new Set(prev).add(p.key));
-        await sleep(1100);
-      }
-      if (!cancelled) setSearching(null);
-    })();
-    return () => {
-      cancelled = true;
-      setSearching(null);
-    };
   }, [date]);
 
   // 그날 장소가 모두 보이도록 지도를 맞춘다.
@@ -179,9 +154,8 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
   }
 
   const picking = places.find((p) => p.key === pickingKey);
-  const unlocated = places.length - located.length;
-  // 링크에서 읽지 못했고 이름 검색도 끝났거나 검색 대상이 아닌 장소는 직접 찍어야 한다.
-  const needsPin = places.filter((p) => p.lat === undefined && (!p.searchable || tried.has(p.key)));
+  // 링크에서 위치를 읽을 수 없고 아직 찍지 않은 장소는 직접 찍어야 한다.
+  const needsPin = places.filter((p) => p.lat === undefined && !(p.url && parseCoords(p.url)));
 
   return (
     <section className="day-map">
@@ -204,7 +178,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
 
       {needsPin.length > 0 && (
         <div className="day-map__needs-pin">
-          <p>위치를 찾지 못한 장소가 있어요. 눌러서 지도에 직접 찍어 주세요.</p>
+          <p>링크에서 위치를 읽지 못한 장소예요. 눌러서 지도에 직접 찍어 주세요.</p>
           <div className="day-map__needs-pin-chips">
             {needsPin.map((p) => (
               <button key={p.key} type="button" onClick={() => startPicking(p.key)}>
@@ -233,8 +207,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
 
       <button type="button" className="day-map__manage" aria-expanded={managing} onClick={() => setManaging((v) => !v)}>
         <span>
-          장소 {places.length}곳{unlocated > 0 && searching === null ? ` · 위치를 찾지 못한 곳 ${unlocated}곳` : ''}
-          {searching !== null ? ' · 위치 찾는 중…' : ''}
+          장소 {places.length}곳{needsPin.length > 0 ? ` · 위치를 찍어야 하는 곳 ${needsPin.length}곳` : ''}
         </span>
         <span className={managing ? 'day-map__chevron day-map__chevron--open' : 'day-map__chevron'}>
           <ChevronIcon />
@@ -253,17 +226,9 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
                     {p.context && <span className="day-map__row-context">{p.context}</span>}
                   </span>
                 </button>
-                {searching === p.key ? (
-                  <span className="day-map__status">찾는 중…</span>
-                ) : (
-                  <button
-                    type="button"
-                    className="day-map__locate"
-                    onClick={() => startPicking(p.key)}
-                  >
-                    {p.lat !== undefined ? '위치 수정' : '위치 지정'}
-                  </button>
-                )}
+                <button type="button" className="day-map__locate" onClick={() => startPicking(p.key)}>
+                  {p.lat !== undefined ? '위치 수정' : '위치 지정'}
+                </button>
               </li>
             );
           })}

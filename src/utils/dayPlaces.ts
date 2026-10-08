@@ -1,4 +1,4 @@
-import type { GeoSource, LinkedText, ScheduleItem } from '../types';
+import type { LinkedText, ScheduleItem } from '../types';
 
 export type DayPlace = {
   key: string;
@@ -17,8 +17,6 @@ export type DayPlace = {
   candidate: boolean;
   /** 같은 번호 안에서 경로선이 지나는 장소(선택한 선택지, 없으면 첫 선택지). */
   primary: boolean;
-  /** 이름으로 좌표를 검색해도 되는 장소인지. 확정된 일정의 이름은 활동명일 수 있어 제외한다. */
-  searchable: boolean;
   /** 장소가 속한 일정의 제목(이동 경로·선택지). */
   context: string;
 };
@@ -34,7 +32,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   function push(
     item: ScheduleItem,
     link: LinkedText,
-    extra: Pick<DayPlace, 'choice' | 'candidate' | 'primary' | 'searchable' | 'context'>,
+    extra: Pick<DayPlace, 'choice' | 'candidate' | 'primary' | 'context'>,
   ) {
     places.push({
       key: `${item.id}:${link.id}`,
@@ -55,7 +53,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
     if (content.type === 'fixed') {
       if (content.item.label.trim() && content.item.url?.trim()) {
         number++;
-        push(item, content.item, { choice: false, candidate: false, primary: true, searchable: false, context: '' });
+        push(item, content.item, { choice: false, candidate: false, primary: true, context: '' });
       }
     } else if (content.type === 'choices') {
       const options = content.options.filter((o) => o.label.trim() && o.url?.trim());
@@ -67,7 +65,6 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
           choice: true,
           candidate: !!selected && o.id !== selected.id,
           primary: selected ? o.id === selected.id : i === 0,
-          searchable: true,
           context: content.title,
         }),
       );
@@ -75,7 +72,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       for (const stop of content.stops) {
         if (!stop.label.trim() || !stop.url?.trim()) continue;
         number++;
-        push(item, stop, { choice: false, candidate: false, primary: true, searchable: true, context: content.title });
+        push(item, stop, { choice: false, candidate: false, primary: true, context: content.title });
       }
     }
   }
@@ -106,9 +103,8 @@ export function setPlaceCoords(
   itemId: string,
   placeId: string,
   coords: Coords,
-  geo?: GeoSource,
 ): ScheduleItem[] {
-  const patch = (l: LinkedText): LinkedText => (l.id === placeId ? { ...l, ...coords, geo } : l);
+  const patch = (l: LinkedText): LinkedText => (l.id === placeId ? { ...l, ...coords } : l);
   return items.map((item) => {
     if (item.id !== itemId) return item;
     const c = item.content;

@@ -8,11 +8,7 @@ export type LinkedText = {
   /** 지도에 표시할 좌표. 링크에서 읽거나 이름 검색, 직접 지정으로 채운다. */
   lat?: number;
   lng?: number;
-  /** 좌표를 어떻게 정했는지. 링크에서 읽은 좌표는 비워 둔다. */
-  geo?: GeoSource;
 };
-
-export type GeoSource = 'search' | 'manual';
 
 export type Spot = 'photo' | 'bike' | 'tram' | 'bus';
 
