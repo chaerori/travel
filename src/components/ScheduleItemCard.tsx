@@ -5,7 +5,6 @@ import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { LinkIcon } from './icons/LinkIcon';
 import { PencilIcon } from './icons/PencilIcon';
-import { LinkRow } from './LinkRow';
 import { PlaceBadge } from './PlaceBadge';
 import { SpotIcon, getSpot } from './SpotPicker';
 
@@ -87,7 +86,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
               {item.content.options.map((opt) => (
                 <div key={opt.id} className="choice-row">
                   {badgeFor(opt.id)}
-                  <LinkRow item={opt} />
+                  <span className="link-row link-row--plain">{opt.label}</span>
                 </div>
               ))}
             </div>
@@ -110,7 +109,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
                     <span key={stop.id} className="route-step">
                       <span className="route-stop">
                         {badgeFor(stop.id)}
-                        <LinkRow item={stop} />
+                        <span className="link-row link-row--plain">{stop.label}</span>
                         {getSpot(stop) && (
                           <span className="route-stop__photo-icon">
                             <SpotIcon spot={getSpot(stop)!} />

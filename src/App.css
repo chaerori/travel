@@ -627,14 +627,6 @@ button.calendar__day {
   padding: 6px 10px;
 }
 
-.route-stop:has(a.link-row):hover {
-  background: var(--color-primary-soft);
-}
-
-.route-stop:has(a.link-row):hover .link-row {
-  color: var(--color-primary-strong);
-}
-
 .route-stop__photo-icon {
   display: flex;
   align-items: center;
