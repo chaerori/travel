@@ -4,6 +4,7 @@ import { BikeIcon } from './icons/BikeIcon';
 import { BusIcon } from './icons/BusIcon';
 import { CameraIcon } from './icons/CameraIcon';
 import { ChevronIcon } from './icons/ChevronIcon';
+import { TaxiIcon } from './icons/TaxiIcon';
 import { TramIcon } from './icons/TramIcon';
 
 /** 예전 데이터(photoSpot)도 사진 스폿으로 취급한다. */
@@ -19,6 +20,8 @@ export function SpotIcon({ spot }: { spot: Spot }) {
       return <TramIcon />;
     case 'bus':
       return <BusIcon />;
+    case 'taxi':
+      return <TaxiIcon />;
     default:
       return <CameraIcon />;
   }
@@ -30,6 +33,7 @@ const OPTIONS: { value: Spot | undefined; label: string }[] = [
   { value: 'bike', label: '자전거' },
   { value: 'tram', label: '트램' },
   { value: 'bus', label: '버스' },
+  { value: 'taxi', label: '택시' },
 ];
 
 type Props = {
@@ -37,7 +41,7 @@ type Props = {
   onChange: (value: Spot | undefined) => void;
 };
 
-/** 이동 경로 장소 옆에 표시할 아이콘(카메라/자전거/트램/버스)을 고르는 드롭다운. */
+/** 이동 경로 장소 옆에 표시할 아이콘(포토 스팟/자전거/트램/버스/택시)을 고르는 드롭다운. */
 export function SpotPicker({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

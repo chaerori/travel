@@ -10,7 +10,7 @@ export type LinkedText = {
   lng?: number;
 };
 
-export type Spot = 'photo' | 'bike' | 'tram' | 'bus';
+export type Spot = 'photo' | 'bike' | 'tram' | 'bus' | 'taxi';
 
 export type PrepItem = {
   id: string;
