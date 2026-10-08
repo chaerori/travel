@@ -593,8 +593,17 @@ button.calendar__day {
 
 .item-card__fixed-row {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 2px;
+}
+
+/* 이름과 정보 아이콘은 한 덩어리로 두고, 자리가 모자라면 예약 필요 뱃지가 다음 줄로 내려간다. */
+.item-card__fixed-main {
+  display: flex;
   align-items: center;
   gap: 2px;
+  min-width: 0;
 }
 
 .item-card__fixed-row .icon-action svg {
@@ -694,7 +703,7 @@ button.calendar__day {
 .choice-row .link-row {
   font-size: 13px;
   font-weight: 400;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .item-card__memo {
@@ -705,6 +714,7 @@ button.calendar__day {
 }
 
 .prep-toggle {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -715,6 +725,17 @@ button.calendar__day {
   font-weight: 600;
   color: var(--color-text-muted);
   cursor: pointer;
+}
+
+.prep-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
+}
+
+/* 펼친 상태에서는 아래 체크박스를 가리지 않게 한다. */
+.prep-toggle[aria-expanded='true']::after {
+  bottom: -2px;
 }
 
 .prep-toggle__chevron {
@@ -763,7 +784,7 @@ button.calendar__day {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .icon-action {
@@ -1066,11 +1087,6 @@ button.calendar__day {
   cursor: pointer;
 }
 
-.schedule-add-btn {
-  align-self: flex-end;
-  margin-bottom: 14px;
-}
-
 .trip-create__toggle {
   display: flex;
   align-items: center;
@@ -1262,6 +1278,19 @@ button.calendar__day {
   content: '';
   position: absolute;
   inset: -8px;
+}
+
+/* 카드의 수정·삭제는 눌리는 영역을 44px 높이로 넓히되, 서로 맞닿는 쪽은 겹치지 않게 한다. */
+.item-card__actions .icon-action::after {
+  inset: -10px;
+}
+
+.item-card__actions .icon-action:first-child::after {
+  right: -5px;
+}
+
+.item-card__actions .icon-action:last-child::after {
+  left: -5px;
 }
 
 .btn,
@@ -1684,4 +1713,27 @@ button.calendar__day {
   font-weight: 600;
   line-height: 1.5;
   color: var(--color-warning-strong);
+}
+
+/* 지도 확대·축소 버튼을 앱의 둥근 카드 스타일에 맞춘다. */
+.day-map .leaflet-touch .leaflet-bar {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.day-map .leaflet-touch .leaflet-bar a {
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  font-size: 18px;
+  color: var(--color-primary-strong);
+  border-bottom-color: var(--color-border);
+}
+
+.day-map .leaflet-touch .leaflet-bar a:hover,
+.day-map .leaflet-touch .leaflet-bar a:focus {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
 }

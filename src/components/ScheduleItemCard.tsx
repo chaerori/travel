@@ -51,24 +51,26 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
         {item.content.type === 'fixed' && (
           <div className="item-card__content">
             <div className="item-card__fixed-row">
-              {badgeFor(item.content.item.id)}
-              <span className="link-row link-row--plain">{item.content.item.label}</span>
-              {item.content.info &&
-                (isUrl(item.content.info) ? (
-                  <a
-                    className="icon-action"
-                    href={item.content.info}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="정보"
-                  >
-                    <LinkIcon />
-                  </a>
-                ) : (
-                  <span className="icon-action" title={item.content.info} aria-label="정보">
-                    <LinkIcon />
-                  </span>
-                ))}
+              <div className="item-card__fixed-main">
+                {badgeFor(item.content.item.id)}
+                <span className="link-row link-row--plain">{item.content.item.label}</span>
+                {item.content.info &&
+                  (isUrl(item.content.info) ? (
+                    <a
+                      className="icon-action"
+                      href={item.content.info}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="정보"
+                    >
+                      <LinkIcon />
+                    </a>
+                  ) : (
+                    <span className="icon-action" title={item.content.info} aria-label="정보">
+                      <LinkIcon />
+                    </span>
+                  ))}
+              </div>
               {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
             </div>
           </div>
@@ -128,7 +130,7 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
 
         {item.prep.length > 0 && (
           <div className="item-card__prep">
-            <button type="button" className="prep-toggle" onClick={() => setPrepOpen((v) => !v)}>
+            <button type="button" className="prep-toggle" aria-expanded={prepOpen} onClick={() => setPrepOpen((v) => !v)}>
               준비물
               <span className={prepOpen ? 'prep-toggle__chevron prep-toggle__chevron--open' : 'prep-toggle__chevron'}>
                 <ChevronIcon />

@@ -236,10 +236,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       <main className="app__list">
         <CalendarSection items={trip.items} selectedDate={activeDate} onSelectDate={setSelectedDate} />
 
-        <button type="button" className="add-btn schedule-add-btn" onClick={openAddForm}>
-          + 일정 추가
-        </button>
-
         {rows.length === 0 && (
           <div className="empty-state">
             <p>등록된 일정이 없습니다.</p>
