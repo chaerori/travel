@@ -99,7 +99,6 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete, badges, onP
                   }
                   onClick={() => toggleChoice(opt.id)}
                 >
-                  <span className="choice-row__dot" />
                   {badgeFor(opt.id)}
                   <LinkRow item={opt} />
                 </button>
