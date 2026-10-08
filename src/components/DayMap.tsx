@@ -220,14 +220,14 @@ export function DayMap({ items, date, onPlaceCoords, focusRequest }: Props) {
       <div className="day-map__canvas-wrap" ref={wrapRef}>
         <div className="day-map__canvas" ref={mapEl} />
         {focusedKey && !picking && (
-          <>
-            <button type="button" className="day-map__edit" onClick={() => startPicking(focusedKey)}>
-              위치 수정
-            </button>
+          <div className="day-map__actions">
             <button type="button" className="day-map__fit" onClick={() => fitToLocated(true)}>
               전체 보기
             </button>
-          </>
+            <button type="button" className="day-map__edit" onClick={() => startPicking(focusedKey)}>
+              위치 수정
+            </button>
+          </div>
         )}
         {picking && (
           <div className="day-map__hint">

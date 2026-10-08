@@ -1558,22 +1558,6 @@ button.calendar__day {
   background: var(--color-choice);
 }
 
-.day-map__fit {
-  position: absolute;
-  left: 8px;
-  bottom: 28px;
-  z-index: 500;
-  padding: 6px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-surface);
-  box-shadow: 0 2px 8px rgba(20, 16, 32, 0.15);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-primary-strong);
-  cursor: pointer;
-}
-
 .form-note {
   margin: 0;
   font-size: 12px;
@@ -1626,22 +1610,6 @@ button.calendar__day {
   background: var(--color-primary-soft);
 }
 
-.day-map__edit {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  z-index: 500;
-  padding: 6px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-surface);
-  box-shadow: 0 2px 8px rgba(20, 16, 32, 0.15);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-primary-strong);
-  cursor: pointer;
-}
-
 /* 일정 카드 안에서 지도 핀과 같은 번호를 보여 주는 배지 */
 .place-badge {
   flex: none;
@@ -1673,4 +1641,34 @@ button.calendar__day {
 
 .choice-row .place-badge {
   margin-right: 0;
+}
+
+/* 지도 우측 상단의 버튼들 */
+.day-map__actions {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 500;
+  display: flex;
+  gap: 6px;
+}
+
+.day-map__fit,
+.day-map__edit {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(20, 16, 32, 0.15);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day-map__fit {
+  color: var(--color-text-secondary);
+}
+
+.day-map__edit {
+  color: var(--color-primary-strong);
 }
