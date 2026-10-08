@@ -1558,12 +1558,6 @@ button.calendar__day {
   background: var(--color-choice);
 }
 
-.form-note {
-  margin: 0;
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-
 .day-map__pin--stack {
   box-shadow:
     0 0 0 2px #fff,

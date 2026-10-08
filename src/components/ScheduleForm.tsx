@@ -307,7 +307,6 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                   </div>
                 ))}
                 {links.some((l) => isShortMapLink(l.url)) && <p className="form-hint">{SHORT_LINK_HINT}</p>}
-                <p className="form-note">구글 지도 링크를 넣은 장소만 지도에 표시돼요.</p>
                 <button type="button" className="add-btn" onClick={addLink}>
                   + 항목 추가
                 </button>
