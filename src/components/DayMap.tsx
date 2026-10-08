@@ -36,6 +36,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
   const markersRef = useRef(new Map<string, L.Marker>());
+  const drawRef = useRef<(() => void) | null>(null);
   const onCoordsRef = useRef(onPlaceCoords);
   onCoordsRef.current = onPlaceCoords;
   const placesRef = useRef(places);
@@ -63,6 +64,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
       if (place) onCoordsRef.current(place.itemId, place.placeId, { lat: e.latlng.lat, lng: e.latlng.lng });
       setPickingKey(null);
     });
+    map.on('zoomend', () => drawRef.current?.());
     mapRef.current = map;
     // 모달이 올라오는 애니메이션이 끝난 뒤 크기를 다시 계산한다.
     const timer = setTimeout(() => map.invalidateSize(), 350);
@@ -73,41 +75,67 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     };
   }, []);
 
-  // 핀과 경로선을 다시 그린다.
-  useEffect(() => {
+  // 핀과 경로선을 다시 그린다. 확대·축소하면 겹침 여부가 달라지므로 줌이 바뀔 때도 다시 그린다.
+  function drawMarkers() {
     const map = mapRef.current;
     const layer = layerRef.current;
     if (!map || !layer) return;
     layer.clearLayers();
     markersRef.current.clear();
+    const pts = locatedRef.current;
+    const zoom = map.getZoom();
+    const px = pts.map((p) => map.project([p.lat!, p.lng!], zoom));
+
+    // 화면에서 서로 겹치는 핀끼리 묶어, 묶음 안에서는 핀을 둥글게 펼쳐 놓아 하나씩 누를 수 있게 한다.
+    const groups: number[][] = [];
+    pts.forEach((_, i) => {
+      const g = groups.find((members) => members.some((j) => px[i].distanceTo(px[j]) < 30));
+      if (g) g.push(i);
+      else groups.push([i]);
+    });
+    for (const g of groups) {
+      const n = g.length;
+      const radius = n === 2 ? 18 : Math.max(20, n * 6.5);
+      g.forEach((i, k) => {
+        const p = pts[i];
+        const angle = n === 2 ? Math.PI * k : -Math.PI / 2 + (2 * Math.PI * k) / n;
+        const dx = n === 1 ? 0 : Math.round(Math.cos(angle) * radius);
+        const dy = n === 1 ? 0 : Math.round(Math.sin(angle) * radius);
+        const icon = L.divIcon({
+          className: 'day-map__marker',
+          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
+          iconSize: [28, 28],
+          iconAnchor: [14 - dx, 14 - dy],
+        });
+        const marker = L.marker([p.lat!, p.lng!], { icon })
+          .bindTooltip(p.label, { direction: 'top', offset: [dx, dy - 12] })
+          .addTo(layer);
+        marker.on('click', () => {
+          // 위치를 찍는 중에는 핀을 눌러도 링크를 열지 않는다.
+          if (pickingRef.current) return;
+          window.open(mapsLinkFor(p), '_blank', 'noreferrer');
+        });
+        markersRef.current.set(p.key, marker);
+      });
+    }
+
+    // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
     const route: L.LatLngTuple[] = [];
     const routeNumbers = new Set<number>();
-    for (const p of located) {
-      const point: L.LatLngTuple = [p.lat!, p.lng!];
-      const icon = L.divIcon({
-        className: 'day-map__marker',
-        html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-      });
-      const marker = L.marker(point, { icon }).bindTooltip(p.label, { direction: 'top', offset: [0, -12] }).addTo(layer);
-      marker.on('click', () => {
-        // 위치를 찍는 중에는 핀을 눌러도 링크를 열지 않는다.
-        if (pickingRef.current) return;
-        window.open(mapsLinkFor(p), '_blank', 'noreferrer');
-      });
-      markersRef.current.set(p.key, marker);
-    }
-    // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
-    for (const p of located) {
+    for (const p of pts) {
       if (routeNumbers.has(p.number)) continue;
-      const pick = located.find((q) => q.number === p.number && q.primary) ?? p;
+      const pick = pts.find((q) => q.number === p.number && q.primary) ?? p;
       routeNumbers.add(p.number);
       route.push([pick.lat!, pick.lng!]);
     }
     if (route.length > 1) {
       L.polyline(route, { color: '#6c5ce7', weight: 3, opacity: 0.55, dashArray: '6 8' }).addTo(layer);
     }
+  }
+  drawRef.current = drawMarkers;
+
+  useEffect(() => {
+    drawMarkers();
     fitToLocated(false);
   }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.candidate}:${p.primary}`).join('|')]);
 
