@@ -1701,3 +1701,59 @@ button.calendar__day {
 .link-editor .form-hint {
   margin: 0;
 }
+
+/* 당일 선택지는 보라색(일정)과 구분되도록 주황색으로 표시한다. */
+:root {
+  --color-choice: #d9480f;
+}
+
+.day-map__pin--choice {
+  background: var(--color-choice);
+}
+
+.day-map__pin--choice.day-map__pin--candidate {
+  background: var(--color-surface);
+  border-color: var(--color-choice);
+  color: var(--color-choice);
+}
+
+.day-map__badge--choice {
+  background: var(--color-choice);
+}
+
+.day-map__badge--choice.day-map__badge--candidate {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-choice);
+  color: var(--color-choice);
+  line-height: 19px;
+}
+
+.day-map__needs-pin-number--choice {
+  background: var(--color-choice);
+}
+
+.day-map__legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.day-map__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.day-map__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.day-map__legend-dot--choice {
+  background: var(--color-choice);
+}

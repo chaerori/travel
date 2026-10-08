@@ -16,6 +16,12 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function badgeClass(p: { choice: boolean; candidate: boolean }): string {
+  return ['day-map__badge', p.choice && 'day-map__badge--choice', p.candidate && 'day-map__badge--candidate']
+    .filter(Boolean)
+    .join(' ');
+}
+
 export function DayMap({ items, date, onPlaceCoords }: Props) {
   const [searching, setSearching] = useState<string | null>(null);
   const [pickingKey, setPickingKey] = useState<string | null>(null);
@@ -78,7 +84,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
       const point: L.LatLngTuple = [p.lat!, p.lng!];
       const icon = L.divIcon({
         className: 'day-map__marker',
-        html: `<span class="day-map__pin${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
+        html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${p.candidate ? ' day-map__pin--candidate' : ''}">${p.number}</span>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14],
       });
@@ -96,7 +102,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
     }
     if (located.length === 1) map.setView([located[0].lat!, located[0].lng!], 15, { animate: false });
     else if (located.length > 1) map.fitBounds(L.latLngBounds(located.map((p) => [p.lat!, p.lng!] as L.LatLngTuple)), { padding: [36, 36], maxZoom: 16, animate: false });
-  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.candidate}:${p.primary}`).join('|')]);
+  }, [located.map((p) => `${p.key}:${p.lat}:${p.lng}:${p.number}:${p.choice}:${p.candidate}:${p.primary}`).join('|')]);
 
   // 좌표가 없는 장소는 링크에서 읽거나 이름으로 검색한다(검색은 초당 1건 이하로 제한).
   useEffect(() => {
@@ -157,11 +163,26 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
           <div className="day-map__needs-pin-chips">
             {needsPin.map((p) => (
               <button key={p.key} type="button" onClick={() => startPicking(p.key)}>
-                <span className="day-map__needs-pin-number">{p.number}</span>
+                <span className={p.choice ? 'day-map__needs-pin-number day-map__needs-pin-number--choice' : 'day-map__needs-pin-number'}>
+                  {p.number}
+                </span>
                 {p.label}
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {places.some((p) => p.choice) && (
+        <div className="day-map__legend">
+          <span>
+            <i className="day-map__legend-dot" />
+            일정
+          </span>
+          <span>
+            <i className="day-map__legend-dot day-map__legend-dot--choice" />
+            선택지
+          </span>
         </div>
       )}
 
@@ -180,7 +201,7 @@ export function DayMap({ items, date, onPlaceCoords }: Props) {
           {places.map((p) => {
             return (
               <li key={p.key} className="day-map__row">
-                <span className={p.candidate ? 'day-map__badge day-map__badge--candidate' : 'day-map__badge'}>{p.number}</span>
+                <span className={badgeClass(p)}>{p.number}</span>
                 <span className="day-map__row-text">
                   <span className="day-map__row-label">{p.label}</span>
                   {p.context && <span className="day-map__row-context">{p.context}</span>}

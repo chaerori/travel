@@ -11,6 +11,8 @@ export type DayPlace = {
   lng?: number;
   /** 지도·목록에 표시하는 번호. 당일 선택지의 선택지들은 같은 번호를 쓴다. */
   number: number;
+  /** 당일 선택지의 선택지인지. 지도에서 다른 색으로 구분한다. */
+  choice: boolean;
   /** 같은 번호의 선택지 중 이미 다른 선택지가 골라진 경우 true. 흐리게 표시한다. */
   candidate: boolean;
   /** 같은 번호 안에서 경로선이 지나는 장소(선택한 선택지, 없으면 첫 선택지). */
@@ -32,7 +34,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   function push(
     item: ScheduleItem,
     link: LinkedText,
-    extra: Pick<DayPlace, 'candidate' | 'primary' | 'searchable' | 'context'>,
+    extra: Pick<DayPlace, 'choice' | 'candidate' | 'primary' | 'searchable' | 'context'>,
   ) {
     places.push({
       key: `${item.id}:${link.id}`,
@@ -53,7 +55,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
     if (content.type === 'fixed') {
       if (content.item.label.trim() && (content.item.url || content.item.lat !== undefined)) {
         number++;
-        push(item, content.item, { candidate: false, primary: true, searchable: false, context: '' });
+        push(item, content.item, { choice: false, candidate: false, primary: true, searchable: false, context: '' });
       }
     } else if (content.type === 'choices') {
       const options = content.options.filter((o) => o.label.trim());
@@ -62,6 +64,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       const selected = options.find((o) => o.id === content.selectedId);
       options.forEach((o, i) =>
         push(item, o, {
+          choice: true,
           candidate: !!selected && o.id !== selected.id,
           primary: selected ? o.id === selected.id : i === 0,
           searchable: true,
@@ -72,7 +75,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       for (const stop of content.stops) {
         if (!stop.label.trim()) continue;
         number++;
-        push(item, stop, { candidate: false, primary: true, searchable: true, context: content.title });
+        push(item, stop, { choice: false, candidate: false, primary: true, searchable: true, context: content.title });
       }
     }
   }
