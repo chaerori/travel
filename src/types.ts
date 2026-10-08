@@ -5,6 +5,9 @@ export type LinkedText = {
   /** 이동 경로 장소 옆에 표시할 아이콘 종류. 예전 데이터는 photoSpot(사진 스폿)만 가진다. */
   spot?: Spot;
   photoSpot?: boolean;
+  /** 지도에 표시할 좌표. 링크에서 읽거나 이름 검색, 직접 지정으로 채운다. */
+  lat?: number;
+  lng?: number;
 };
 
 export type Spot = 'photo' | 'bike' | 'tram' | 'bus';

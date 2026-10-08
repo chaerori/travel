@@ -12,6 +12,7 @@ import { EWalletIcon } from './components/icons/EWalletIcon';
 import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
+import { setPlaceCoords, type Coords } from './utils/dayPlaces';
 import { addHours, formatDateWithWeekday } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
@@ -128,12 +129,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
 
-  function openMap() {
-    if (trip.mapUrl) {
-      window.open(trip.mapUrl, '_blank', 'noreferrer');
-    } else {
-      alert('지도 링크가 설정되지 않았습니다. 여행 목록에서 설정할 수 있습니다.');
-    }
+  function handlePlaceCoords(itemId: string, placeId: string, coords: Coords) {
+    setTrip((prev) => ({ ...prev, items: setPlaceCoords(prev.items, itemId, placeId, coords) }));
   }
 
   function scrollToDate(date: string) {
@@ -267,7 +264,9 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         onLuggageChange={handleLuggageChange}
         bookmarks={trip.bookmarks}
         onBookmarksChange={handleBookmarksChange}
-        onOpenMap={openMap}
+        items={trip.items}
+        mapUrl={trip.mapUrl}
+        onPlaceCoords={handlePlaceCoords}
       />
     </div>
   );

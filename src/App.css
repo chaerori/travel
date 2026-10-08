@@ -1459,3 +1459,189 @@ button.calendar__day {
   width: 18px;
   height: 18px;
 }
+
+/* 하루 지도 */
+.day-map__days {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.day-map__day {
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.day-map__day--active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
+}
+
+.day-map__canvas-wrap {
+  position: relative;
+}
+
+.day-map__canvas {
+  height: min(46vh, 380px);
+  min-height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-bg);
+}
+
+.day-map__hint {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--color-text);
+  color: #fff;
+  font-size: 13px;
+}
+
+.day-map__hint button {
+  flex: none;
+  border: none;
+  background: none;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.day-map__marker {
+  background: none;
+  border: none;
+}
+
+.day-map__pin {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(20, 16, 32, 0.3);
+}
+
+.day-map__pin--candidate {
+  background: var(--color-surface);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+}
+
+.day-map__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.day-map__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.day-map__badge {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}
+
+.day-map__badge--candidate {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-text-muted);
+  color: var(--color-text-secondary);
+  line-height: 19px;
+}
+
+.day-map__row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.day-map__row-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.day-map__row-context {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.day-map__locate,
+.day-map__status {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 4px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-strong);
+}
+
+.day-map__locate {
+  cursor: pointer;
+}
+
+.day-map__status {
+  color: var(--color-text-muted);
+}
+
+.day-map__empty {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.day-map__external {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.day-map__days,
+.day-map__canvas-wrap,
+.day-map__list,
+.day-map__empty,
+.day-map__external {
+  flex: none;
+}
