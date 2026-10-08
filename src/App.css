@@ -597,10 +597,6 @@ button.calendar__day {
   gap: 2px;
 }
 
-.item-card__fixed-row .icon-action + .icon-action {
-  margin-left: -4px;
-}
-
 .item-card__fixed-row .icon-action svg {
   width: 16px;
   height: 16px;
@@ -613,11 +609,6 @@ button.calendar__day {
   font-size: 15px;
   font-weight: 500;
   margin-bottom: 4px;
-}
-
-.item-card__title .icon-action svg {
-  width: 16px;
-  height: 16px;
 }
 
 .item-card__content--route {

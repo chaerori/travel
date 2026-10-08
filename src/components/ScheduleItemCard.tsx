@@ -3,7 +3,6 @@ import type { ScheduleItem } from '../types';
 import { ChevronIcon } from './icons/ChevronIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { LinkIcon } from './icons/LinkIcon';
-import { MapIcon } from './icons/MapIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { LinkRow } from './LinkRow';
 import { SpotIcon, getSpot } from './SpotPicker';
@@ -49,17 +48,6 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
           <div className="item-card__content">
             <div className="item-card__fixed-row">
               <span className="link-row link-row--plain">{item.content.item.label}</span>
-              {item.content.item.url && (
-                <a
-                  className="icon-action"
-                  href={item.content.item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="위치"
-                >
-                  <MapIcon />
-                </a>
-              )}
               {item.content.info &&
                 (isUrl(item.content.info) ? (
                   <a
@@ -109,17 +97,12 @@ export function ScheduleItemCard({ item, onUpdate, onEdit, onDelete }: Props) {
 
         {item.content.type === 'route' &&
           (() => {
-            const { title, stops, location } = item.content;
+            const { title, stops } = item.content;
             return (
               <div className="item-card__content">
                 {title && (
                   <div className="item-card__title">
                     {title}
-                    {location && (
-                      <a className="icon-action" href={location} target="_blank" rel="noreferrer" aria-label="위치">
-                        <MapIcon />
-                      </a>
-                    )}
                     {item.needsReservation && <span className="reservation-tag">예약 필요</span>}
                   </div>
                 )}
