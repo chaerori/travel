@@ -1,17 +1,19 @@
 import { useRef, useState } from 'react';
 import type { LinkedText, PaymentMethod, PrepItem, ScheduleContent, ScheduleItem } from '../types';
 import { parseWon } from '../utils/currency';
+import { parseCoords } from '../utils/dayPlaces';
 import { makeId } from '../utils/id';
 import { SpotPicker, getSpot } from './SpotPicker';
 import { TimeSelect } from './TimeSelect';
 
 type ContentType = ScheduleContent['type'];
 
-const SHORT_LINK_HINT =
-  '짧은 링크(maps.app.goo.gl)는 지도에 위치를 표시할 수 없어요. 구글 지도 웹에서 주소창의 전체 링크를 붙여넣으면 정확하게 표시됩니다.';
+const UNREADABLE_LINK_HINT =
+  '이 링크에서는 장소의 정확한 위치를 읽을 수 없어요(짧은 링크이거나 좌표가 없는 주소). 저장한 뒤 일정 카드의 점선 번호를 눌러 지도에서 직접 찍어 주세요.';
 
-function isShortMapLink(url?: string): boolean {
-  return !!url && /(maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(url);
+/** 링크는 있지만 장소의 정확한 좌표를 읽을 수 없는 경우. */
+function isUnreadableMapLink(url?: string): boolean {
+  return !!url?.trim() && !parseCoords(url);
 }
 
 type Props = {
@@ -246,7 +248,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                 />
               </label>
             </div>
-            {isShortMapLink(links[0].url) && <p className="form-hint">{SHORT_LINK_HINT}</p>}
+            {isUnreadableMapLink(links[0].url) && <p className="form-hint">{UNREADABLE_LINK_HINT}</p>}
           </>
         )}
 
@@ -306,7 +308,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
                     )}
                   </div>
                 ))}
-                {links.some((l) => isShortMapLink(l.url)) && <p className="form-hint">{SHORT_LINK_HINT}</p>}
+                {links.some((l) => isUnreadableMapLink(l.url)) && <p className="form-hint">{UNREADABLE_LINK_HINT}</p>}
                 <button type="button" className="add-btn" onClick={addLink}>
                   + 항목 추가
                 </button>

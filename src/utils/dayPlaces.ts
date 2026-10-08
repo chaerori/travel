@@ -21,6 +21,25 @@ export type DayPlace = {
 
 export type Coords = { lat: number; lng: number };
 
+/** 지도 화면의 중심(`@위도,경도`). 장소 위치가 아니다. */
+function viewportCenter(url: string): Coords | null {
+  const m = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+  return m ? { lat: Number(m[1]), lng: Number(m[2]) } : null;
+}
+
+/**
+ * 저장된 좌표. 예전 방식으로 주소의 지도 화면 중심을 장소 위치로 저장해 둔 경우는 틀린 값이라 버린다
+ * (장소의 정확한 좌표를 읽을 수 없는 주소인데 저장된 값이 화면 중심과 같을 때).
+ */
+function savedCoords(link: LinkedText): { lat?: number; lng?: number } {
+  if (link.lat === undefined || link.lng === undefined) return {};
+  if (link.url && !parseCoords(link.url)) {
+    const center = viewportCenter(link.url);
+    if (center && Math.abs(center.lat - link.lat) < 1e-6 && Math.abs(center.lng - link.lng) < 1e-6) return {};
+  }
+  return { lat: link.lat, lng: link.lng };
+}
+
 /** 해당 날짜 일정의 장소를 시간 순으로 모은다. 구글 지도 링크를 넣은 장소만 대상이다. */
 export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   const dayItems = items.filter((i) => i.date === date).sort((a, b) => a.startTime.localeCompare(b.startTime));
@@ -39,8 +58,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
       label: link.label.trim(),
       url: link.url,
       city: item.city,
-      lat: link.lat,
-      lng: link.lng,
+      ...savedCoords(link),
       number,
       ...extra,
     });
@@ -75,11 +93,14 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   return places;
 }
 
-/** 구글 지도 전체 주소에 들어 있는 좌표를 읽는다. 짧은 링크(maps.app.goo.gl)는 읽을 수 없다. */
+/**
+ * 구글 지도 주소에서 장소의 정확한 좌표(!3d…!4d…, q=·ll=·query= 값)를 읽는다.
+ * 주소의 `@위도,경도`는 장소가 아니라 지도 화면의 중심이라 쓰지 않는다. 지도를 움직이지 않고 여러 장소의
+ * 주소를 복사하면 모두 같은 값이 들어 있어, 쓰면 전부 한 곳에 찍힌다. 짧은 링크(maps.app.goo.gl)도 읽을 수 없다.
+ */
 export function parseCoords(url: string): Coords | null {
   const patterns = [
     /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
     /[?&](?:q|ll|query|destination)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
   ];
   for (const re of patterns) {
