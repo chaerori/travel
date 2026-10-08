@@ -261,7 +261,7 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
               <div className="link-editor">
                 {links.map((l, index) => (
                   <div className="link-editor__row" key={l.id} data-link-index={index}>
-                    {contentType === 'route' && links.length > 1 && (
+                    {links.length > 1 && (
                       <span
                         className="drag-handle"
                         onPointerDown={(e) => handleDragPointerDown(e, index)}
