@@ -26,7 +26,7 @@ export function SpotIcon({ spot }: { spot: Spot }) {
 
 const OPTIONS: { value: Spot | undefined; label: string }[] = [
   { value: undefined, label: '없음' },
-  { value: 'photo', label: '카메라' },
+  { value: 'photo', label: '포토 스팟' },
   { value: 'bike', label: '자전거' },
   { value: 'tram', label: '트램' },
   { value: 'bus', label: '버스' },
