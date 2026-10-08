@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { BottomNav } from './components/BottomNav';
 import { BudgetSection } from './components/BudgetSection';
@@ -12,11 +12,14 @@ import { EWalletIcon } from './components/icons/EWalletIcon';
 import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './types';
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
-import { setPlaceCoords, type Coords } from './utils/dayPlaces';
-import { addHours, formatDateWithWeekday } from './utils/date';
+import { getDayPlaces, setPlaceCoords, type Coords } from './utils/dayPlaces';
+import { addHours, formatDateWithWeekday, todayString } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
 import { hasFullAccess } from './firebase';
+
+// 지도 라이브러리는 용량이 커서 지도가 필요할 때만 불러온다.
+const DayMap = lazy(() => import('./components/DayMap').then((m) => ({ default: m.DayMap })));
 
 type Row = {
   item: ScheduleItem;
@@ -50,6 +53,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // 헤더가 고정되어 내용과 겹치기 시작하면 경계를 표시한다.
   useEffect(() => {
@@ -61,9 +65,25 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
   const rows = useMemo(() => buildRows(trip.items), [trip.items]);
 
+  // 일정이 있는 날짜 중 보고 있는 날. 고른 날이 없어졌거나 아직 고르지 않았으면 오늘, 오늘이 없으면 첫째 날.
+  const scheduledDates = useMemo(() => [...new Set(trip.items.map((i) => i.date))].sort(), [trip.items]);
+  const today = todayString();
+  const activeDate =
+    selectedDate && scheduledDates.includes(selectedDate)
+      ? selectedDate
+      : scheduledDates.includes(today)
+        ? today
+        : (scheduledDates[0] ?? null);
+  const dayRows = useMemo(() => rows.filter((r) => r.item.date === activeDate), [rows, activeDate]);
+  const hasPlaces = useMemo(
+    () => activeDate !== null && getDayPlaces(trip.items, activeDate).length > 0,
+    [trip.items, activeDate],
+  );
+
   const lastItem = rows[rows.length - 1]?.item;
-  const defaultStartTime = lastItem
-    ? lastItem.endTime || addHours(lastItem.startTime, 0.5)
+  const dayLastItem = dayRows[dayRows.length - 1]?.item;
+  const defaultStartTime = dayLastItem
+    ? dayLastItem.endTime || addHours(dayLastItem.startTime, 0.5)
     : '09:00';
 
   function openAddForm() {
@@ -84,6 +104,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         : [...prev.items, item];
       return { ...prev, items };
     });
+    setSelectedDate(item.date);
     setFormOpen(false);
     setEditingItem(null);
   }
@@ -133,13 +154,12 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, items: setPlaceCoords(prev.items, itemId, placeId, coords) }));
   }
 
-  function scrollToDate(date: string) {
-    const target = document.getElementById(`date-${date}`);
-    if (!target) return;
-    const header = document.querySelector('.app__header');
-    const offset = header instanceof HTMLElement ? header.offsetHeight : 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset - 8;
-    window.scrollTo({ top, behavior: 'smooth' });
+  function openMap() {
+    if (trip.mapUrl) {
+      window.open(trip.mapUrl, '_blank', 'noreferrer');
+    } else {
+      alert('지도 링크가 설정되지 않았습니다. 여행 목록에서 설정할 수 있습니다.');
+    }
   }
 
   if (status === 'denied') {
@@ -209,7 +229,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       </header>
 
       <main className="app__list">
-        <CalendarSection items={trip.items} onSelectDate={scrollToDate} />
+        <CalendarSection items={trip.items} selectedDate={activeDate} onSelectDate={setSelectedDate} />
 
         <button type="button" className="add-btn schedule-add-btn" onClick={openAddForm}>
           + 일정 추가
@@ -221,18 +241,22 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </div>
         )}
 
-        {rows.map(({ item, showDate, showCity }, index) => (
+        {activeDate && dayRows.length > 0 && (
+          <div className="date-city-row date-city-row--first">
+            <span className="date-divider">{formatDateWithWeekday(activeDate)}</span>
+            <span className="city-heading">{dayRows[0].item.city}</span>
+          </div>
+        )}
+
+        {activeDate && hasPlaces && (
+          <Suspense fallback={<div className="day-map__placeholder" />}>
+            <DayMap items={trip.items} date={activeDate} onPlaceCoords={handlePlaceCoords} />
+          </Suspense>
+        )}
+
+        {dayRows.map(({ item, showCity }, index) => (
           <div key={item.id} className="schedule-row">
-            {showDate && (
-              <div
-                id={`date-${item.date}`}
-                className={index === 0 ? 'date-city-row date-city-row--first' : 'date-city-row'}
-              >
-                <span className="date-divider">{formatDateWithWeekday(item.date)}</span>
-                <span className="city-heading">{item.city}</span>
-              </div>
-            )}
-            {!showDate && showCity && <div className="city-heading">{item.city}</div>}
+            {index > 0 && showCity && <div className="city-heading">{item.city}</div>}
             <ScheduleItemCard
               item={item}
               onUpdate={handleUpdate}
@@ -246,8 +270,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       {formOpen && (
         <ScheduleForm
           initial={editingItem}
-          defaultDate={lastItem?.date ?? new Date().toISOString().slice(0, 10)}
-          defaultCity={lastItem?.city ?? ''}
+          defaultDate={activeDate ?? today}
+          defaultCity={dayLastItem?.city ?? lastItem?.city ?? ''}
           defaultStartTime={defaultStartTime}
           onSave={handleSave}
           onCancel={() => {
@@ -264,9 +288,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         onLuggageChange={handleLuggageChange}
         bookmarks={trip.bookmarks}
         onBookmarksChange={handleBookmarksChange}
-        items={trip.items}
-        mapUrl={trip.mapUrl}
-        onPlaceCoords={handlePlaceCoords}
+        onOpenMap={openMap}
       />
     </div>
   );

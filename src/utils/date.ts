@@ -8,6 +8,13 @@ export function formatDateWithWeekday(dateStr: string): string {
   return `${month}월 ${day}일 (${weekday})`;
 }
 
+/** 오늘 날짜(기기 시간 기준)를 YYYY-MM-DD로 돌려준다. */
+export function todayString(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 export function addHours(time: string, hours: number): string {
   const [h, m] = time.split(':').map(Number);
   const total = (h * 60 + m + hours * 60 + 24 * 60) % (24 * 60);

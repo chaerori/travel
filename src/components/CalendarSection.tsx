@@ -4,6 +4,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 type Props = {
   items: ScheduleItem[];
+  selectedDate: string | null;
   onSelectDate: (date: string) => void;
 };
 
@@ -24,7 +25,7 @@ function startOfWeek(d: Date): Date {
   return addDays(d, -d.getDay());
 }
 
-export function CalendarSection({ items, onSelectDate }: Props) {
+export function CalendarSection({ items, selectedDate, onSelectDate }: Props) {
   if (items.length === 0) {
     return (
       <div className="calendar">
@@ -92,7 +93,8 @@ export function CalendarSection({ items, onSelectDate }: Props) {
             <button
               key={dateStr}
               type="button"
-              className={`calendar__day calendar__day--${variant}`}
+              className={`calendar__day calendar__day--${variant}${dateStr === selectedDate ? ' calendar__day--selected' : ''}`}
+              aria-pressed={dateStr === selectedDate}
               onClick={() => onSelectDate(dateStr)}
             >
               {d.getDate()}

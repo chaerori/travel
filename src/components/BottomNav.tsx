@@ -1,6 +1,5 @@
-import { lazy, Suspense, useState } from 'react';
-import type { Bookmarks, ExpenseEntry, Luggage, ScheduleItem } from '../types';
-import type { Coords } from '../utils/dayPlaces';
+import { useState } from 'react';
+import type { Bookmarks, ExpenseEntry, Luggage } from '../types';
 import { ExpenseModal } from './ExpenseModal';
 import { PlacesModal } from './PlacesModal';
 import { PrepChecklistModal } from './PrepChecklistModal';
@@ -9,9 +8,6 @@ import { CityMarkerIcon } from './icons/CityMarkerIcon';
 import { GpsLocationIcon } from './icons/GpsLocationIcon';
 import { PurseIcon } from './icons/PurseIcon';
 
-// 지도 라이브러리는 용량이 커서 지도를 처음 열 때만 불러온다.
-const DayMapModal = lazy(() => import('./DayMapModal').then((m) => ({ default: m.DayMapModal })));
-
 type Props = {
   expenses: ExpenseEntry[];
   onExpensesChange: (expenses: ExpenseEntry[]) => void;
@@ -19,9 +15,7 @@ type Props = {
   onLuggageChange: (luggage: Luggage[]) => void;
   bookmarks: Bookmarks;
   onBookmarksChange: (bookmarks: Bookmarks) => void;
-  items: ScheduleItem[];
-  mapUrl: string;
-  onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
+  onOpenMap: () => void;
 };
 
 export function BottomNav({
@@ -31,14 +25,11 @@ export function BottomNav({
   onLuggageChange,
   bookmarks,
   onBookmarksChange,
-  items,
-  mapUrl,
-  onPlaceCoords,
+  onOpenMap,
 }: Props) {
   const [prepOpen, setPrepOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [placesOpen, setPlacesOpen] = useState(false);
-  const [mapOpen, setMapOpen] = useState(false);
 
   return (
     <>
@@ -55,7 +46,7 @@ export function BottomNav({
           <GpsLocationIcon />
           <span>가고 싶은 장소</span>
         </button>
-        <button type="button" className="bottom-nav__item" onClick={() => setMapOpen(true)}>
+        <button type="button" className="bottom-nav__item" onClick={onOpenMap}>
           <CityMarkerIcon />
           <span>지도</span>
         </button>
@@ -71,12 +62,6 @@ export function BottomNav({
 
       {placesOpen && (
         <PlacesModal bookmarks={bookmarks} onChange={onBookmarksChange} onClose={() => setPlacesOpen(false)} />
-      )}
-
-      {mapOpen && (
-        <Suspense fallback={null}>
-          <DayMapModal items={items} mapUrl={mapUrl} onPlaceCoords={onPlaceCoords} onClose={() => setMapOpen(false)} />
-        </Suspense>
       )}
     </>
   );

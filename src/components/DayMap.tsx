@@ -1,39 +1,25 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronIcon } from './icons/ChevronIcon';
 import type { ScheduleItem } from '../types';
-import { formatDateWithWeekday } from '../utils/date';
 import { getDayPlaces, parseCoords, type Coords } from '../utils/dayPlaces';
 import { geocodePlace } from '../utils/geocode';
 
 type Props = {
   items: ScheduleItem[];
-  mapUrl: string;
+  date: string;
   onPlaceCoords: (itemId: string, placeId: string, coords: Coords) => void;
-  onClose: () => void;
 };
-
-function todayString(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function DayMapModal({ items, mapUrl, onPlaceCoords, onClose }: Props) {
-  const dates = useMemo(
-    () => [...new Set(items.map((i) => i.date))].filter((d) => getDayPlaces(items, d).length > 0).sort(),
-    [items],
-  );
-  const [date, setDate] = useState(() => {
-    const today = todayString();
-    return dates.includes(today) ? today : (dates[0] ?? '');
-  });
+export function DayMap({ items, date, onPlaceCoords }: Props) {
   const [searching, setSearching] = useState<string | null>(null);
   const [pickingKey, setPickingKey] = useState<string | null>(null);
+  const [managing, setManaging] = useState(false);
 
   const places = useMemo(() => getDayPlaces(items, date), [items, date]);
   const located = places.filter((p) => p.lat !== undefined && p.lng !== undefined);
@@ -108,6 +94,7 @@ export function DayMapModal({ items, mapUrl, onPlaceCoords, onClose }: Props) {
 
   // 좌표가 없는 장소는 링크에서 읽거나 이름으로 검색한다(검색은 초당 1건 이하로 제한).
   useEffect(() => {
+    setPickingKey(null);
     let cancelled = false;
     (async () => {
       for (const p of getDayPlaces(itemsRef.current, date)) {
@@ -134,93 +121,63 @@ export function DayMapModal({ items, mapUrl, onPlaceCoords, onClose }: Props) {
   }, [date]);
 
   const picking = places.find((p) => p.key === pickingKey);
+  const unlocated = places.length - located.length;
   let number = 0;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal__header">
-          <h2 className="modal__title">지도</h2>
-          <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
-            ✕
-          </button>
-        </div>
-
-        {dates.length === 0 ? (
-          <p className="day-map__empty">지도에 표시할 장소가 없습니다. 이동 경로나 선택지에 장소를 추가하면 여기에 나타납니다.</p>
-        ) : (
-          <>
-            <div className="day-map__days" role="tablist">
-              {dates.map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  role="tab"
-                  aria-selected={d === date}
-                  className={d === date ? 'day-map__day day-map__day--active' : 'day-map__day'}
-                  onClick={() => {
-                    setPickingKey(null);
-                    setDate(d);
-                  }}
-                >
-                  {formatDateWithWeekday(d)}
-                </button>
-              ))}
-            </div>
-
-            <div className="day-map__canvas-wrap" ref={wrapRef}>
-              <div className="day-map__canvas" ref={mapEl} />
-              {picking && (
-                <div className="day-map__hint">
-                  <span>지도를 눌러 ‘{picking.label}’ 위치를 지정하세요</span>
-                  <button type="button" onClick={() => setPickingKey(null)}>
-                    취소
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <ol className="day-map__list">
-              {places.map((p) => {
-                const hasCoords = p.lat !== undefined;
-                const badge = p.numbered ? String(++number) : '?';
-                return (
-                  <li key={p.key} className="day-map__row">
-                    <span className={p.numbered ? 'day-map__badge' : 'day-map__badge day-map__badge--candidate'}>{badge}</span>
-                    <span className="day-map__row-text">
-                      <span className="day-map__row-label">{p.label}</span>
-                      {p.context && <span className="day-map__row-context">{p.context}</span>}
-                    </span>
-                    {searching === p.key ? (
-                      <span className="day-map__status">찾는 중…</span>
-                    ) : (
-                      <button
-                        type="button"
-                        className="day-map__locate"
-                        onClick={() => {
-                          setPickingKey(p.key);
-                          wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }}
-                      >
-                        {hasCoords ? '위치 수정' : '위치 지정'}
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-            {located.length === 0 && searching === null && (
-              <p className="day-map__empty">장소의 위치를 찾지 못했습니다. ‘위치 지정’을 눌러 지도에서 직접 찍어 주세요.</p>
-            )}
-          </>
-        )}
-
-        {mapUrl && (
-          <a className="day-map__external" href={mapUrl} target="_blank" rel="noreferrer">
-            내 지도 열기 ↗
-          </a>
+    <section className="day-map">
+      <div className="day-map__canvas-wrap" ref={wrapRef}>
+        <div className="day-map__canvas" ref={mapEl} />
+        {picking && (
+          <div className="day-map__hint">
+            <span>지도를 눌러 ‘{picking.label}’ 위치를 지정하세요</span>
+            <button type="button" onClick={() => setPickingKey(null)}>
+              취소
+            </button>
+          </div>
         )}
       </div>
-    </div>
+
+      <button type="button" className="day-map__manage" aria-expanded={managing} onClick={() => setManaging((v) => !v)}>
+        <span>
+          장소 {places.length}곳{unlocated > 0 && searching === null ? ` · 위치를 찾지 못한 곳 ${unlocated}곳` : ''}
+          {searching !== null ? ' · 위치 찾는 중…' : ''}
+        </span>
+        <span className={managing ? 'day-map__chevron day-map__chevron--open' : 'day-map__chevron'}>
+          <ChevronIcon />
+        </span>
+      </button>
+
+      {managing && (
+        <ol className="day-map__list">
+          {places.map((p) => {
+            const badge = p.numbered ? String(++number) : '?';
+            return (
+              <li key={p.key} className="day-map__row">
+                <span className={p.numbered ? 'day-map__badge' : 'day-map__badge day-map__badge--candidate'}>{badge}</span>
+                <span className="day-map__row-text">
+                  <span className="day-map__row-label">{p.label}</span>
+                  {p.context && <span className="day-map__row-context">{p.context}</span>}
+                </span>
+                {searching === p.key ? (
+                  <span className="day-map__status">찾는 중…</span>
+                ) : (
+                  <button
+                    type="button"
+                    className="day-map__locate"
+                    onClick={() => {
+                      setPickingKey(p.key);
+                      wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }}
+                  >
+                    {p.lat !== undefined ? '위치 수정' : '위치 지정'}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </section>
   );
 }
