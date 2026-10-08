@@ -53,7 +53,7 @@ export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   for (const item of dayItems) {
     const content = item.content;
     if (content.type === 'fixed') {
-      if (content.item.label.trim() && (content.item.url || content.item.lat !== undefined)) {
+      if (content.item.label.trim() && content.item.url) {
         number++;
         push(item, content.item, { choice: false, candidate: false, primary: true, searchable: false, context: '' });
       }

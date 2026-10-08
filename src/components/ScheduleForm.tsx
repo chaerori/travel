@@ -55,7 +55,18 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
   const [needsReservation, setNeedsReservation] = useState(initial?.needsReservation ?? false);
 
   function updateLink(id: string, patch: Partial<LinkedText>) {
-    setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
+    setLinks((prev) =>
+      prev.map((l) => {
+        if (l.id !== id) return l;
+        const next = { ...l, ...patch };
+        // 링크가 바뀌거나 지워지면 이전 링크로 정해진 지도 좌표는 더 이상 맞지 않는다.
+        if ('url' in patch && (patch.url ?? '') !== (l.url ?? '')) {
+          next.lat = undefined;
+          next.lng = undefined;
+        }
+        return next;
+      }),
+    );
   }
 
   function handleContentTypeChange(next: ContentType) {
