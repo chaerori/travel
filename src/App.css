@@ -26,6 +26,12 @@
   padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
 }
 
+.bottom-nav__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
 .bottom-nav__item {
   flex: 1;
   min-width: 0;

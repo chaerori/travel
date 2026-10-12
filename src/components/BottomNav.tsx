@@ -46,9 +46,19 @@ export function BottomNav({
           <GpsLocationIcon />
           <span>가고 싶은 장소</span>
         </button>
-        <button type="button" className="bottom-nav__item" onClick={onOpenMap}>
+        <button
+          type="button"
+          className="bottom-nav__item"
+          onClick={onOpenMap}
+          aria-label="지도, 새 탭에서 열기"
+        >
           <CityMarkerIcon />
-          <span>지도</span>
+          <span className="bottom-nav__label">
+            지도
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
         </button>
       </nav>
 
