@@ -104,7 +104,17 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
 
         {trips.length === 0 && status === 'ready' && (
           <div className="empty-state">
-            <p>아직 만든 여행이 없습니다.</p>
+            {isOwner ? (
+              <>
+                <p className="empty-state__title">첫 여행을 만들어 보세요</p>
+                <p>일정과 비용, 짐 목록을 한곳에서 관리할 수 있어요.</p>
+              </>
+            ) : (
+              <>
+                <p className="empty-state__title">공유받은 여행이 아직 없어요</p>
+                <p>여행을 만든 사람이 초대하면 여기에 나타나요.</p>
+              </>
+            )}
           </div>
         )}
 

@@ -238,7 +238,11 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
 
         {rows.length === 0 && (
           <div className="empty-state">
-            <p>등록된 일정이 없습니다.</p>
+            <p className="empty-state__title">첫 일정을 추가해 보세요</p>
+            <p>날짜와 시간, 장소를 넣으면 달력과 지도에 바로 나타나요.</p>
+            <button type="button" className="btn btn--primary empty-state__action" onClick={openAddForm}>
+              일정 추가
+            </button>
           </div>
         )}
 

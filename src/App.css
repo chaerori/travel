@@ -520,6 +520,20 @@ button.calendar__day {
 
 .empty-state p {
   margin: 0;
+  text-wrap: balance;
+}
+
+.empty-state__title {
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.empty-state__action {
+  flex: none;
+  margin: 16px auto 0;
+  padding: 10px 24px;
 }
 
 .schedule-row {

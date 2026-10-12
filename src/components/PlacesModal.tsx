@@ -133,7 +133,9 @@ export function PlacesModal({ bookmarks, onChange, onClose }: Props) {
         <div className="link-editor">
           {visibleItems.length === 0 && (
             <p className="sync-panel__hint">
-              {items.length === 0 ? '아직 추가한 항목이 없습니다.' : '해당 위치의 항목이 없습니다.'}
+              {items.length === 0
+                ? '아직 추가한 곳이 없어요. 아래에서 이름과 구글맵 링크를 넣으면 지도에 별로 표시돼요.'
+                : '이 위치에 추가한 곳이 없어요.'}
             </p>
           )}
           {visibleItems.map((item) => {

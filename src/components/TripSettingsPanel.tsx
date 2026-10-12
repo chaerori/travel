@@ -79,7 +79,7 @@ export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
             <span>일행 초대</span>
             <div className="link-editor">
               {sharedEmails.length === 0 && (
-                <p className="sync-panel__hint">아직 초대한 사람이 없습니다.</p>
+                <p className="sync-panel__hint">아직 초대한 사람이 없어요. 이메일을 추가하면 같은 일정을 함께 볼 수 있어요.</p>
               )}
               {sharedEmails.map((email) => (
                 <div className="link-editor__row" key={email}>
