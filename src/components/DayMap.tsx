@@ -300,17 +300,15 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
 
       {(places.some((p) => p.choice) || stars.length > 0) && (
         <div className="day-map__legend">
+          <span>
+            <i className="day-map__legend-dot" />
+            일정
+          </span>
           {places.some((p) => p.choice) && (
-            <>
-              <span>
-                <i className="day-map__legend-dot" />
-                일정
-              </span>
-              <span>
-                <i className="day-map__legend-dot day-map__legend-dot--choice" />
-                선택지
-              </span>
-            </>
+            <span>
+              <i className="day-map__legend-dot day-map__legend-dot--choice" />
+              선택지
+            </span>
           )}
           {stars.length > 0 && (
             <span>
