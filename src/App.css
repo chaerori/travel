@@ -1822,3 +1822,40 @@ button.calendar__day {
   stroke: #d98a0b;
   stroke-width: 1;
 }
+
+/* 가고 싶은 장소 목록의 별: 지도에 표시되면 채운 별, 아니면 빈 별 */
+.bookmark-star-wrap {
+  flex: none;
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  padding-top: 2px;
+}
+
+.bookmark-star {
+  display: block;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.bookmark-star--on {
+  fill: #f5a524;
+  stroke: #d98a0b;
+}
+
+.bookmark-star--off {
+  fill: none;
+  stroke: var(--color-text-muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

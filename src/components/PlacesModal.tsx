@@ -3,7 +3,9 @@ import type { BookmarkCategory, BookmarkItem, Bookmarks } from '../types';
 import { makeId } from '../utils/id';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { PencilIcon } from './icons/PencilIcon';
+import { parseCoords } from '../utils/dayPlaces';
 import { LinkRow } from './LinkRow';
+import { StarIcon } from './icons/StarIcon';
 import { useSheet } from '../utils/useSheet';
 
 const CATEGORIES: { key: BookmarkCategory; label: string }[] = [
@@ -134,25 +136,35 @@ export function PlacesModal({ bookmarks, onChange, onClose }: Props) {
               {items.length === 0 ? '아직 추가한 항목이 없습니다.' : '해당 위치의 항목이 없습니다.'}
             </p>
           )}
-          {visibleItems.map((item) => (
-            <div className="link-editor__row" key={item.id}>
-              <div className="bookmark-item__body">
-                <LinkRow item={item} />
-                {item.description && <div className="bookmark-item__desc">{item.description}</div>}
+          {visibleItems.map((item) => {
+            const onMap = !!item.url && parseCoords(item.url) !== null;
+            return (
+              <div className="link-editor__row" key={item.id}>
+                <span
+                  className="bookmark-star-wrap"
+                  title={onMap ? '지도에 별로 표시돼요' : '구글맵 링크에서 위치를 읽을 수 없어 지도에 표시되지 않아요'}
+                >
+                  <StarIcon filled={onMap} />
+                  <span className="sr-only">{onMap ? '지도에 표시됨' : '지도에 표시되지 않음'}</span>
+                </span>
+                <div className="bookmark-item__body">
+                  <LinkRow item={item} />
+                  {item.description && <div className="bookmark-item__desc">{item.description}</div>}
+                </div>
+                <button type="button" className="icon-action" onClick={() => startEdit(item)} aria-label="수정">
+                  <PencilIcon />
+                </button>
+                <button
+                  type="button"
+                  className="icon-action icon-action--danger"
+                  onClick={() => removeItem(item.id)}
+                  aria-label="삭제"
+                >
+                  <DeleteIcon />
+                </button>
               </div>
-              <button type="button" className="icon-action" onClick={() => startEdit(item)} aria-label="수정">
-                <PencilIcon />
-              </button>
-              <button
-                type="button"
-                className="icon-action icon-action--danger"
-                onClick={() => removeItem(item.id)}
-                aria-label="삭제"
-              >
-                <DeleteIcon />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <form className="bookmark-add-form" onSubmit={submitForm}>
