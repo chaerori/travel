@@ -521,23 +521,33 @@ button.calendar__day {
   flex-direction: column;
 }
 
-.date-city-row {
+.day-heading {
+  margin-bottom: 12px;
+}
+
+.day-heading__title {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
-.date-city-row--first {
-  margin-top: 0;
-}
-
-.date-divider {
-  font-size: 13px;
+  gap: 8px;
+  margin: 0;
+  font-size: 22px;
   font-weight: 700;
+  line-height: 1.2;
+}
+
+.day-heading__today {
+  border-radius: 6px;
+  padding: 2px 8px;
+  background: var(--color-primary-soft);
   color: var(--color-primary-strong);
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.day-heading__sub {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
 .city-heading {
@@ -549,8 +559,48 @@ button.calendar__day {
   font-weight: 700;
 }
 
-.date-city-row .city-heading {
-  margin: 0;
+/* 하루 일정: 시간 · 세로선과 점 · 카드 순서로 흐른다. */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 44px 16px minmax(0, 1fr);
+  column-gap: 6px;
+  margin-bottom: 10px;
+}
+
+.timeline-rail {
+  position: relative;
+}
+
+/* 점들을 잇는 선. 카드 사이 간격까지 이어 주고, 마지막 일정에서는 점에서 끝낸다. */
+.timeline-rail::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: -10px;
+  width: 2px;
+  background: rgba(108, 92, 231, 0.22);
+}
+
+.schedule-row:last-child .timeline-rail::before {
+  bottom: auto;
+  height: 26px;
+}
+
+.timeline-rail__dot {
+  position: absolute;
+  left: 2px;
+  top: 21px;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border: 2px solid var(--color-bg);
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.timeline-rail__dot--choice {
+  background: var(--color-choice);
 }
 
 .item-card {
@@ -560,18 +610,16 @@ button.calendar__day {
   border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 14px;
-  margin-bottom: 10px;
   box-shadow: var(--shadow-card);
 }
 
 .item-card__time {
-  flex: none;
-  width: 52px;
+  align-items: flex-end;
   display: flex;
   flex-direction: column;
   gap: 2px;
   white-space: nowrap;
-  padding-top: 1px;
+  padding-top: 15px;
 }
 
 .item-card__time-start {

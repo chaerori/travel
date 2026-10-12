@@ -243,10 +243,15 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
         )}
 
         {activeDate && dayRows.length > 0 && (
-          <div className="date-city-row date-city-row--first">
-            <span className="date-divider">{formatDateWithWeekday(activeDate)}</span>
-            <span className="city-heading">{dayRows[0].item.city}</span>
-          </div>
+          <header className="day-heading">
+            <h2 className="day-heading__title">
+              {scheduledDates.indexOf(activeDate) + 1}일차
+              {activeDate === today && <span className="day-heading__today">오늘</span>}
+            </h2>
+            <p className="day-heading__sub">
+              {formatDateWithWeekday(activeDate)} · {dayRows[0].item.city}
+            </p>
+          </header>
         )}
 
         {activeDate && hasPlaces && (
