@@ -150,7 +150,7 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
         const stacked = k === 0 && members.length > 1;
         const icon = L.divIcon({
           className: 'day-map__marker',
-          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${stacked ? ' day-map__pin--stack' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 11}px">${p.number}</span>`,
+          html: `<span class="day-map__pin${p.choice ? ' day-map__pin--choice' : ''}${stacked ? ' day-map__pin--stack' : ''}" style="width:${size}px;height:${size}px;line-height:${size - 4}px;font-size:${size >= 28 ? 13 : 12}px">${p.number}</span>`,
           iconSize: [size, size],
           iconAnchor: [size / 2, size / 2],
         });
