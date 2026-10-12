@@ -299,6 +299,16 @@ button.calendar__day {
   justify-content: flex-end;
 }
 
+/* 긴 폼에서도 저장 버튼이 항상 보이도록 시트 아래에 붙인다. */
+.form-actions--sticky {
+  position: sticky;
+  bottom: calc(-20px - env(safe-area-inset-bottom));
+  margin: 8px -20px calc(-20px - env(safe-area-inset-bottom));
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  background: var(--color-surface);
+  display: flex;
+}
+
 .bookmark-item__body {
   flex: 1;
   min-width: 0;

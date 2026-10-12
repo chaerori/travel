@@ -373,8 +373,8 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
           </div>
         </div>
 
-        <div className="form-actions--end">
-          <button type="submit" className="add-btn">
+        <div className="form-actions--sticky">
+          <button type="submit" className="btn btn--primary">
             저장
           </button>
         </div>
