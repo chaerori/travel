@@ -5,6 +5,7 @@ import { parseCoords } from '../utils/dayPlaces';
 import { makeId } from '../utils/id';
 import { SpotPicker, getSpot } from './SpotPicker';
 import { TimeSelect } from './TimeSelect';
+import { useSheet } from '../utils/useSheet';
 
 type ContentType = ScheduleContent['type'];
 
@@ -36,6 +37,7 @@ function toLinkedList(content: ScheduleContent): LinkedText[] {
 }
 
 export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTime, onSave, onCancel }: Props) {
+  const sheet = useSheet(onCancel);
   const [date, setDate] = useState(initial?.date ?? defaultDate);
   const [city, setCity] = useState(initial?.city ?? defaultCity);
   const [startTime, setStartTime] = useState(initial?.startTime ?? defaultStartTime);
@@ -169,9 +171,9 @@ export function ScheduleForm({ initial, defaultDate, defaultCity, defaultStartTi
 
   return (
     <div className="modal-backdrop" onClick={onCancel}>
-      <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
-        <div className="modal__header">
-          <h2 className="modal__title">{initial ? '일정 수정' : '일정 추가'}</h2>
+      <form className="modal" ref={sheet.ref} {...sheet.dialogProps} onSubmit={handleSubmit}>
+        <div className="modal__header" {...sheet.handleProps}>
+          <h2 className="modal__title" id={sheet.titleId}>{initial ? '일정 수정' : '일정 추가'}</h2>
           <button type="button" className="modal__close" onClick={onCancel} aria-label="닫기">
             ✕
           </button>

@@ -847,6 +847,10 @@ button.calendar__day {
   }
 }
 
+.modal:focus-visible {
+  outline: none;
+}
+
 .modal > * + * {
   margin-top: 14px;
 }
@@ -857,6 +861,7 @@ button.calendar__day {
 }
 
 .modal__header {
+  touch-action: none;
   position: sticky;
   top: 0;
   z-index: 1;

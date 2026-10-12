@@ -3,6 +3,7 @@ import type { CurrencyCode } from '../types';
 import { CURRENCY_OPTIONS } from '../utils/currency';
 import { useCloudTrip } from '../utils/cloudTrip';
 import { renameTripIndexEntry } from '../utils/tripIndex';
+import { useSheet } from '../utils/useSheet';
 
 type Props = {
   tripId: string;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
+  const sheet = useSheet(onClose);
   const { trip, setTrip, status, sharedEmails, addSharedEmail, removeSharedEmail } = useCloudTrip(true, tripId);
   const [input, setInput] = useState('');
   const [titleDraft, setTitleDraft] = useState('');
@@ -49,9 +51,9 @@ export function TripSettingsPanel({ tripId, isOwner, onClose }: Props) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal__header">
-          <h2 className="modal__title">여행 설정</h2>
+      <div className="modal" ref={sheet.ref} {...sheet.dialogProps}>
+        <div className="modal__header" {...sheet.handleProps}>
+          <h2 className="modal__title" id={sheet.titleId}>여행 설정</h2>
           <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
             ✕
           </button>

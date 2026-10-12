@@ -3,6 +3,7 @@ import type { ExpenseEntry } from '../types';
 import { formatWon, parseWon } from '../utils/currency';
 import { makeId } from '../utils/id';
 import { DeleteIcon } from './icons/DeleteIcon';
+import { useSheet } from '../utils/useSheet';
 
 type ExpenseFormState = {
   label: string;
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export function ExpenseModal({ expenses, onChange, onClose }: Props) {
+  const sheet = useSheet(onClose);
   const [form, setForm] = useState<ExpenseFormState>(emptyExpenseForm());
   const dragIndex = useRef<number | null>(null);
 
@@ -73,9 +75,9 @@ export function ExpenseModal({ expenses, onChange, onClose }: Props) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal__header">
-          <h2 className="modal__title">비용</h2>
+      <div className="modal" ref={sheet.ref} {...sheet.dialogProps}>
+        <div className="modal__header" {...sheet.handleProps}>
+          <h2 className="modal__title" id={sheet.titleId}>비용</h2>
           <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
             ✕
           </button>

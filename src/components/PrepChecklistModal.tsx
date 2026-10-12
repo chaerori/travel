@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Luggage, PrepItem } from '../types';
 import { makeId } from '../utils/id';
+import { useSheet } from '../utils/useSheet';
 
 type Props = {
   luggage: Luggage[];
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export function PrepChecklistModal({ luggage, onChange, onClose }: Props) {
+  const sheet = useSheet(onClose);
   const [activeId, setActiveId] = useState<string | null>(luggage[0]?.id ?? null);
   const [addingTab, setAddingTab] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -121,9 +123,9 @@ export function PrepChecklistModal({ luggage, onChange, onClose }: Props) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal__header">
-          <h2 className="modal__title">짐 체크리스트</h2>
+      <div className="modal" ref={sheet.ref} {...sheet.dialogProps}>
+        <div className="modal__header" {...sheet.handleProps}>
+          <h2 className="modal__title" id={sheet.titleId}>짐 체크리스트</h2>
           <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
             ✕
           </button>
@@ -169,7 +171,10 @@ export function PrepChecklistModal({ luggage, onChange, onClose }: Props) {
                   onBlur={commitAddTab}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') commitAddTab();
-                    if (e.key === 'Escape') setAddingTab(false);
+                    if (e.key === 'Escape') {
+                      e.preventDefault();
+                      setAddingTab(false);
+                    }
                   }}
                 />
               </div>
