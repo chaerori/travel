@@ -48,6 +48,13 @@ function savedCoords(link: LinkedText): { lat?: number; lng?: number } {
   return { lat: link.lat, lng: link.lng };
 }
 
+/** 장소의 좌표. 저장된 좌표를 우선하고, 없으면 링크에서 읽는다. 알 수 없으면 null. */
+export function linkCoords(link: LinkedText): Coords | null {
+  const saved = savedCoords(link);
+  if (saved.lat !== undefined && saved.lng !== undefined) return { lat: saved.lat, lng: saved.lng };
+  return link.url ? parseCoords(link.url) : null;
+}
+
 /** 해당 날짜 일정의 장소를 시간 순으로 모은다. 구글 지도 링크를 넣은 장소만 대상이다. */
 export function getDayPlaces(items: ScheduleItem[], date: string): DayPlace[] {
   const dayItems = items.filter((i) => i.date === date).sort((a, b) => a.startTime.localeCompare(b.startTime));

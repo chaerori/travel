@@ -158,8 +158,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
 
-  // 가고 싶은 장소를 지도에서 보여 준다. 장소의 도시와 같은 도시의 일정이 있는 날 중
-  // 오늘이거나 오늘과 가장 가까운 미래 날짜로 옮기고, 같은 도시의 날이 없으면 보던 날에서 보여 준다.
+  // 가고 싶은 장소를 지도에서 보여 준다. 그 장소와 가장 가까운 확정된 일정이 있는 날로 옮기고,
+  // 그런 날이 없으면 보던 날에서 보여 준다.
   function handleShowBookmark(id: string) {
     const target = pickBookmarkDate(trip, id, today) ?? activeDate;
     if (target && target !== activeDate) setSelectedDate(target);
