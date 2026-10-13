@@ -1823,7 +1823,7 @@ button.calendar__day {
 /* 가고 싶은 장소 별 */
 .day-map__star {
   display: block;
-  fill: #f5a524;
+  fill: var(--color-star);
   stroke: #fff;
   stroke-width: 1.6;
   stroke-linejoin: round;
@@ -1833,7 +1833,7 @@ button.calendar__day {
 .day-map__legend-star {
   flex: none;
   filter: none;
-  stroke: #d98a0b;
+  stroke: var(--color-star-edge);
   stroke-width: 1;
 }
 
@@ -1853,8 +1853,8 @@ button.calendar__day {
 }
 
 .bookmark-star--on {
-  fill: #f5a524;
-  stroke: #d98a0b;
+  fill: var(--color-star);
+  stroke: var(--color-star-edge);
 }
 
 .bookmark-star--off {
