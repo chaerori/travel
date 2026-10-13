@@ -300,6 +300,13 @@ button.calendar__day {
   margin-top: 16px;
 }
 
+/* 목록과 새 항목 입력창을 구분한다. 시트의 `> * + *` 간격보다 우선하도록 선택자를 한 단계 높인다. */
+.modal .bookmark-add-form {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+
 .form-actions--end {
   display: flex;
   justify-content: flex-end;
