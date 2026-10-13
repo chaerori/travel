@@ -88,7 +88,10 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" ref={sheet.ref} {...sheet.dialogProps}>
         <div className="modal__header" {...sheet.handleProps}>
-          <h2 className="modal__title" id={sheet.titleId}>가고 싶은 장소</h2>
+          <h2 className="modal__title modal__title--star" id={sheet.titleId}>
+            가고 싶은 장소
+            <StarIcon />
+          </h2>
           <button type="button" className="modal__close" onClick={onClose} aria-label="닫기">
             ✕
           </button>
@@ -103,7 +106,6 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
               onClick={() => switchTab(c.key)}
             >
               {c.label}
-              <span className="bookmark-card__count">{bookmarks[c.key].length}</span>
             </button>
           ))}
         </div>
@@ -115,7 +117,7 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
               className={'bookmark-filter__chip' + (locationFilter === null ? ' bookmark-filter__chip--active' : '')}
               onClick={() => setLocationFilter(null)}
             >
-              전체
+              전체<span className="bookmark-card__count">{items.length}</span>
             </button>
             {locations.map((loc) => (
               <button
@@ -127,6 +129,7 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
                 onClick={() => setLocationFilter(loc)}
               >
                 {loc}
+                <span className="bookmark-card__count">{items.filter((i) => i.location === loc).length}</span>
               </button>
             ))}
           </div>
@@ -144,13 +147,6 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
             const onMap = !!item.url && parseCoords(item.url) !== null;
             return (
               <div className="link-editor__row" key={item.id}>
-                <span
-                  className="bookmark-star-wrap"
-                  title={onMap ? '지도에 별로 표시돼요' : '구글맵 링크에서 위치를 읽을 수 없어 지도에 표시되지 않아요'}
-                >
-                  <StarIcon filled={onMap} />
-                  <span className="sr-only">{onMap ? '지도에 표시됨' : '지도에 표시되지 않음'}</span>
-                </span>
                 <div className="bookmark-item__body">
                   {onMap && onShowOnMap ? (
                   <button
