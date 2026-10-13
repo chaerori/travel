@@ -1,4 +1,5 @@
 import type { LinkedText, ScheduleItem } from '../types';
+import { s2CellToLatLng } from './s2';
 
 export type DayPlace = {
   key: string;
@@ -120,7 +121,7 @@ function dataPairs(url: string): Coords[] {
 }
 
 /**
- * 구글 지도 주소에서 장소의 정확한 좌표(!3d…!4d…, q=·ll=·query= 값)를 읽는다.
+ * 구글 지도 주소에서 장소의 좌표(!3d…!4d…, q=·ll=·query= 값, 없으면 장소 식별자)를 읽는다.
  * `!3d…!4d…` 쌍은 주소에 여러 개 들어 있을 수 있다(앞에 보던 다른 장소가 함께 실리는 경우). 열린 장소는
  * 맨 마지막 쌍이므로 마지막 것을 쓴다.
  * 주소의 `@위도,경도`는 장소가 아니라 지도 화면의 중심이라 쓰지 않는다. 지도를 움직이지 않고 여러 장소의
@@ -134,6 +135,12 @@ export function parseCoords(url: string): Coords | null {
     const lat = Number(m[1]);
     const lng = Number(m[2]);
     if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) return { lat, lng };
+  }
+  // 좌표가 주소에 없는 경우(국내 장소 등): 장소 식별자 `!1s0x…:0x…`에 담긴 위치를 푼다. 열린 장소는 맨 마지막 것이다.
+  const ids = [...url.matchAll(/!1s0x([0-9a-f]{16}):0x[0-9a-f]+/gi)];
+  for (let k = ids.length - 1; k >= 0; k--) {
+    const at = s2CellToLatLng(ids[k][1]);
+    if (at) return at;
   }
   return null;
 }
