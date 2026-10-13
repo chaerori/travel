@@ -140,7 +140,7 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
             <p className="sync-panel__hint">
               {items.length === 0
                 ? '아직 추가한 곳이 없어요. 아래에서 이름과 구글맵 링크를 넣으면 지도에 별로 표시돼요.'
-                : '이 위치에 추가한 곳이 없어요.'}
+                : '이 도시에 추가한 곳이 없어요.'}
             </p>
           )}
           {visibleItems.map((item) => {
@@ -190,12 +190,12 @@ export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props
               />
             </label>
             <label className="form-field">
-              <span>위치</span>
+              <span>도시</span>
               <input
                 type="text"
                 value={form.location}
                 onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                placeholder="위치 (선택)"
+                placeholder="도시 (선택)"
               />
             </label>
           </div>
