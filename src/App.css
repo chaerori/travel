@@ -758,6 +758,16 @@ button.calendar__day {
   min-width: 0;
 }
 
+.bookmark-item__body button.link-row {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .bookmark-item__body .link-row {
   flex: none;
   min-width: auto;

@@ -83,6 +83,7 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
   const markersRef = useRef(new Map<string, L.Marker>());
+  const starMarkersRef = useRef(new Map<string, L.Marker>());
   const drawRef = useRef<(() => void) | null>(null);
   const onCoordsRef = useRef(onPlaceCoords);
   onCoordsRef.current = onPlaceCoords;
@@ -131,6 +132,7 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
     if (!map || !layer) return;
     layer.clearLayers();
     markersRef.current.clear();
+    starMarkersRef.current.clear();
     const pts = locatedRef.current;
     const zoom = map.getZoom();
     const px = pts.map((p) => map.project([p.lat!, p.lng!], zoom));
@@ -179,13 +181,14 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
         iconSize: [starSize, starSize],
         iconAnchor: [starSize / 2, starSize / 2],
       });
-      L.marker([star.lat, star.lng], { icon, zIndexOffset: -1000 })
+      const starMarker = L.marker([star.lat, star.lng], { icon, zIndexOffset: -1000 })
         .bindTooltip(`${star.label} (${star.category})`, { direction: 'top', offset: [0, -starSize / 2] })
         .on('click', () => {
           if (pickingRef.current) return;
           if (/^https?:\/\//i.test(star.url)) window.open(star.url, '_blank', 'noreferrer');
         })
         .addTo(layer);
+      starMarkersRef.current.set(star.id, starMarker);
     }
 
     // 경로선은 번호마다 한 곳(선택한 선택지 또는 첫 번째)을 지나게 이어 준다.
@@ -233,7 +236,7 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
   function fitToLocated(animate: boolean) {
     const map = mapRef.current;
     const pts = locatedRef.current;
-    if (!map || pts.length === 0) return;
+    if (!map) return;
     setFocusedKey(null);
     markersRef.current.forEach((m) => m.closeTooltip());
     // 그날 장소 가까이(걸어서나 가볍게 이동할 거리)에 있는 가고 싶은 장소도 함께 보이게 맞춘다.
@@ -241,8 +244,9 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
     const here = pts.map((p) => L.latLng(p.lat!, p.lng!));
     const nearStars = starsRef.current
       .map((st) => L.latLng(st.lat, st.lng))
-      .filter((at) => here.some((h) => h.distanceTo(at) <= STAR_FIT_RADIUS_M));
+      .filter((at) => here.length === 0 || here.some((h) => h.distanceTo(at) <= STAR_FIT_RADIUS_M));
     const all = [...here, ...nearStars];
+    if (all.length === 0) return;
     if (all.length === 1) map.setView(all[0], 15, { animate });
     else map.fitBounds(L.latLngBounds(all), { padding: [36, 36], maxZoom: 16, animate });
   }
@@ -261,8 +265,25 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
     setFocusedKey(p.key);
   }
 
+  // 가고 싶은 장소 목록에서 고른 별로 지도를 확대한다.
+  function focusStar(id: string) {
+    const map = mapRef.current;
+    const star = starsRef.current.find((st) => st.id === id);
+    if (!map || !star) return;
+    wrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    map.setView([star.lat, star.lng], 17);
+    // 확대가 끝나면 핀을 다시 그리므로, 이동이 끝난 뒤에 이름이 보이게 한다.
+    map.once('moveend', () => starMarkersRef.current.get(id)?.openTooltip());
+    starMarkersRef.current.get(id)?.openTooltip();
+    setFocusedKey(`star:${id}`);
+  }
+
   useEffect(() => {
     if (!focusRequest) return;
+    if (focusRequest.key.startsWith('star:')) {
+      focusStar(focusRequest.key.slice('star:'.length));
+      return;
+    }
     const place = placesRef.current.find((p) => p.key === focusRequest.key);
     if (place) focusPlace(place);
   }, [focusRequest]);
@@ -283,9 +304,11 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
             <button type="button" className="day-map__fit" onClick={() => fitToLocated(true)}>
               전체 보기
             </button>
-            <button type="button" className="day-map__edit" onClick={() => startPicking(focusedKey)}>
-              위치 수정
-            </button>
+            {!focusedKey.startsWith('star:') && (
+              <button type="button" className="day-map__edit" onClick={() => startPicking(focusedKey)}>
+                위치 수정
+              </button>
+            )}
           </div>
         )}
         {picking && (
@@ -300,10 +323,12 @@ export function DayMap({ items, bookmarks, date, onPlaceCoords, focusRequest }: 
 
       {(places.some((p) => p.choice) || stars.length > 0) && (
         <div className="day-map__legend">
-          <span>
-            <i className="day-map__legend-dot" />
-            일정
-          </span>
+          {places.length > 0 && (
+            <span>
+              <i className="day-map__legend-dot" />
+              일정
+            </span>
+          )}
           {places.some((p) => p.choice) && (
             <span>
               <i className="day-map__legend-dot day-map__legend-dot--choice" />

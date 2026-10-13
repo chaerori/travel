@@ -16,6 +16,8 @@ type Props = {
   bookmarks: Bookmarks;
   onBookmarksChange: (bookmarks: Bookmarks) => void;
   onOpenMap: () => void;
+  /** 가고 싶은 장소를 앱 안의 지도에서 보여 준다. 보여 줄 지도가 없으면 undefined. */
+  onShowBookmark?: (id: string) => void;
 };
 
 export function BottomNav({
@@ -26,6 +28,7 @@ export function BottomNav({
   bookmarks,
   onBookmarksChange,
   onOpenMap,
+  onShowBookmark,
 }: Props) {
   const [prepOpen, setPrepOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
@@ -71,7 +74,18 @@ export function BottomNav({
       )}
 
       {placesOpen && (
-        <PlacesModal bookmarks={bookmarks} onChange={onBookmarksChange} onClose={() => setPlacesOpen(false)} />
+        <PlacesModal
+          bookmarks={bookmarks}
+          onChange={onBookmarksChange}
+          onClose={() => setPlacesOpen(false)}
+          onShowOnMap={
+            onShowBookmark &&
+            ((id) => {
+              setPlacesOpen(false);
+              onShowBookmark(id);
+            })
+          }
+        />
       )}
     </>
   );

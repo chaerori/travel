@@ -29,9 +29,11 @@ type Props = {
   bookmarks: Bookmarks;
   onChange: (bookmarks: Bookmarks) => void;
   onClose: () => void;
+  /** 이름을 눌렀을 때 앱 안의 지도에서 해당 장소를 보여 준다. 없으면 구글맵 링크를 연다. */
+  onShowOnMap?: (id: string) => void;
 };
 
-export function PlacesModal({ bookmarks, onChange, onClose }: Props) {
+export function PlacesModal({ bookmarks, onChange, onClose, onShowOnMap }: Props) {
   const sheet = useSheet(onClose);
   const [activeCategory, setActiveCategory] = useState<BookmarkCategory>('food');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -150,7 +152,18 @@ export function PlacesModal({ bookmarks, onChange, onClose }: Props) {
                   <span className="sr-only">{onMap ? '지도에 표시됨' : '지도에 표시되지 않음'}</span>
                 </span>
                 <div className="bookmark-item__body">
+                  {onMap && onShowOnMap ? (
+                  <button
+                    type="button"
+                    className="link-row link-row--button"
+                    title="지도에서 보기"
+                    onClick={() => onShowOnMap(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ) : (
                   <LinkRow item={item} />
+                )}
                   {item.description && <div className="bookmark-item__desc">{item.description}</div>}
                 </div>
                 <button type="button" className="icon-action" onClick={() => startEdit(item)} aria-label="수정">
