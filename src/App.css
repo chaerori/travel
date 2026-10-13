@@ -1242,10 +1242,31 @@ button.calendar__day {
 .trip-card__link {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
   text-decoration: none;
+}
+
+.trip-card__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* 여행 이름 옆 디데이: 배경 없이 연한 보라색 글자, 이름(16px)보다 작게 */
+.dday {
+  flex: none;
+  color: #7b6df0;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.dday--past {
+  color: var(--color-text-muted);
 }
 
 .expense-table {

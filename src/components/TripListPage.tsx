@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { hasFullAccess } from '../firebase';
 import { signOutUser } from '../utils/auth';
+import { todayString } from '../utils/date';
 import { createTrip, deleteTrip, useTripIndex } from '../utils/tripIndex';
+import { compareDDay, dDay } from '../utils/tripDday';
+import { useTripDateRanges } from '../utils/tripDates';
 import { tripUrl } from '../utils/tripId';
 import { TripSettingsPanel } from './TripSettingsPanel';
 import { DeleteIcon } from './icons/DeleteIcon';
@@ -11,6 +14,14 @@ import { SettingsIcon } from './icons/SettingsIcon';
 export function TripListPage({ userEmail }: { userEmail: string }) {
   const isOwner = hasFullAccess(userEmail);
   const { trips, status } = useTripIndex(userEmail);
+  const ranges = useTripDateRanges(trips.map((t) => t.id));
+  // 진행 중이거나 디데이가 가까운 여행이 위로 오게 정렬한다.
+  const sortedTrips = useMemo(() => {
+    const today = todayString();
+    return trips
+      .map((t) => ({ trip: t, dday: dDay(ranges[t.id] ?? null, today) }))
+      .sort((a, b) => compareDDay(a.dday, b.dday) || a.trip.title.localeCompare(b.trip.title, 'ko'));
+  }, [trips, ranges]);
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -118,10 +129,13 @@ export function TripListPage({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {trips.map((t) => (
+        {sortedTrips.map(({ trip: t, dday }) => (
           <div key={t.id} className="trip-card">
             <a className="trip-card__link" href={tripUrl(t.id)}>
-              {t.title}
+              <span className="trip-card__title">{t.title}</span>
+              {dday.label && (
+                <span className={dday.group === 3 ? 'dday dday--past' : 'dday'}>{dday.label}</span>
+              )}
             </a>
             <button
               type="button"
