@@ -8,6 +8,13 @@ export function formatDateWithWeekday(dateStr: string): string {
   return `${month}월 ${day}일 (${weekday})`;
 }
 
+/** 날짜 목록에서 오늘이거나 오늘과 가장 가까운 미래 날짜를 고른다. 미래 날짜가 없으면 가장 최근 지난 날짜. */
+export function pickNearestDate(dates: string[], today: string): string | null {
+  if (dates.length === 0) return null;
+  const sorted = [...dates].sort();
+  return sorted.find((d) => d >= today) ?? sorted[sorted.length - 1];
+}
+
 /** 오늘 날짜(기기 시간 기준)를 YYYY-MM-DD로 돌려준다. */
 export function todayString(): string {
   const d = new Date();

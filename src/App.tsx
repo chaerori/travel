@@ -13,6 +13,7 @@ import type { Bookmarks, Budget, ExpenseEntry, Luggage, ScheduleItem } from './t
 import { useAuthUser, signOutUser } from './utils/auth';
 import { useCloudTrip } from './utils/cloudTrip';
 import { getDayPlaces, getPlaceBadges, setPlaceCoords, type Coords } from './utils/dayPlaces';
+import { pickBookmarkDate } from './utils/bookmarkDate';
 import { addHours, formatDateWithWeekday, todayString } from './utils/date';
 import { getTripSlug } from './utils/tripId';
 import { renameTripIndexEntry } from './utils/tripIndex';
@@ -55,8 +56,8 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
   const [scrolled, setScrolled] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [focusRequest, setFocusRequest] = useState<{ key: string; n: number } | null>(null);
-  // 그날 지도에 표시할 일정 장소가 없어도, 가고 싶은 장소를 보려고 열어 둔 지도.
-  const [bookmarkMapOpen, setBookmarkMapOpen] = useState(false);
+  // 그날 지도에 표시할 일정 장소가 없어도, 가고 싶은 장소를 보려고 지도를 열어 둔 날짜.
+  const [bookmarkMapDate, setBookmarkMapDate] = useState<string | null>(null);
 
   // 헤더가 고정되어 내용과 겹치기 시작하면 경계를 표시한다.
   useEffect(() => {
@@ -77,11 +78,6 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
       : scheduledDates.includes(today)
         ? today
         : (scheduledDates[0] ?? null);
-  // 다른 날을 보면 가고 싶은 장소를 보려고 열어 둔 지도는 닫는다(그날 표시할 장소가 있으면 지도는 그대로 보인다).
-  useEffect(() => {
-    setBookmarkMapOpen(false);
-  }, [activeDate]);
-
   const dayRows = useMemo(() => rows.filter((r) => r.item.date === activeDate), [rows, activeDate]);
   const placeBadges = useMemo(
     () => (activeDate ? getPlaceBadges(trip.items, activeDate) : {}),
@@ -162,8 +158,12 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
     setTrip((prev) => ({ ...prev, bookmarks }));
   }
 
+  // 가고 싶은 장소를 지도에서 보여 준다. 장소의 위치와 같은 도시의 일정이 있는 날 중
+  // 오늘이거나 오늘과 가장 가까운 미래 날짜로 옮기고, 같은 도시의 날이 없으면 보던 날에서 보여 준다.
   function handleShowBookmark(id: string) {
-    setBookmarkMapOpen(true);
+    const target = pickBookmarkDate(trip, id, today) ?? activeDate;
+    if (target && target !== activeDate) setSelectedDate(target);
+    setBookmarkMapDate(target);
     setFocusRequest((prev) => ({ key: `star:${id}`, n: (prev?.n ?? 0) + 1 }));
   }
 
@@ -270,7 +270,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
           </header>
         )}
 
-        {activeDate && (hasPlaces || bookmarkMapOpen) && (
+        {activeDate && (hasPlaces || bookmarkMapDate === activeDate) && (
           <Suspense fallback={<div className="day-map__placeholder" />}>
             <DayMap
               items={trip.items}
