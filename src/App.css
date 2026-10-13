@@ -619,8 +619,10 @@ button.calendar__day {
   background: var(--color-primary);
 }
 
+/* 선택지는 속이 빈 보라색: 색은 일정과 같고 모양(채움/빈 원)으로 구분한다. */
 .timeline-rail__dot--choice {
-  background: var(--color-choice);
+  background: var(--color-surface);
+  border-color: var(--color-primary);
 }
 
 .item-card {
@@ -1630,17 +1632,22 @@ button.calendar__day {
   margin: 0;
 }
 
-/* 당일 선택지는 보라색(일정)과 구분되도록 주황색으로 표시한다. */
-:root {
-  --color-choice: #d9480f;
-}
-
+/* 당일 선택지는 일정(채운 보라)과 같은 색의 속이 빈 원으로 표시한다. */
 .day-map__pin--choice {
-  background: var(--color-choice);
+  background: #fff;
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
+  box-shadow:
+    0 0 0 1.5px #fff,
+    0 2px 6px rgba(20, 16, 32, 0.3);
 }
 
 .day-map__badge--choice {
-  background: var(--color-choice);
+  box-sizing: border-box;
+  border: 2px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary-strong);
+  line-height: 18px;
 }
 
 .day-map__legend {
@@ -1666,19 +1673,15 @@ button.calendar__day {
 }
 
 .day-map__legend-dot--choice {
-  background: var(--color-choice);
+  box-sizing: border-box;
+  border: 2px solid var(--color-primary);
+  background: #fff;
 }
 
 .day-map__pin--stack {
   box-shadow:
     0 0 0 2px #fff,
     0 0 0 5px rgba(108, 92, 231, 0.4);
-}
-
-.day-map__pin--choice.day-map__pin--stack {
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 5px rgba(217, 72, 15, 0.4);
 }
 
 .day-map__popup .leaflet-popup-content-wrapper {
@@ -1734,7 +1737,10 @@ button.calendar__day {
 }
 
 .place-badge--choice {
-  background: var(--color-choice);
+  box-sizing: border-box;
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary-strong);
 }
 
 .place-badge--unplaced {
@@ -1833,8 +1839,7 @@ button.calendar__day {
 .day-map__legend-star {
   flex: none;
   filter: none;
-  stroke: var(--color-star-edge);
-  stroke-width: 1;
+  stroke: none;
 }
 
 /* 가고 싶은 장소 목록의 별: 지도에 표시되면 채운 별, 아니면 빈 별 */
@@ -1854,7 +1859,7 @@ button.calendar__day {
 
 .bookmark-star--on {
   fill: var(--color-star);
-  stroke: var(--color-star-edge);
+  stroke: none;
 }
 
 .bookmark-star--off {
