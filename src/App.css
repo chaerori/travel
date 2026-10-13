@@ -1343,7 +1343,7 @@ button.calendar__day {
   margin-top: auto;
   padding-top: 24px;
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: #a09db2;
   text-align: center;
   text-decoration: none;
 }
