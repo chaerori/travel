@@ -1,4 +1,5 @@
 import type { LinkedText, ScheduleItem } from '../types';
+import { plusCodeToLatLng } from './plusCode';
 import { s2CellToLatLng } from './s2';
 
 export type DayPlace = {
@@ -34,6 +35,17 @@ function viewportCenter(url: string): Coords | null {
  */
 function savedCoords(link: LinkedText): { lat?: number; lng?: number } {
   if (link.lat === undefined || link.lng === undefined) return {};
+  // S2 셀 값에서 읽어 저장해 둔 좌표는 지금 읽는 값과 다르면 틀린 값이라 버린다.
+  if (link.url) {
+    const now = parseCoords(link.url);
+    const stale = legacyS2Coords(link.url).some(
+      (c) =>
+        Math.abs(c.lat - link.lat!) < 1e-6 &&
+        Math.abs(c.lng - link.lng!) < 1e-6 &&
+        !(now && Math.abs(now.lat - link.lat!) < 1e-6 && Math.abs(now.lng - link.lng!) < 1e-6),
+    );
+    if (stale) return {};
+  }
   // 예전에는 주소의 첫 번째 쌍을 썼다. 마지막 쌍이 아닌 다른 쌍과 같은 값이면 그때 잘못 저장된 좌표다.
   if (link.url) {
     const pairs = dataPairs(link.url);
@@ -121,7 +133,7 @@ function dataPairs(url: string): Coords[] {
 }
 
 /**
- * 구글 지도 주소에서 장소의 좌표(!3d…!4d…, q=·ll=·query= 값, 없으면 장소 식별자)를 읽는다.
+ * 구글 지도 주소에서 장소의 좌표(!3d…!4d…, q=·ll=·query= 값, 없으면 플러스 코드)를 읽는다.
  * `!3d…!4d…` 쌍은 주소에 여러 개 들어 있을 수 있다(앞에 보던 다른 장소가 함께 실리는 경우). 열린 장소는
  * 맨 마지막 쌍이므로 마지막 것을 쓴다.
  * 주소의 `@위도,경도`는 장소가 아니라 지도 화면의 중심이라 쓰지 않는다. 지도를 움직이지 않고 여러 장소의
@@ -136,13 +148,20 @@ export function parseCoords(url: string): Coords | null {
     const lng = Number(m[2]);
     if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) return { lat, lng };
   }
-  // 좌표가 주소에 없는 경우(국내 장소 등): 장소 식별자 `!1s0x…:0x…`에 담긴 위치를 푼다. 열린 장소는 맨 마지막 것이다.
-  const ids = [...url.matchAll(/!1s0x([0-9a-f]{16}):0x[0-9a-f]+/gi)];
-  for (let k = ids.length - 1; k >= 0; k--) {
-    const at = s2CellToLatLng(ids[k][1]);
-    if (at) return at;
+  // 좌표가 주소에 없는 경우(국내 장소 등): 장소의 플러스 코드(`!20s8Q8CRJFF+GCJ`)에서 위치를 얻는다.
+  // 장소 식별자(`!1s0x…`)의 S2 셀 값은 장소와 몇 km 떨어진 곳을 가리키는 경우가 있어 쓰지 않는다.
+  const plus = url.match(/!20s([0-9A-Za-z]{8}(?:%2B|\+)[0-9A-Za-z]{2,})/);
+  return plus ? plusCodeToLatLng(decodeURIComponent(plus[1])) : null;
+}
+
+/** 예전에 장소 식별자의 S2 셀 값으로 읽어 저장한 좌표(틀린 값일 수 있음). 저장값 정리에만 쓴다. */
+function legacyS2Coords(url: string): Coords[] {
+  const out: Coords[] = [];
+  for (const m of url.matchAll(/!1s0x([0-9a-f]{16}):0x[0-9a-f]+/gi)) {
+    const at = s2CellToLatLng(m[1]);
+    if (at) out.push(at);
   }
-  return null;
+  return out;
 }
 
 /** 일정 안의 특정 장소에 좌표를 기록한다. */
