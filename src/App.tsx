@@ -265,7 +265,7 @@ function TripView({ userEmail, tripId }: { userEmail: string; tripId: string }) 
               {activeDate === today && <span className="day-heading__today">오늘</span>}
             </h2>
             <p className="day-heading__sub">
-              {formatDateWithWeekday(activeDate)} · {dayRows[0].item.city}
+              {[formatDateWithWeekday(activeDate), dayRows[0].item.city.trim()].filter(Boolean).join(' · ')}
             </p>
           </header>
         )}
